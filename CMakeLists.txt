@@ -12,10 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 add_executable(${PROJECT_NAME}
-	"main.cpp"
-	"mainwindow.cpp"
-	"mainwindow.h"
-	"mainwindow.ui"
+	"src/main.cpp"
+	"src/mainwindow.cpp"
+	"src/mainwindow.h"
+	"src/mainwindow.ui"
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
