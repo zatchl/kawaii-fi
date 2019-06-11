@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Charts REQUIRED)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(LibNL REQUIRED)
@@ -22,4 +22,4 @@ add_executable(${PROJECT_NAME}
 	"src/mainwindow.ui"
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets ${LibNL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts ${LibNL_LIBRARIES})
