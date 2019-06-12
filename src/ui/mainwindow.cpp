@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "models/accesspoint.h"
+#include "models/accesspointtablemodel.h"
 #include "models/wirelessinterface.h"
 #include "ui_mainwindow.h"
 
@@ -27,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ui->apSpectrumChartView->chart()->layout()->setContentsMargins(0, 0, 0, 0);
 
 	_ui->splitter->setSizes({INT_MAX, INT_MAX});
+
+	_apTableModel = new AccessPointTableModel(this);
+	_ui->apTableView->setModel(_apTableModel);
 
 	connect(&_scanResultWatcher, &QFutureWatcher<QVector<KawaiiFi::AccessPoint>>::finished, this,
 	        &MainWindow::handleScanResult);
@@ -59,5 +63,6 @@ void MainWindow::handleScanResult()
 	_progressBar->hide();
 	statusBar()->showMessage(
 	        QString("Found %0 access points").arg(_scanResultWatcher.result().size()));
+	_apTableModel->updateAccessPoints(_scanResultWatcher.result());
 	QTimer::singleShot(5000, this, &MainWindow::scan);
 }

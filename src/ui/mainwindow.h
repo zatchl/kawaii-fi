@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "models/accesspoint.h"
+#include "models/accesspointtablemodel.h"
 #include "models/wirelessinterface.h"
 
 #include <QFutureWatcher>
@@ -26,6 +27,7 @@ namespace KawaiiFi {
 		QProgressBar *_progressBar;
 		QFutureWatcher<QVector<KawaiiFi::AccessPoint>> _scanResultWatcher;
 		QVector<KawaiiFi::WirelessInterface> _wirelessInterfaces;
+		AccessPointTableModel *_apTableModel;
 	};
 } // namespace KawaiiFi
 
