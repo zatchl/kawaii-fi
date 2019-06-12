@@ -7,7 +7,8 @@
 
 using namespace KawaiiFi;
 
-WirelessInterface::WirelessInterface(int index, const QString name) : _index(index), _name(name)
+WirelessInterface::WirelessInterface(unsigned int index, const QString name)
+    : _index(index), _name(name)
 {
 }
 
@@ -48,7 +49,7 @@ QString WirelessInterface::name() const
 	return _name;
 }
 
-int WirelessInterface::index() const
+unsigned int WirelessInterface::index() const
 {
 	return _index;
 }
