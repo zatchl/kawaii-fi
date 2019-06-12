@@ -20,6 +20,8 @@ add_executable(${PROJECT_NAME}
 
 	"src/models/accesspoint.cpp"
 	"src/models/accesspoint.h"
+	"src/models/wirelessinterface.cpp"
+	"src/models/wirelessinterface.h"
 
 	"src/ui/mainwindow.cpp"
 	"src/ui/mainwindow.h"
