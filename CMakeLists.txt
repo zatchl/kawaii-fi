@@ -17,9 +17,10 @@ include_directories(${LibNL_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME}
 	"src/main.cpp"
-	"src/mainwindow.cpp"
-	"src/mainwindow.h"
-	"src/mainwindow.ui"
+
+	"src/ui/mainwindow.cpp"
+	"src/ui/mainwindow.h"
+	"src/ui/mainwindow.ui"
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts ${LibNL_LIBRARIES})
