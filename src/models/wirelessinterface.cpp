@@ -32,6 +32,16 @@ namespace KawaiiFi {
 		return scanResults();
 	}
 
+	bool WirelessInterface::supportsTwoPointFourGhz() const
+	{
+		return _twoPointFourGhzChannels.size() > 0;
+	}
+
+	bool WirelessInterface::supportsFiveGhz() const
+	{
+		return _fiveGhzChannels.size() > 0;
+	}
+
 	QString WirelessInterface::name() const
 	{
 		return _name;
@@ -40,6 +50,16 @@ namespace KawaiiFi {
 	int WirelessInterface::index() const
 	{
 		return _index;
+	}
+
+	QVector<unsigned int> WirelessInterface::twoPointFourGhzChannels() const
+	{
+		return _twoPointFourGhzChannels;
+	}
+
+	QVector<unsigned int> WirelessInterface::fiveGhzChannels() const
+	{
+		return _fiveGhzChannels;
 	}
 
 	QVector<WirelessInterface> getWirelessInterfaces()

@@ -15,12 +15,18 @@ namespace KawaiiFi {
 		int triggerScan() const;
 		QVector<AccessPoint> scanResults() const;
 		QVector<AccessPoint> waitForNewScanResults() const;
+		bool supportsTwoPointFourGhz() const;
+		bool supportsFiveGhz() const;
 		int index() const;
 		QString name() const;
+		QVector<unsigned int> twoPointFourGhzChannels() const;
+		QVector<unsigned int> fiveGhzChannels() const;
 
 	private:
 		int _index;
 		QString _name;
+		QVector<unsigned int> _twoPointFourGhzChannels;
+		QVector<unsigned int> _fiveGhzChannels;
 	};
 
 	QVector<WirelessInterface> getWirelessInterfaces();
