@@ -18,6 +18,9 @@ include_directories(${LibNL_INCLUDE_DIR} src/)
 add_executable(${PROJECT_NAME}
 	"src/main.cpp"
 
+	"src/models/accesspoint.cpp"
+	"src/models/accesspoint.h"
+
 	"src/ui/mainwindow.cpp"
 	"src/ui/mainwindow.h"
 	"src/ui/mainwindow.ui"
