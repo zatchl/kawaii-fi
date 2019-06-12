@@ -1,5 +1,7 @@
-#include "mainwindow.h"
+#include "ui/mainwindow.h"
 #include <QApplication>
+
+using namespace KawaiiFi;
 
 int main(int argc, char *argv[])
 {

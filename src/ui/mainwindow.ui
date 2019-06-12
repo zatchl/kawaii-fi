@@ -1,7 +1,7 @@
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
-  <property name="geometry" >
+ <class>KawaiiFi::MainWindow</class>
+ <widget class="QMainWindow" name="KawaiiFi::MainWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
