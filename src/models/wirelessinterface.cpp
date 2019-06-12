@@ -5,66 +5,66 @@
 #include <QVector>
 #include <net/if.h>
 
-namespace KawaiiFi {
-	WirelessInterface::WirelessInterface(int index, const QString name) : _index(index), _name(name)
-	{
-	}
+using namespace KawaiiFi;
 
-	QString WirelessInterface::linkStatus() const
-	{
-		return "";
-	}
+WirelessInterface::WirelessInterface(int index, const QString name) : _index(index), _name(name)
+{
+}
 
-	int WirelessInterface::triggerScan() const
-	{
-		return 0;
-	}
+QString WirelessInterface::linkStatus() const
+{
+	return "";
+}
 
-	QVector<AccessPoint> WirelessInterface::scanResults() const
-	{
-		QVector<AccessPoint> accessPoints;
-		return accessPoints;
-	}
+int WirelessInterface::triggerScan() const
+{
+	return 0;
+}
 
-	QVector<AccessPoint> WirelessInterface::waitForNewScanResults() const
-	{
-		triggerScan();
-		return scanResults();
-	}
+QVector<AccessPoint> WirelessInterface::scanResults() const
+{
+	QVector<AccessPoint> accessPoints;
+	return accessPoints;
+}
 
-	bool WirelessInterface::supportsTwoPointFourGhz() const
-	{
-		return _twoPointFourGhzChannels.size() > 0;
-	}
+QVector<AccessPoint> WirelessInterface::waitForNewScanResults() const
+{
+	triggerScan();
+	return scanResults();
+}
 
-	bool WirelessInterface::supportsFiveGhz() const
-	{
-		return _fiveGhzChannels.size() > 0;
-	}
+bool WirelessInterface::supportsTwoPointFourGhz() const
+{
+	return _twoPointFourGhzChannels.size() > 0;
+}
 
-	QString WirelessInterface::name() const
-	{
-		return _name;
-	}
+bool WirelessInterface::supportsFiveGhz() const
+{
+	return _fiveGhzChannels.size() > 0;
+}
 
-	int WirelessInterface::index() const
-	{
-		return _index;
-	}
+QString WirelessInterface::name() const
+{
+	return _name;
+}
 
-	QVector<unsigned int> WirelessInterface::twoPointFourGhzChannels() const
-	{
-		return _twoPointFourGhzChannels;
-	}
+int WirelessInterface::index() const
+{
+	return _index;
+}
 
-	QVector<unsigned int> WirelessInterface::fiveGhzChannels() const
-	{
-		return _fiveGhzChannels;
-	}
+QVector<unsigned int> WirelessInterface::twoPointFourGhzChannels() const
+{
+	return _twoPointFourGhzChannels;
+}
 
-	QVector<WirelessInterface> getWirelessInterfaces()
-	{
-		QVector<WirelessInterface> wirelessInterfaces;
-		return wirelessInterfaces;
-	}
-} // namespace KawaiiFi
+QVector<unsigned int> WirelessInterface::fiveGhzChannels() const
+{
+	return _fiveGhzChannels;
+}
+
+QVector<WirelessInterface> getWirelessInterfaces()
+{
+	QVector<WirelessInterface> wirelessInterfaces;
+	return wirelessInterfaces;
+}
