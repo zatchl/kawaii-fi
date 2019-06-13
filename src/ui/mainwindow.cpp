@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ui->setupUi(this);
 	_ui->scanIntervalComboBox->addItems(QStringList({"10 seconds", "30 seconds", "1 minute"}));
 
-	_wirelessInterfaces = KawaiiFi::getWirelessInterfaces();
+	_wirelessInterfaces = getWirelessInterfaces();
 	for (const auto &interface : _wirelessInterfaces) {
 		_ui->interfaceComboBox->addItem(interface.name());
 	}
