@@ -3,7 +3,11 @@
 
 #include <QString>
 #include <QVector>
-#include <net/if.h>
+#include <cstring>
+#include <ifaddrs.h>
+#include <linux/wireless.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 using namespace KawaiiFi;
 
@@ -64,8 +68,50 @@ QVector<unsigned int> WirelessInterface::fiveGhzChannels() const
 	return _fiveGhzChannels;
 }
 
-QVector<WirelessInterface> getWirelessInterfaces()
+// The following is adapted from https://gist.github.com/edufelipe/6108057
+namespace {
+	bool isInterfaceWireless(const char *ifname)
+	{
+		int sock = -1;
+		struct iwreq pwrq;
+		memset(&pwrq, 0, sizeof(pwrq));
+		strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
+
+		if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+			return false;
+		}
+
+		if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
+			close(sock);
+			return true;
+		}
+
+		close(sock);
+		return false;
+	}
+} // namespace
+
+QVector<WirelessInterface> KawaiiFi::getWirelessInterfaces()
 {
 	QVector<WirelessInterface> wirelessInterfaces;
+
+	//	// Get the addresses of all the interfaces
+	struct ifaddrs *ifaddr;
+	if (getifaddrs(&ifaddr) == -1) {
+		return wirelessInterfaces;
+	}
+
+	//	// If any of the interfaces are wireless, add them to the vector
+	unsigned int interfaceIndex = 1;
+	for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next, ++interfaceIndex) {
+		if (ifa->ifa_addr == nullptr || ifa->ifa_addr->sa_family != AF_PACKET) {
+			continue;
+		}
+
+		if (isInterfaceWireless(ifa->ifa_name)) {
+			wirelessInterfaces.append(WirelessInterface(interfaceIndex, ifa->ifa_name));
+		}
+	}
+	freeifaddrs(ifaddr);
 	return wirelessInterfaces;
 }
