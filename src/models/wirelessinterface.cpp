@@ -1,12 +1,15 @@
 #include "wirelessinterface.h"
 #include "accesspoint.h"
 
+#include <net/if.h>
+
 #include <QString>
 #include <QVector>
 #include <cstring>
 #include <ifaddrs.h>
 #include <linux/wireless.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 using namespace KawaiiFi;
@@ -102,14 +105,14 @@ QVector<WirelessInterface> KawaiiFi::getWirelessInterfaces()
 	}
 
 	//	// If any of the interfaces are wireless, add them to the vector
-	unsigned int interfaceIndex = 1;
-	for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next, ++interfaceIndex) {
+	for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
 		if (ifa->ifa_addr == nullptr || ifa->ifa_addr->sa_family != AF_PACKET) {
 			continue;
 		}
 
 		if (isInterfaceWireless(ifa->ifa_name)) {
-			wirelessInterfaces.append(WirelessInterface(interfaceIndex, ifa->ifa_name));
+			wirelessInterfaces.append(
+			        WirelessInterface(if_nametoindex(ifa->ifa_name), ifa->ifa_name));
 		}
 	}
 	freeifaddrs(ifaddr);
