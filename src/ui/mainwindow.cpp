@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 
 	_apTableModel = new AccessPointTableModel(this);
 	_ui->apTableView->setModel(_apTableModel);
+	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	connect(&_scanResultWatcher, &QFutureWatcher<QVector<KawaiiFi::AccessPoint>>::finished, this,
 	        &MainWindow::handleScanResult);
