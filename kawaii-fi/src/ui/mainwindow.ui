@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>832</width>
-    <height>406</height>
+    <width>1062</width>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
       <item>
        <widget class="QLineEdit" name="filterLineEdit">
         <property name="placeholderText">
-         <string>Search...</string>
+         <string>Add filter...</string>
         </property>
        </widget>
       </item>
@@ -85,7 +85,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>832</width>
+     <width>1062</width>
      <height>23</height>
     </rect>
    </property>
