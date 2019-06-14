@@ -1,5 +1,4 @@
-#include "wirelessinterface.h"
-#include "accesspoint.h"
+#include <libkawaii-fi/wirelessinterface.h>
 
 #include <net/if.h>
 
@@ -7,6 +6,7 @@
 #include <QVector>
 #include <cstring>
 #include <ifaddrs.h>
+#include <libkawaii-fi/accesspoint.h>
 #include <linux/wireless.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>

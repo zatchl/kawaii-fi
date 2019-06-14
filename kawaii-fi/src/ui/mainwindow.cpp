@@ -1,7 +1,5 @@
 #include "mainwindow.h"
-#include "models/accesspoint.h"
 #include "models/accesspointtablemodel.h"
-#include "models/wirelessinterface.h"
 #include "ui_mainwindow.h"
 
 #include <QComboBox>
@@ -12,6 +10,8 @@
 #include <QTimer>
 #include <QVector>
 #include <QtConcurrent/QtConcurrentRun>
+#include <libkawaii-fi/accesspoint.h>
+#include <libkawaii-fi/wirelessinterface.h>
 
 using namespace KawaiiFi;
 

@@ -1,13 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "models/accesspoint.h"
 #include "models/accesspointtablemodel.h"
-#include "models/wirelessinterface.h"
 
 #include <QFutureWatcher>
 #include <QMainWindow>
 #include <QProgressBar>
+#include <libkawaii-fi/accesspoint.h>
+#include <libkawaii-fi/wirelessinterface.h>
 
 namespace KawaiiFi {
 	namespace Ui {

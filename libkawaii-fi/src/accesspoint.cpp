@@ -1,4 +1,4 @@
-#include "accesspoint.h"
+#include <libkawaii-fi/accesspoint.h>
 
 #include <QString>
 

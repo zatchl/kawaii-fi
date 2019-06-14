@@ -18,4 +18,4 @@ find_package(LibNL REQUIRED)
 include_directories(${LibNL_INCLUDE_DIR} src/)
 
 add_executable(${PROJECT_NAME} "src/main.cpp")
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::DBus ${LibNL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::DBus ${LibNL_LIBRARIES} libkawaii-fi)

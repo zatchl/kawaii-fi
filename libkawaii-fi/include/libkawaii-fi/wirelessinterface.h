@@ -1,7 +1,7 @@
 #ifndef WIRELESSINTERFACE_H
 #define WIRELESSINTERFACE_H
 
-#include "accesspoint.h"
+#include <libkawaii-fi/accesspoint.h>
 
 #include <QString>
 #include <QVector>

@@ -16,16 +16,12 @@ include_directories(src/)
 add_executable(${PROJECT_NAME}
 	"src/main.cpp"
 
-	"src/models/accesspoint.cpp"
-	"src/models/accesspoint.h"
 	"src/models/accesspointtablemodel.cpp"
 	"src/models/accesspointtablemodel.h"
-	"src/models/wirelessinterface.cpp"
-	"src/models/wirelessinterface.h"
 
 	"src/ui/mainwindow.cpp"
 	"src/ui/mainwindow.h"
 	"src/ui/mainwindow.ui"
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts Qt5::DBus)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts Qt5::DBus libkawaii-fi)

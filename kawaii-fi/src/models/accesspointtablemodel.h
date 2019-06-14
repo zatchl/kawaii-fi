@@ -1,11 +1,10 @@
 #ifndef ACCESSPOINTTABLEMODEL_H
 #define ACCESSPOINTTABLEMODEL_H
 
-#include "accesspoint.h"
-
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QVector>
+#include <libkawaii-fi/accesspoint.h>
 
 namespace KawaiiFi {
 	class AccessPointTableModel : public QAbstractTableModel {

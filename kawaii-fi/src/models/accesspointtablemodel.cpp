@@ -3,6 +3,7 @@
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QVector>
+#include <libkawaii-fi/accesspoint.h>
 
 using namespace KawaiiFi;
 
