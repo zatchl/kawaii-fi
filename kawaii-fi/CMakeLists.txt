@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS Widgets Charts REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Charts DBus REQUIRED)
 
 include_directories(src/)
 
@@ -28,4 +28,4 @@ add_executable(${PROJECT_NAME}
 	"src/ui/mainwindow.ui"
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts Qt5::DBus)
