@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(kawaii-fid LANGUAGES CXX)
+project(kawaii-fi-server LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
