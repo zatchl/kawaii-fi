@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kawaiifi.Server">
+    <signal name="wifi_scan_completed">
+      <arg name="nicName" type="s" direction="out"/>
+    </signal>
+	<method name="wireless_nic_names">
+	    <arg name="nics" type="a(s)" direction="out"/>
+		<annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QStringList"/>
+	</method>
+	<method name="access_points">
+	    <arg name="nic" type="s" direction="in"/>
+		<arg name="aps" type="a(sssiuuu)" direction="out"/>
+		<annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVector&lt;AccessPoint&gt;"/>
+	</method>
+	<method name="trigger_wifi_scan">
+	    <arg name="nic" type="s" direction="in"/>
+	</method>
+  </interface>
+</node>

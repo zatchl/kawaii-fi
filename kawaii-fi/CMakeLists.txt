@@ -13,6 +13,12 @@ find_package(Qt5 COMPONENTS Widgets Charts DBus REQUIRED)
 
 include_directories(src/)
 
+cmake_policy(SET CMP0071 NEW)
+set(dbus_src org.kawaiifi.Server.xml)
+
+set_source_files_properties(org.kawaiifi.Server.xml PROPERTIES INCLUDE libkawaii-fi/access_point.h)
+qt5_add_dbus_interface(dbus_src org.kawaiifi.Server.xml kawaiifi_server_interface)
+
 add_executable(${PROJECT_NAME}
 	"src/main.cpp"
 
@@ -22,6 +28,7 @@ add_executable(${PROJECT_NAME}
 	"src/ui/mainwindow.cpp"
 	"src/ui/mainwindow.h"
 	"src/ui/mainwindow.ui"
+	${dbus_src}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Charts Qt5::DBus libkawaii-fi)
