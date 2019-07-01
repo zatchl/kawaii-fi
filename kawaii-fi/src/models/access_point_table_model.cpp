@@ -1,4 +1,4 @@
-#include "accesspointtablemodel.h"
+#include "access_point_table_model.h"
 
 #include <QAbstractTableModel>
 #include <QVariant>
@@ -11,7 +11,7 @@ AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableMo
 {
 }
 
-void AccessPointTableModel::updateAccessPoints(QVector<KawaiiFi::AccessPoint> accessPoints)
+void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &access_points)
 {
 	_accessPoints = accessPoints;
 }
