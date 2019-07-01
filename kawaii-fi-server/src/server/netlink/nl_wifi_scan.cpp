@@ -15,13 +15,13 @@
 namespace {
 	int process_access_point(nl_msg *msg, void *aps)
 	{
-		QVector<AccessPoint> *accessPoints = static_cast<QVector<AccessPoint> *>(aps);
+		auto accessPoints = static_cast<QVector<AccessPoint> *>(aps);
 		AccessPoint ap;
 
-		genlmsghdr *gnlh = static_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
 		nlattr *tb[NL80211_ATTR_MAX + 1];
 		nlattr *bss[NL80211_BSS_MAX + 1];
 		static nla_policy bss_policy[NL80211_BSS_MAX + 1];
+		auto gnlh = static_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
 		bss_policy[NL80211_BSS_TSF].type = NLA_U64;
 		bss_policy[NL80211_BSS_FREQUENCY].type = NLA_U32;
 		bss_policy[NL80211_BSS_BSSID] = {};
@@ -97,8 +97,8 @@ int KawaiiFi::wait_for_new_wifi_scan_results(unsigned int timeout_seconds)
 	// clang-format off
 	// Set up a callback for when a valid message is received
 	nl_cb_set(callback, NL_CB_VALID, NL_CB_CUSTOM, [](nl_msg *msg, void *arg) -> int {
-		genlmsghdr *gnlh = static_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
-		int *callback_arg = static_cast<int *>(arg);
+		auto gnlh = static_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
+		auto callback_arg = static_cast<int *>(arg);
 
 		switch (gnlh->cmd) {
 		// If the command from the recieved message indicates there are new scan results,
@@ -118,7 +118,7 @@ int KawaiiFi::wait_for_new_wifi_scan_results(unsigned int timeout_seconds)
 
 	// Set up a callback for when ACKs are received
 	nl_cb_set(callback, NL_CB_ACK, NL_CB_CUSTOM, [](nl_msg *msg, void *arg) -> int {
-		int *callback_arg = static_cast<int *>(arg);
+		auto callback_arg = static_cast<int *>(arg);
 		*callback_arg = 0;
 		return NL_STOP;
 	}, &callback_arg);
