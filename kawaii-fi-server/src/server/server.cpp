@@ -45,7 +45,7 @@ namespace {
 	bool is_nic_wireless(const char *ifname)
 	{
 		int sock = -1;
-		struct iwreq pwrq;
+		struct iwreq pwrq = {};
 		memset(&pwrq, 0, sizeof(pwrq));
 		strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
 
