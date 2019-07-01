@@ -7,6 +7,11 @@
 
 using namespace KawaiiFi;
 
+namespace {
+	enum Column { SSID, BSSID, Vendor, Frequency, Channel, ChannelWidth, SignalStrength };
+	const int total_columns = 7;
+} // namespace
+
 AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent) {}
 
 void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &access_points)
@@ -17,7 +22,7 @@ void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &acc
 
 int AccessPointTableModel::rowCount(const QModelIndex &) const { return _accessPoints.size(); }
 
-int AccessPointTableModel::columnCount(const QModelIndex &) const { return 7; }
+int AccessPointTableModel::columnCount(const QModelIndex &) const { return total_columns; }
 
 QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 {
@@ -29,19 +34,19 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		const AccessPoint &ap = _accessPoints[index.row()];
 
 		switch (index.column()) {
-		case 0:
+		case Column::SSID:
 			return ap.ssid;
-		case 1:
+		case Column::BSSID:
 			return ap.bssid;
-		case 2:
+		case Column::Vendor:
 			return ap.vendor;
-		case 3:
+		case Column::Frequency:
 			return ap.frequency;
-		case 4:
+		case Column::Channel:
 			return ap.channel;
-		case 5:
+		case Column::ChannelWidth:
 			return ap.channel_width;
-		case 6:
+		case Column::SignalStrength:
 			return QString::number(static_cast<double>(ap.signal_strength_mbm) / 100, 'g', 2);
 		}
 	}
@@ -57,19 +62,19 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 
 	if (orientation == Qt::Orientation::Horizontal) {
 		switch (section) {
-		case 0:
+		case Column::SSID:
 			return tr("Network Name");
-		case 1:
+		case Column::BSSID:
 			return tr("BSSID");
-		case 2:
+		case Column::Vendor:
 			return tr("Vendor");
-		case 3:
+		case Column::Frequency:
 			return tr("Frequency");
-		case 4:
+		case Column::Channel:
 			return tr("Channel");
-		case 5:
+		case Column::ChannelWidth:
 			return tr("Channel Width");
-		case 6:
+		case Column::SignalStrength:
 			return tr("Signal (dBm)");
 		}
 	}
