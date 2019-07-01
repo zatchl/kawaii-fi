@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <QVector>
+#include <array>
 #include <chrono>
 #include <libkawaii-fi/access_point.h>
 #include <libnl3/netlink/genl/ctrl.h>
@@ -18,10 +19,10 @@ namespace {
 		auto accessPoints = static_cast<QVector<AccessPoint> *>(aps);
 		AccessPoint ap;
 
-		nlattr *tb[NL80211_ATTR_MAX + 1];
-		nlattr *bss[NL80211_BSS_MAX + 1];
-		static nla_policy bss_policy[NL80211_BSS_MAX + 1];
 		auto gnlh = static_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
+		std::array<nlattr *, NL80211_ATTR_MAX + 1> tb{};
+		std::array<nlattr *, NL80211_BSS_MAX + 1> bss{};
+		static std::array<nla_policy, NL80211_BSS_MAX + 1> bss_policy;
 		bss_policy[NL80211_BSS_TSF].type = NLA_U64;
 		bss_policy[NL80211_BSS_FREQUENCY].type = NLA_U32;
 		bss_policy[NL80211_BSS_BSSID] = {};
@@ -35,7 +36,7 @@ namespace {
 		bss_policy[NL80211_BSS_BEACON_IES] = {};
 
 		// Create attribute index
-		nla_parse(tb, NL80211_ATTR_MAX, genlmsg_attrdata(gnlh, 0), genlmsg_attrlen(gnlh, 0),
+		nla_parse(tb.begin(), NL80211_ATTR_MAX, genlmsg_attrdata(gnlh, 0), genlmsg_attrlen(gnlh, 0),
 		          nullptr);
 
 		if (!tb[NL80211_ATTR_BSS]) {
@@ -43,7 +44,8 @@ namespace {
 		}
 
 		// Create attribute index based on nested attribute
-		if (nla_parse_nested(bss, NL80211_BSS_MAX, tb[NL80211_ATTR_BSS], bss_policy)) {
+		if (nla_parse_nested(bss.begin(), NL80211_BSS_MAX, tb[NL80211_ATTR_BSS],
+		                     bss_policy.begin())) {
 			return NL_SKIP;
 		}
 
