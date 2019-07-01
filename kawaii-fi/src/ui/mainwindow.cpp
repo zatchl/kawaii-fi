@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 
 	_ui->scanButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 
+	_ui->filterLineEdit->setFocus();
+
 	_progress_bar = new QProgressBar();
 	_progress_bar->setRange(0, 0);
 	statusBar()->addPermanentWidget(_progress_bar);
