@@ -63,6 +63,10 @@ namespace {
 			ap.channel_width = KawaiiFi::parse_channel_width(bss[NL80211_BSS_CHAN_WIDTH]);
 		}
 
+		if (bss[NL80211_BSS_SEEN_MS_AGO]) {
+			ap.age_ms = KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]);
+		}
+
 		if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
 			KawaiiFi::InformationElements ie =
 			        KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS]);

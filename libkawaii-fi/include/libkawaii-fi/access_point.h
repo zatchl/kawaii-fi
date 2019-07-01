@@ -12,6 +12,7 @@ struct AccessPoint {
 	unsigned int frequency = 0;
 	unsigned int channel = 0;
 	unsigned int channel_width = 0;
+	unsigned int age_ms = 0;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 

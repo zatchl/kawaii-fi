@@ -58,3 +58,5 @@ KawaiiFi::InformationElements KawaiiFi::parse_information_elements(nlattr *ies_a
 unsigned int KawaiiFi::parse_tsf(nlattr *tsf_attr) { return 0; }
 
 unsigned int KawaiiFi::parse_beacon_interval(nlattr *beacon_interval_attr) { return 0; }
+
+unsigned int KawaiiFi::parse_age_ms(nlattr *age_attr) { return nla_get_u32(age_attr); }
