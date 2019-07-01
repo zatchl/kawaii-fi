@@ -22,8 +22,8 @@ namespace KawaiiFi {
 
 	public slots:
 		QStringList wireless_nic_names();
-		QVector<AccessPoint> access_points(const QString &nicName);
-		void trigger_wifi_scan(const QString &nicName);
+		QVector<AccessPoint> access_points(const QString &nic_name);
+		void trigger_wifi_scan(const QString &nic_name);
 	};
 } // namespace KawaiiFi
 

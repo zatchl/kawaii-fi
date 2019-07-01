@@ -97,23 +97,23 @@ QStringList KawaiiFi::Server::wireless_nic_names()
 	return nic_names;
 }
 
-void KawaiiFi::Server::trigger_wifi_scan(const QString &nicName)
+void KawaiiFi::Server::trigger_wifi_scan(const QString &nic_name)
 {
 	// Check to see if the given interface name is connected
-	QHash<QString, unsigned int> nics = wireless_nics();
-	if (!nics.contains(nicName)) {
+	const QHash<QString, unsigned int> nics = wireless_nics();
+	if (!nics.contains(nic_name)) {
 		return;
 	}
 
 	// Attempt to trigger a Wi-Fi scan using the interface's index
 	// Return if triggering the scan was not successful
-	if (trigger_scan_with_interface(nics[nicName])) {
+	if (trigger_scan_with_interface(nics[nic_name])) {
 		return;
 	}
 
 	// Wait for the new scan results to come in
 	wait_for_new_wifi_scan_results();
-	emit wifi_scan_completed(nicName);
+	emit wifi_scan_completed(nic_name);
 }
 
 QVector<AccessPoint> KawaiiFi::Server::access_points(const QString &nic_name)
