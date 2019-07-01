@@ -119,14 +119,14 @@ int KawaiiFi::wait_for_new_wifi_scan_results(unsigned int timeout_seconds)
 	}, &callback_arg);
 
 	// Set up a callback for when ACKs are received
-	nl_cb_set(callback, NL_CB_ACK, NL_CB_CUSTOM, [](nl_msg *msg, void *arg) -> int {
+	nl_cb_set(callback, NL_CB_ACK, NL_CB_CUSTOM, [](nl_msg *, void *arg) -> int {
 		auto callback_arg = static_cast<int *>(arg);
 		*callback_arg = 0;
 		return NL_STOP;
 	}, &callback_arg);
 
 	// Override Netlink's sequence number checking
-	nl_cb_set(callback, NL_CB_SEQ_CHECK, NL_CB_CUSTOM, [](nl_msg *msg, void *arg) -> int {
+	nl_cb_set(callback, NL_CB_SEQ_CHECK, NL_CB_CUSTOM, [](nl_msg *, void *) -> int {
 		return NL_OK;
 	}, nullptr);
 	// clang-format on

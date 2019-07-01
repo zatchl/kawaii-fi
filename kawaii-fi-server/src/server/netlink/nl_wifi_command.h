@@ -87,14 +87,14 @@ namespace KawaiiFi {
 
 		// clang-format off
 		// Set up an error callback
-		nl_cb_err(callback, NL_CB_CUSTOM, [](sockaddr_nl *nla, nlmsgerr *nlerr, void *arg) -> int {
+		nl_cb_err(callback, NL_CB_CUSTOM, [](sockaddr_nl *, nlmsgerr *nlerr, void *arg) -> int {
 			int *callback_arg = static_cast<int *>(arg);
 			*callback_arg = nlerr->error;
 			return NL_STOP;
 		}, &callback_arg);
 
 		// Set up a callback for when ACKs are received
-		nl_cb_set(callback, NL_CB_ACK, NL_CB_CUSTOM, [](nl_msg *msg, void *arg) -> int {
+		nl_cb_set(callback, NL_CB_ACK, NL_CB_CUSTOM, [](nl_msg *, void *arg) -> int {
 			int *callback_arg = static_cast<int *>(arg);
 			*callback_arg = 0;
 			return NL_STOP;
@@ -102,7 +102,7 @@ namespace KawaiiFi {
 
 
 		// Set up a callback for when the last message is received
-		nl_cb_set(callback, NL_CB_FINISH, NL_CB_CUSTOM, [](nl_msg *msg, void *arg) -> int {
+		nl_cb_set(callback, NL_CB_FINISH, NL_CB_CUSTOM, [](nl_msg *, void *arg) -> int {
 			int *callback_arg = static_cast<int *>(arg);
 			*callback_arg = 0;
 			return NL_SKIP;
