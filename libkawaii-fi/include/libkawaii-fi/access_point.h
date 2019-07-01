@@ -8,7 +8,7 @@ struct AccessPoint {
 	QString bssid;
 	QString ssid;
 	QString vendor;
-	int signal_strength = 0;
+	int signal_strength_mbm = 0;
 	unsigned int frequency = 0;
 	unsigned int channel = 0;
 	unsigned int channel_width = 0;
