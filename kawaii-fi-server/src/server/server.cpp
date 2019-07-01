@@ -88,14 +88,7 @@ namespace {
 	}
 } // namespace
 
-QStringList KawaiiFi::Server::wireless_nic_names()
-{
-	QStringList nic_names;
-	for (const QString &nic_name : wireless_nics().keys()) {
-		nic_names.append(nic_name);
-	}
-	return nic_names;
-}
+QStringList KawaiiFi::Server::wireless_nic_names() { return wireless_nics().keys(); }
 
 void KawaiiFi::Server::trigger_wifi_scan(const QString &nic_name)
 {
