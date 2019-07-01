@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QProgressBar>
+#include <QSortFilterProxyModel>
 #include <QString>
 
 namespace KawaiiFi {
@@ -28,6 +29,7 @@ namespace KawaiiFi {
 		QProgressBar *_progress_bar;
 		org::kawaiifi::Server *_server_interface = nullptr;
 		AccessPointTableModel *_ap_table_model = nullptr;
+		QSortFilterProxyModel *_ap_proxy_model = nullptr;
 	};
 } // namespace KawaiiFi
 
