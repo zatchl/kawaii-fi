@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ui->apTableView->setModel(_ap_table_model);
 	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+	_ui->scanButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+
 	_progress_bar = new QProgressBar();
 	_progress_bar->setRange(0, 0);
 	statusBar()->addPermanentWidget(_progress_bar);
