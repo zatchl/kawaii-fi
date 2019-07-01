@@ -1,13 +1,14 @@
 #include "ui/mainwindow.h"
-#include <QApplication>
 
-using namespace KawaiiFi;
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	MainWindow w;
+
+	KawaiiFi::MainWindow w;
 	w.show();
+	w.connect_to_server();
 
 	return QApplication::exec();
 }

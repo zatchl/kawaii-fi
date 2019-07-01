@@ -1,17 +1,20 @@
 #include "mainwindow.h"
-#include "models/accesspointtablemodel.h"
+
+#include "kawaiifi_server_interface.h"
+#include "models/access_point_table_model.h"
 #include "ui_mainwindow.h"
 
+#include <QChartView>
 #include <QComboBox>
-#include <QFuture>
-#include <QFutureWatcher>
+#include <QDBusConnection>
+#include <QDBusObjectPath>
 #include <QMainWindow>
 #include <QProgressBar>
+#include <QString>
+#include <QTableView>
 #include <QTimer>
-#include <QVector>
-#include <QtConcurrent/QtConcurrentRun>
-#include <libkawaii-fi/accesspoint.h>
-#include <libkawaii-fi/wirelessinterface.h>
+#include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/kawaiifi.h>
 
 using namespace KawaiiFi;
 
@@ -20,50 +23,74 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ui->setupUi(this);
 	_ui->scanIntervalComboBox->addItems(QStringList({"10 seconds", "30 seconds", "1 minute"}));
 
-	_wirelessInterfaces = getWirelessInterfaces();
-	for (const auto &interface : _wirelessInterfaces) {
-		_ui->interfaceComboBox->addItem(interface.name());
-	}
-
+	// Remove the rounded corners around the chart view
 	_ui->apSpectrumChartView->chart()->layout()->setContentsMargins(0, 0, 0, 0);
 
+	// Divide the splitter in half
 	_ui->splitter->setSizes({INT_MAX, INT_MAX});
 
-	_apTableModel = new AccessPointTableModel(this);
-	_ui->apTableView->setModel(_apTableModel);
+	_ap_table_model = new AccessPointTableModel(this);
+	_ui->apTableView->setModel(_ap_table_model);
 	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-	connect(&_scanResultWatcher, &QFutureWatcher<QVector<KawaiiFi::AccessPoint>>::finished, this,
-	        &MainWindow::handleScanResult);
-
-	_progressBar = new QProgressBar();
-	_progressBar->setRange(0, 0);
-	statusBar()->addPermanentWidget(_progressBar);
-	_progressBar->hide();
-	scan();
+	_progress_bar = new QProgressBar();
+	_progress_bar->setRange(0, 0);
+	statusBar()->addPermanentWidget(_progress_bar);
+	_progress_bar->hide();
 }
 
-MainWindow::~MainWindow()
+MainWindow::~MainWindow() { delete _ui; }
+
+void MainWindow::connect_to_server()
 {
-	delete _ui;
+	if (_server_interface && _server_interface->isValid()) {
+		return;
+	}
+
+	qDBusRegisterMetaType<AccessPoint>();
+	qDBusRegisterMetaType<QVector<AccessPoint>>();
+
+	_server_interface = new org::kawaiifi::Server(KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath,
+	                                              QDBusConnection::systemBus(), this);
+	connect(_server_interface, &org::kawaiifi::Server::wifi_scan_completed, this,
+	        &MainWindow::handle_scan_completed);
+	refresh_wireless_nics();
+	scan();
 }
 
 void MainWindow::scan()
 {
-	if (_wirelessInterfaces.size() > 0) {
-		_progressBar->show();
-		QFuture<QVector<KawaiiFi::AccessPoint>> scanResult =
-		        QtConcurrent::run(_wirelessInterfaces[_ui->interfaceComboBox->currentIndex()],
-		                &KawaiiFi::WirelessInterface::waitForNewScanResults);
-		_scanResultWatcher.setFuture(scanResult);
+	if (!_server_interface || !_server_interface->isValid()) {
+		return;
 	}
+
+	_ui->interfaceComboBox->setEnabled(false);
+	_progress_bar->show();
+	_server_interface->trigger_wifi_scan(_ui->interfaceComboBox->currentText());
 }
 
-void MainWindow::handleScanResult()
+void MainWindow::handle_scan_completed(const QString &nic_name)
 {
-	_progressBar->hide();
-	statusBar()->showMessage(
-	        QString("Found %0 access points").arg(_scanResultWatcher.result().size()));
-	_apTableModel->updateAccessPoints(_scanResultWatcher.result());
-	QTimer::singleShot(5000, this, &MainWindow::scan);
+	if (_server_interface && nic_name == _ui->interfaceComboBox->currentText()) {
+		_ap_table_model->update_access_points(_server_interface->access_points(nic_name).value());
+	}
+
+	_ui->interfaceComboBox->setEnabled(true);
+	_progress_bar->hide();
+
+	QTimer::singleShot(10000, this, &MainWindow::scan);
+}
+
+void MainWindow::refresh_wireless_nics()
+{
+	if (!_server_interface || !_server_interface->isValid()) {
+		return;
+	}
+	// Set wireless nics
+	_ui->interfaceComboBox->clear();
+	QStringList nic_names = _server_interface->wireless_nic_names().value();
+	for (const QString &nic_name : nic_names) {
+		_ui->interfaceComboBox->addItem(nic_name);
+	}
+	_ui->interfaceComboBox->setCurrentIndex(0);
 }

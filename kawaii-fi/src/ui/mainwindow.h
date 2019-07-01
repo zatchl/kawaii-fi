@@ -1,13 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "models/accesspointtablemodel.h"
+#include "kawaiifi_server_interface.h"
+#include "models/access_point_table_model.h"
 
-#include <QFutureWatcher>
 #include <QMainWindow>
 #include <QProgressBar>
-#include <libkawaii-fi/accesspoint.h>
-#include <libkawaii-fi/wirelessinterface.h>
+#include <QString>
 
 namespace KawaiiFi {
 	namespace Ui {
@@ -19,15 +18,16 @@ namespace KawaiiFi {
 	public:
 		explicit MainWindow(QWidget *parent = nullptr);
 		~MainWindow();
+		void connect_to_server();
 
 	private:
 		void scan();
-		void handleScanResult();
+		void handle_scan_completed(const QString &nic_name);
+		void refresh_wireless_nics();
 		Ui::MainWindow *_ui;
-		QProgressBar *_progressBar;
-		QFutureWatcher<QVector<KawaiiFi::AccessPoint>> _scanResultWatcher;
-		QVector<KawaiiFi::WirelessInterface> _wirelessInterfaces;
-		AccessPointTableModel *_apTableModel;
+		QProgressBar *_progress_bar;
+		org::kawaiifi::Server *_server_interface = nullptr;
+		AccessPointTableModel *_ap_table_model = nullptr;
 	};
 } // namespace KawaiiFi
 

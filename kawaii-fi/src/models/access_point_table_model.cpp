@@ -3,28 +3,21 @@
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QVector>
-#include <libkawaii-fi/accesspoint.h>
+#include <libkawaii-fi/access_point.h>
 
 using namespace KawaiiFi;
 
-AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent)
-{
-}
+AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent) {}
 
 void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &access_points)
 {
-	_accessPoints = accessPoints;
+	_accessPoints = access_points;
+	emit layoutChanged();
 }
 
-int AccessPointTableModel::rowCount(const QModelIndex &parent) const
-{
-	return _accessPoints.size();
-}
+int AccessPointTableModel::rowCount(const QModelIndex &) const { return _accessPoints.size(); }
 
-int AccessPointTableModel::columnCount(const QModelIndex &parent) const
-{
-	return 6;
-}
+int AccessPointTableModel::columnCount(const QModelIndex &) const { return 7; }
 
 QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 {
@@ -37,17 +30,19 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 
 		switch (index.column()) {
 		case 0:
-			return ap.ssid();
+			return ap.ssid;
 		case 1:
-			return ap.bssid();
+			return ap.bssid;
 		case 2:
-			return ap.vendor();
+			return ap.vendor;
 		case 3:
-			return ap.channel();
+			return ap.frequency;
 		case 4:
-			return ap.channelWidth();
+			return ap.channel;
 		case 5:
-			return ap.signalStrength();
+			return ap.channelWidth;
+		case 6:
+			return ap.signalStrength;
 		}
 	}
 
@@ -69,10 +64,12 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 		case 2:
 			return tr("Vendor");
 		case 3:
-			return tr("Channel");
+			return tr("Frequency");
 		case 4:
-			return tr("Channel Width");
+			return tr("Channel");
 		case 5:
+			return tr("Channel Width");
+		case 6:
 			return tr("Signal Strength");
 		}
 	}
