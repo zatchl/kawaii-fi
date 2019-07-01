@@ -42,7 +42,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		case 5:
 			return ap.channel_width;
 		case 6:
-			return ap.signal_strength_mbm;
+			return QString::number(static_cast<double>(ap.signal_strength_mbm) / 100, 'g', 2);
 		}
 	}
 
@@ -70,7 +70,7 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 		case 5:
 			return tr("Channel Width");
 		case 6:
-			return tr("Signal Strength");
+			return tr("Signal (dBm)");
 		}
 	}
 

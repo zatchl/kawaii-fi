@@ -67,6 +67,11 @@ namespace {
 			ap.age_ms = KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]);
 		}
 
+		if (bss[NL80211_BSS_SIGNAL_MBM]) {
+			ap.signal_strength_mbm =
+			        KawaiiFi::parse_signal_strength_mbm(bss[NL80211_BSS_SIGNAL_MBM]);
+		}
+
 		if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
 			KawaiiFi::InformationElements ie =
 			        KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS]);

@@ -16,6 +16,7 @@ namespace KawaiiFi {
 	unsigned int parse_tsf(nlattr *tsf_attr);
 	unsigned int parse_beacon_interval(nlattr *beacon_interval_attr);
 	unsigned int parse_age_ms(nlattr *age_attr);
+	int parse_signal_strength_mbm(nlattr *signal_strength_attr);
 	InformationElements parse_information_elements(nlattr *ies_attr);
 } // namespace KawaiiFi
 
