@@ -63,7 +63,7 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 	if (orientation == Qt::Orientation::Horizontal) {
 		switch (section) {
 		case Column::SSID:
-			return tr("Network Name");
+			return tr("SSID");
 		case Column::BSSID:
 			return tr("BSSID");
 		case Column::Vendor:
