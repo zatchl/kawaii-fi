@@ -21,12 +21,6 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap)
 	return argument;
 }
 
-bool operator==(const AccessPoint &lhs, const AccessPoint &rhs)
-{
-	return lhs.bssid == rhs.bssid;
-}
+bool operator==(const AccessPoint &lhs, const AccessPoint &rhs) { return lhs.bssid == rhs.bssid; }
 
-bool operator!=(const AccessPoint &lhs, const AccessPoint &rhs)
-{
-	return !(lhs == rhs);
-}
+bool operator!=(const AccessPoint &lhs, const AccessPoint &rhs) { return !(lhs == rhs); }
