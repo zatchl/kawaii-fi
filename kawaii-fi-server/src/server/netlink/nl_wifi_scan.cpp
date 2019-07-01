@@ -60,7 +60,7 @@ namespace {
 		}
 
 		if (bss[NL80211_BSS_CHAN_WIDTH]) {
-			ap.channelWidth = KawaiiFi::parse_channel_width(bss[NL80211_BSS_CHAN_WIDTH]);
+			ap.channel_width = KawaiiFi::parse_channel_width(bss[NL80211_BSS_CHAN_WIDTH]);
 		}
 
 		if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {

@@ -8,10 +8,10 @@ struct AccessPoint {
 	QString bssid;
 	QString ssid;
 	QString vendor;
-	int signalStrength = 0;
+	int signal_strength = 0;
 	unsigned int frequency = 0;
 	unsigned int channel = 0;
-	unsigned int channelWidth = 0;
+	unsigned int channel_width = 0;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 

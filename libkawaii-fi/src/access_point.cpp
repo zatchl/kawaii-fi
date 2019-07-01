@@ -6,8 +6,8 @@
 QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
 {
 	argument.beginStructure();
-	argument << ap.bssid << ap.ssid << ap.vendor << ap.frequency << ap.channel << ap.channelWidth
-	         << ap.signalStrength;
+	argument << ap.bssid << ap.ssid << ap.vendor << ap.frequency << ap.channel << ap.channel_width
+	         << ap.signal_strength;
 	argument.endStructure();
 	return argument;
 }
@@ -15,8 +15,8 @@ QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
 const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap)
 {
 	argument.beginStructure();
-	argument >> ap.bssid >> ap.ssid >> ap.vendor >> ap.frequency >> ap.channel >> ap.channelWidth >>
-	        ap.signalStrength;
+	argument >> ap.bssid >> ap.ssid >> ap.vendor >> ap.frequency >> ap.channel >>
+	        ap.channel_width >> ap.signal_strength;
 	argument.endStructure();
 	return argument;
 }

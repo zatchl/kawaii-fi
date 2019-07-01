@@ -40,9 +40,9 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		case 4:
 			return ap.channel;
 		case 5:
-			return ap.channelWidth;
+			return ap.channel_width;
 		case 6:
-			return ap.signalStrength;
+			return ap.signal_strength;
 		}
 	}
 
