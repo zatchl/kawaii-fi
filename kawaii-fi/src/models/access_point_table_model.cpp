@@ -16,6 +16,7 @@ AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableMo
 
 void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &access_points)
 {
+	emit layoutAboutToBeChanged();
 	_accessPoints = access_points;
 	emit layoutChanged();
 }
