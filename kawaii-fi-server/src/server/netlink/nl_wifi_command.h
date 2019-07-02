@@ -14,6 +14,8 @@ namespace KawaiiFi {
 	public:
 		NlWifiCommand(nl80211_commands command, int flags = 0,
 		              nl_recvmsg_msg_cb_t valid_handler = nullptr, T *valid_handler_args = nullptr);
+		NlWifiCommand(const NlWifiCommand &wifi_command) = delete;
+		NlWifiCommand &operator=(const NlWifiCommand &wifi_command) = delete;
 		~NlWifiCommand();
 		int send(unsigned int interface_index);
 
