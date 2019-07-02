@@ -8,13 +8,16 @@
 QString KawaiiFi::parse_bssid(nlattr *bssid_attr)
 {
 	const uint8_t *bssid_bytes = static_cast<uint8_t *>(nla_data(bssid_attr));
+	const int field_width = 2;
+	const int base = 16;
+	const QLatin1Char fill_char = QLatin1Char('0');
 	return QString("%1:%2:%3:%4:%5:%6")
-	        .arg(*bssid_bytes, 2, 16, QLatin1Char('0'))
-	        .arg(*(bssid_bytes + 1), 2, 16, QLatin1Char('0'))
-	        .arg(*(bssid_bytes + 2), 2, 16, QLatin1Char('0'))
-	        .arg(*(bssid_bytes + 3), 2, 16, QLatin1Char('0'))
-	        .arg(*(bssid_bytes + 4), 2, 16, QLatin1Char('0'))
-	        .arg(*(bssid_bytes + 5), 2, 16, QLatin1Char('0'));
+	        .arg(*bssid_bytes, field_width, base, fill_char)
+	        .arg(*(bssid_bytes + 1), field_width, base, fill_char)
+	        .arg(*(bssid_bytes + 2), field_width, base, fill_char)
+	        .arg(*(bssid_bytes + 3), field_width, base, fill_char)
+	        .arg(*(bssid_bytes + 4), field_width, base, fill_char)
+	        .arg(*(bssid_bytes + 5), field_width, base, fill_char);
 }
 
 unsigned int KawaiiFi::parse_frequency(nlattr *frequency_attr)
