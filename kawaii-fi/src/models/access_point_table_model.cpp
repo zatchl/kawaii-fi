@@ -8,8 +8,31 @@
 using namespace KawaiiFi;
 
 namespace {
-	enum Column { SSID, BSSID, Vendor, Frequency, Channel, ChannelWidth, SignalStrength };
-	const int total_columns = 7;
+	enum Column {
+		SSID,
+		BSSID,
+		Vendor,
+		Frequency,
+		Channel,
+		ChannelWidth,
+		SignalStrength,
+		BasicRates,
+		SupportedRates
+	};
+	const int total_columns = 9;
+
+	QString supported_rates_string(const QVector<double> &supported_rates)
+	{
+		QString rates_string;
+		for (int i = 0; i < supported_rates.size(); ++i) {
+			if (i < supported_rates.size() - 1) {
+				rates_string += QString::number(supported_rates[i]) + ", ";
+			} else {
+				rates_string += QString::number(supported_rates[i]);
+			}
+		}
+		return rates_string;
+	}
 } // namespace
 
 AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent) {}
@@ -49,6 +72,10 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 			return ap.channel_width;
 		case Column::SignalStrength:
 			return QString::number(static_cast<double>(ap.signal_strength_mbm) / 100, 'g', 2);
+		case Column::BasicRates:
+			return supported_rates_string(ap.basic_rates);
+		case Column::SupportedRates:
+			return supported_rates_string(ap.supported_rates);
 		}
 	}
 
@@ -77,6 +104,10 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 			return tr("Channel Width");
 		case Column::SignalStrength:
 			return tr("Signal (dBm)");
+		case Column::BasicRates:
+			return tr("Basic Rates (Mbps)");
+		case Column::SupportedRates:
+			return tr("Supported Rates (Mbps)");
 		}
 	}
 

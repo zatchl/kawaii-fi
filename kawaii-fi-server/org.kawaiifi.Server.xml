@@ -10,7 +10,7 @@
 	</method>
 	<method name="access_points">
 	    <arg name="nic" type="s" direction="in"/>
-		<arg name="aps" type="a(sssiuuuu)" direction="out"/>
+		<arg name="aps" type="a(sssiuuuuadad)" direction="out"/>
 		<annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVector&lt;AccessPoint&gt;"/>
 	</method>
 	<method name="trigger_wifi_scan">

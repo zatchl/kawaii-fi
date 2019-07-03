@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <QVector>
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <libkawaii-fi/access_point.h>
@@ -77,6 +78,10 @@ namespace {
 			        KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
 			ap.ssid = ie.ssid;
 			ap.vendor = ie.vendor;
+			ap.basic_rates = ie.basic_rates;
+			std::sort(ap.basic_rates.begin(), ap.basic_rates.end());
+			ap.supported_rates = ie.supported_rates;
+			std::sort(ap.supported_rates.begin(), ap.supported_rates.end());
 		}
 
 		accessPoints->push_back(ap);

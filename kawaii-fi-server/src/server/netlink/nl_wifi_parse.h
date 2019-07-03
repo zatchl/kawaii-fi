@@ -2,12 +2,15 @@
 #define NL_WIFI_PARSE_H
 
 #include <QString>
+#include <QVector>
 #include <libnl3/netlink/attr.h>
 
 namespace KawaiiFi {
 	struct InformationElements {
 		QString ssid;
 		QString vendor;
+		QVector<double> basic_rates;
+		QVector<double> supported_rates;
 	};
 
 	QString parse_bssid(nlattr *bssid_attr);

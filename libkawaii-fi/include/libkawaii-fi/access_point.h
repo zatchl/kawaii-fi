@@ -3,6 +3,7 @@
 
 #include <QDBusArgument>
 #include <QString>
+#include <QVector>
 
 struct AccessPoint {
 	QString bssid;
@@ -13,6 +14,8 @@ struct AccessPoint {
 	unsigned int channel = 0;
 	unsigned int channel_width = 0;
 	unsigned int age_ms = 0;
+	QVector<double> basic_rates;
+	QVector<double> supported_rates;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 
