@@ -39,6 +39,7 @@ add_executable(${PROJECT_NAME}
 	"src/server/netlink/nl_wifi_parse.cpp"
 	"src/server/netlink/nl_wifi_parse.h"
 	"src/server/netlink/nl_wifi_command.h"
+	"src/server/netlink/ieee80211.h"
 	${dbus_src}
 )
 

@@ -1,5 +1,7 @@
 #include "nl_wifi_parse.h"
 
+#include "ieee80211.h"
+
 #include <QByteArray>
 #include <QString>
 #include <libnl3/netlink/attr.h>
@@ -23,28 +25,43 @@ unsigned int KawaiiFi::parse_channel_width(nlattr *channel_width_attr)
 KawaiiFi::InformationElements KawaiiFi::parse_information_elements(nlattr *ies_attr)
 {
 	InformationElements ie;
+	const auto ies_bytes = QByteArray::fromRawData(nla_get_string(ies_attr), nla_len(ies_attr));
+	QByteArray::const_iterator element = ies_bytes.cbegin();
+	while (element + 1 < ies_bytes.cend()) {
+		// The second byte in each information element contains the length of the data
+		int data_length = static_cast<unsigned char>(*(element + 1));
+		if (element + 1 + data_length >= ies_bytes.cend()) {
+			break;
+		}
 
-	const uint8_t *ies_bytes = static_cast<uint8_t *>(nla_data(ies_attr));
-	int ie_len = nla_len(ies_attr);
-	while (ie_len >= 2 && ie_len >= ies_bytes[1]) {
-		uint8_t element_len = ies_bytes[1];
-		switch (ies_bytes[0]) {
-		case 0:
-			if (element_len > 0 && element_len <= 32) {
-				QString ssid;
-				for (int i = 0; i < element_len; ++i) {
-					if (ies_bytes[i + 2] != ' ' && ies_bytes[i + 2] != '\\') {
-						ssid.append(ies_bytes[i + 2]);
-					} else if (ies_bytes[i + 2] == ' ' && (i != 0 && i != element_len - 1)) {
-						ssid.append(" ");
-					}
+		// The first byte in each information element contains the element's ID
+		switch (static_cast<unsigned char>(*element)) {
+		case WLAN_EID_SSID:
+			// The length of the SSID is between 0 and 32 bytes
+			if (data_length <= 32) {
+				ie.ssid = QString::fromLocal8Bit(element + 2, data_length);
+			}
+			break;
+		case WLAN_EID_SUPP_RATES:
+		case WLAN_EID_EXT_SUPP_RATES:
+			for (auto i = element + 2; i < element + 2 + data_length; ++i) {
+				auto rate_byte = static_cast<unsigned char>(*i);
+
+				// The seven low-order bits encode the rate as a multiple of 500 kbps, therefore we
+				// divide by 2 to convert to mbps
+				int rate_mbps = (rate_byte & 0x7f) / 2;
+				ie.supported_rates.append(rate_mbps);
+
+				// The most significant bit of the rate byte indicates whether the rate is
+				// basic/mandatory or not
+				if (rate_byte & 0x80) {
+					ie.basic_rates.append(rate_mbps);
 				}
-				ie.ssid = ssid;
 			}
 			break;
 		}
-		ie_len -= ies_bytes[1] + 2;
-		ies_bytes += ies_bytes[1] + 2;
+		// Increment the element iterator to the start of the next element
+		element += data_length + 2;
 	}
 	return ie;
 }
