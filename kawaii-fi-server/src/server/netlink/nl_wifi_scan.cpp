@@ -76,8 +76,6 @@ namespace {
 
 		if (bss[NL80211_BSS_FREQUENCY]) {
 			ap.frequency = KawaiiFi::parse_frequency(bss[NL80211_BSS_FREQUENCY]);
-			ap.channel = static_cast<unsigned int>(
-			        ieee80211_frequency_to_channel(static_cast<int>(ap.frequency)));
 		}
 
 		if (bss[NL80211_BSS_CHAN_WIDTH]) {
@@ -102,6 +100,7 @@ namespace {
 			std::sort(ap.basic_rates.begin(), ap.basic_rates.end());
 			ap.supported_rates = ie.supported_rates;
 			std::sort(ap.supported_rates.begin(), ap.supported_rates.end());
+			ap.channel = ie.channel;
 		}
 
 		accessPoints->push_back(ap);

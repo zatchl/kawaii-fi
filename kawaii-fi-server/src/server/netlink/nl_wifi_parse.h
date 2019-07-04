@@ -11,6 +11,7 @@ namespace KawaiiFi {
 		QString vendor;
 		QVector<double> basic_rates;
 		QVector<double> supported_rates;
+		unsigned int channel;
 	};
 
 	QString parse_bssid(nlattr *bssid_attr);

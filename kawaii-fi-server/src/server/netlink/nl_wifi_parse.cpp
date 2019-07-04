@@ -59,6 +59,11 @@ KawaiiFi::InformationElements KawaiiFi::parse_information_elements(nlattr *ies_a
 				}
 			}
 			break;
+		case WLAN_EID_DS_PARAMS:
+			if (data_length == 1) {
+				ie.channel = static_cast<unsigned char>(*(element + 2));
+			}
+			break;
 		}
 		// Increment the element iterator to the start of the next element
 		element += data_length + 2;
