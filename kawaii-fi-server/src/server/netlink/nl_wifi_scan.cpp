@@ -58,16 +58,8 @@ namespace {
 
 		ap.bssid = KawaiiFi::parse_bssid(bss[NL80211_BSS_BSSID]);
 
-		if (bss[NL80211_BSS_FREQUENCY]) {
-			ap.frequency = KawaiiFi::parse_frequency(bss[NL80211_BSS_FREQUENCY]);
-		}
-
-		if (bss[NL80211_BSS_CHAN_WIDTH]) {
-			ap.channel_width = KawaiiFi::parse_channel_width(bss[NL80211_BSS_CHAN_WIDTH]);
-		}
-
-		if (bss[NL80211_BSS_SEEN_MS_AGO]) {
-			ap.age_ms = KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]);
+		if (bss[NL80211_BSS_STATUS]) {
+			ap.status = KawaiiFi::parse_status(bss[NL80211_BSS_STATUS]);
 		}
 
 		if (bss[NL80211_BSS_SIGNAL_MBM]) {
@@ -75,16 +67,19 @@ namespace {
 			        KawaiiFi::parse_signal_strength_mbm(bss[NL80211_BSS_SIGNAL_MBM]);
 		}
 
+		if (bss[NL80211_BSS_FREQUENCY]) {
+			ap.frequency = KawaiiFi::parse_frequency(bss[NL80211_BSS_FREQUENCY]);
+		}
+
+		if (bss[NL80211_BSS_SEEN_MS_AGO]) {
+			ap.age_ms = KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]);
+		}
+
 		if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
-			KawaiiFi::InformationElements ie =
-			        KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
-			ap.ssid = ie.ssid;
-			ap.vendor = ie.vendor;
-			ap.basic_rates = ie.basic_rates;
-			std::sort(ap.basic_rates.begin(), ap.basic_rates.end());
-			ap.supported_rates = ie.supported_rates;
-			std::sort(ap.supported_rates.begin(), ap.supported_rates.end());
-			ap.channel = ie.channel;
+			KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS],
+			                                     ap.information_elements);
+		}
+
 		static const std::array<double, 4> b_data_rates = {1, 2, 5.5, 11};
 		static const std::array<double, 8> g_data_rates = {6, 9, 12, 18, 24, 36, 48, 54};
 		static const std::array<double, 3> a_data_rates = {6, 12, 24};
