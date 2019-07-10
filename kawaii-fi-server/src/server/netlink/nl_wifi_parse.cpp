@@ -4,6 +4,7 @@
 
 #include <QByteArray>
 #include <QString>
+#include <libkawaii-fi/information_elements.h>
 #include <libnl3/netlink/attr.h>
 #include <libnl3/netlink/data.h>
 
@@ -17,6 +18,7 @@ unsigned int KawaiiFi::parse_frequency(nlattr *frequency_attr)
 	return nla_get_u32(frequency_attr);
 }
 
+void KawaiiFi::parse_information_elements(nlattr *ies_attr, InformationElements &ies)
 {
 
 KawaiiFi::InformationElements KawaiiFi::parse_information_elements(nlattr *ies_attr)
