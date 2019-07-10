@@ -6,8 +6,11 @@
 #include <QVector>
 #include <libkawaii-fi/information_elements.h>
 
+enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
+
 struct AccessPoint {
 	QString bssid;
+	ConnectionStatus status = ConnectionStatus::Unknown;
 	int signal_strength_mbm = 0;
 	unsigned int frequency = 0;
 	unsigned int age_ms = 0;
