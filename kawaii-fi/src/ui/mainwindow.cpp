@@ -35,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ap_proxy_model->setSourceModel(_ap_table_model);
 
 	_ui->apTableView->setModel(_ap_proxy_model);
-	_ui->apTableView->setSortingEnabled(true);
 	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	_ui->scanButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
