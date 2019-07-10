@@ -4,17 +4,10 @@
 #include <QString>
 #include <QVector>
 #include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/information_elements.h>
 #include <libnl3/netlink/attr.h>
 
 namespace KawaiiFi {
-	struct InformationElements {
-		QString ssid;
-		QString vendor;
-		QVector<double> basic_rates;
-		QVector<double> supported_rates;
-		unsigned int channel;
-	};
-
 	QString parse_bssid(nlattr *bssid_attr);
 	ConnectionStatus parse_status(nlattr *status_attr);
 	unsigned int parse_frequency(nlattr *frequency_attr);
