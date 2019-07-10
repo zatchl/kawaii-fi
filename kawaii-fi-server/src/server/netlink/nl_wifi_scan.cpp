@@ -15,6 +15,7 @@
 #include <linux/nl80211.h>
 
 namespace {
+	const int max_two_point_four_ghz_freq_mhz = 2500;
 
 	int process_access_point(nl_msg *msg, void *aps)
 	{
@@ -84,6 +85,39 @@ namespace {
 			ap.supported_rates = ie.supported_rates;
 			std::sort(ap.supported_rates.begin(), ap.supported_rates.end());
 			ap.channel = ie.channel;
+		static const std::array<double, 4> b_data_rates = {1, 2, 5.5, 11};
+		static const std::array<double, 8> g_data_rates = {6, 9, 12, 18, 24, 36, 48, 54};
+		static const std::array<double, 3> a_data_rates = {6, 12, 24};
+
+		if (ap.frequency < max_two_point_four_ghz_freq_mhz) {
+			for (const auto rate : b_data_rates) {
+				if (ap.information_elements.supported_rates.contains(rate)) {
+					ap.protocols.append(Protocol::B);
+					break;
+				}
+			}
+			for (const auto rate : g_data_rates) {
+				if (ap.information_elements.supported_rates.contains(rate)) {
+					ap.protocols.append(Protocol::G);
+					break;
+				}
+			}
+			if (ap.information_elements.ht_capabilities.supported) {
+				ap.protocols.append(Protocol::N);
+			}
+		} else {
+			for (const auto rate : a_data_rates) {
+				if (ap.information_elements.supported_rates.contains(rate)) {
+					ap.protocols.append(Protocol::A);
+					break;
+				}
+			}
+			if (ap.information_elements.ht_capabilities.supported) {
+				ap.protocols.append(Protocol::N);
+			}
+			if (ap.information_elements.vht_capabilities.supported) {
+				ap.protocols.append(Protocol::AC);
+			}
 		}
 
 		accessPoints->push_back(ap);
