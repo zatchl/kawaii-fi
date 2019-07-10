@@ -16,9 +16,11 @@ add_library(${PROJECT_NAME} SHARED
 	"src/access_point.cpp"
 	"include/${PROJECT_NAME}/ht_capabilities.h"
 	"include/${PROJECT_NAME}/ht_operations.h"
+	"include/${PROJECT_NAME}/vht_capabilities.h"
 	"include/${PROJECT_NAME}/kawaiifi.h"
 	"src/ht_capabilities.cpp"
 	"src/ht_operations.cpp"
+	"src/vht_capabilities.cpp"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
