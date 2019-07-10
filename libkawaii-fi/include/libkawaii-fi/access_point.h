@@ -4,18 +4,15 @@
 #include <QDBusArgument>
 #include <QString>
 #include <QVector>
+#include <libkawaii-fi/information_elements.h>
 
 struct AccessPoint {
 	QString bssid;
-	QString ssid;
 	QString vendor;
 	int signal_strength_mbm = 0;
 	unsigned int frequency = 0;
-	unsigned int channel = 0;
-	unsigned int channel_width = 0;
 	unsigned int age_ms = 0;
-	QVector<double> basic_rates;
-	QVector<double> supported_rates;
+	InformationElements information_elements;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 
