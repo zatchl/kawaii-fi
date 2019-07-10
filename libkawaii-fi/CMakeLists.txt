@@ -14,6 +14,7 @@ find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
 	"src/access_point.cpp"
+	"include/${PROJECT_NAME}/information_elements.h"
 	"include/${PROJECT_NAME}/ht_capabilities.h"
 	"include/${PROJECT_NAME}/ht_operations.h"
 	"include/${PROJECT_NAME}/vht_capabilities.h"
