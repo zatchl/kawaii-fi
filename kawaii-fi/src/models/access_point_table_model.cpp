@@ -8,7 +8,7 @@
 using namespace KawaiiFi;
 
 namespace {
-	enum Column {
+	enum class ApColumn {
 		SSID,
 		BSSID,
 		Vendor,
@@ -16,10 +16,11 @@ namespace {
 		Channel,
 		ChannelWidth,
 		SignalStrength,
+		Protocol,
 		BasicRates,
 		SupportedRates
 	};
-	const int total_columns = 9;
+	const int total_columns = static_cast<int>(ApColumn::SupportedRates) + 1;
 
 	QString supported_rates_string(const QVector<double> &supported_rates)
 	{
@@ -54,31 +55,53 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	if (role == Qt::DisplayRole) {
-		const AccessPoint &ap = _accessPoints[index.row()];
-
-		switch (index.column()) {
-		case Column::SSID:
-			return ap.ssid;
-		case Column::BSSID:
-			return ap.bssid;
-		case Column::Vendor:
-			return ap.vendor;
-		case Column::Frequency:
-			return ap.frequency;
-		case Column::Channel:
-			return ap.channel;
-		case Column::ChannelWidth:
-			return ap.channel_width;
-		case Column::SignalStrength:
-			return QString::number(static_cast<double>(ap.signal_strength_mbm) / 100, 'g', 2);
-		case Column::BasicRates:
-			return supported_rates_string(ap.basic_rates);
-		case Column::SupportedRates:
-			return supported_rates_string(ap.supported_rates);
-		}
+	if (role != Qt::DisplayRole) {
+		return QVariant();
 	}
+	const AccessPoint &ap = _accessPoints[index.row()];
 
+	switch (static_cast<ApColumn>(index.column())) {
+	case ApColumn::SSID:
+		return ap.information_elements.ssid;
+	case ApColumn::BSSID:
+		return ap.bssid;
+	case ApColumn::Vendor:
+		return "";
+	case ApColumn::Frequency:
+		return QString("%1 MHz").arg(ap.frequency);
+	case ApColumn::Channel:
+		return ap.information_elements.channel;
+	case ApColumn::ChannelWidth:
+		if (ap.information_elements.vht_operations.supported) {
+			switch (ap.information_elements.vht_operations.channel_width) {
+			case VhtChannelWidth::TwentyOrFortyMhz:
+				return ap.information_elements.ht_operations.secondary_channel_offset ==
+				                       SecondaryChannelOffset::NoSecondaryChannel
+				               ? "20 MHz"
+				               : "40 MHz";
+			case VhtChannelWidth::EightyMhz:
+				return "80 MHz";
+			case VhtChannelWidth::OneSixtyMhz:
+				return "160 MHz";
+			case VhtChannelWidth::EightyPlusEightyMhz:
+				return "80+80 MHz";
+			}
+		} else if (ap.information_elements.ht_operations.supported) {
+			return ap.information_elements.ht_operations.secondary_channel_offset ==
+			                       SecondaryChannelOffset::NoSecondaryChannel
+			               ? "20 MHz"
+			               : "40 MHz";
+		}
+		return "20 MHz";
+	case ApColumn::SignalStrength:
+		return QString::number(static_cast<double>(ap.signal_strength_mbm) / 100, 'g', 2) + " dBm";
+	case ApColumn::Protocol:
+		return protocols_string(ap.protocols);
+	case ApColumn::BasicRates:
+		return supported_rates_string(ap.information_elements.basic_rates);
+	case ApColumn::SupportedRates:
+		return supported_rates_string(ap.information_elements.supported_rates);
+	}
 	return QVariant();
 }
 
@@ -89,25 +112,27 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 	}
 
 	if (orientation == Qt::Orientation::Horizontal) {
-		switch (section) {
-		case Column::SSID:
+		switch (static_cast<ApColumn>(section)) {
+		case ApColumn::SSID:
 			return tr("SSID");
-		case Column::BSSID:
+		case ApColumn::BSSID:
 			return tr("BSSID");
-		case Column::Vendor:
+		case ApColumn::Vendor:
 			return tr("Vendor");
-		case Column::Frequency:
+		case ApColumn::Frequency:
 			return tr("Frequency");
-		case Column::Channel:
+		case ApColumn::Channel:
 			return tr("Channel");
-		case Column::ChannelWidth:
+		case ApColumn::ChannelWidth:
 			return tr("Channel Width");
-		case Column::SignalStrength:
-			return tr("Signal (dBm)");
-		case Column::BasicRates:
-			return tr("Basic Rates (Mbps)");
-		case Column::SupportedRates:
-			return tr("Supported Rates (Mbps)");
+		case ApColumn::SignalStrength:
+			return tr("Signal");
+		case ApColumn::Protocol:
+			return tr("Protocol");
+		case ApColumn::BasicRates:
+			return tr("Basic Rates");
+		case ApColumn::SupportedRates:
+			return tr("Supported Rates");
 		}
 	}
 
