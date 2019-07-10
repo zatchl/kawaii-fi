@@ -17,10 +17,7 @@ unsigned int KawaiiFi::parse_frequency(nlattr *frequency_attr)
 	return nla_get_u32(frequency_attr);
 }
 
-unsigned int KawaiiFi::parse_channel_width(nlattr *channel_width_attr)
 {
-	return nla_get_u32(channel_width_attr);
-}
 
 KawaiiFi::InformationElements KawaiiFi::parse_information_elements(nlattr *ies_attr)
 {

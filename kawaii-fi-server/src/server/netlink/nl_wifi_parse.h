@@ -11,7 +11,6 @@ namespace KawaiiFi {
 	QString parse_bssid(nlattr *bssid_attr);
 	ConnectionStatus parse_status(nlattr *status_attr);
 	unsigned int parse_frequency(nlattr *frequency_attr);
-	unsigned int parse_channel_width(nlattr *channel_width);
 	unsigned int parse_tsf(nlattr *tsf_attr);
 	unsigned int parse_beacon_interval(nlattr *beacon_interval_attr);
 	unsigned int parse_age_ms(nlattr *age_attr);
