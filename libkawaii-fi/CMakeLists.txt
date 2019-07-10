@@ -17,10 +17,13 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/ht_capabilities.h"
 	"include/${PROJECT_NAME}/ht_operations.h"
 	"include/${PROJECT_NAME}/vht_capabilities.h"
+	"include/${PROJECT_NAME}/vht_operations.h"
 	"include/${PROJECT_NAME}/kawaiifi.h"
+	"src/information_elements.cpp"
 	"src/ht_capabilities.cpp"
 	"src/ht_operations.cpp"
 	"src/vht_capabilities.cpp"
+	"src/vht_operations.cpp"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
