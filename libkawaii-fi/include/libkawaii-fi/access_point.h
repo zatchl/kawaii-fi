@@ -8,12 +8,15 @@
 
 enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
+enum class Protocol { B, A, G, N, AC, AX };
+
 struct AccessPoint {
 	QString bssid;
 	ConnectionStatus status = ConnectionStatus::Unknown;
 	int signal_strength_mbm = 0;
 	unsigned int frequency = 0;
 	unsigned int age_ms = 0;
+	QVector<Protocol> protocols;
 	InformationElements information_elements;
 };
 Q_DECLARE_METATYPE(AccessPoint)
