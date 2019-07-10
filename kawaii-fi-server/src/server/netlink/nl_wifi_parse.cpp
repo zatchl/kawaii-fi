@@ -81,3 +81,17 @@ int KawaiiFi::parse_signal_strength_mbm(nlattr *signal_strength_attr)
 {
 	return nla_get_s32(signal_strength_attr);
 }
+
+ConnectionStatus KawaiiFi::parse_status(nlattr *status_attr)
+{
+	switch (nla_get_u32(status_attr)) {
+	case NL80211_BSS_STATUS_AUTHENTICATED:
+		return ConnectionStatus::Authenticated;
+	case NL80211_BSS_STATUS_ASSOCIATED:
+		return ConnectionStatus::Associated;
+	case NL80211_BSS_STATUS_IBSS_JOINED:
+		return ConnectionStatus::Joined;
+	default:
+		return ConnectionStatus::Unknown;
+	}
+}
