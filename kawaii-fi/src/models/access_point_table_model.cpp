@@ -34,6 +34,37 @@ namespace {
 		}
 		return rates_string + " Mbit/s";
 	}
+
+	QString protocols_string(const QVector<Protocol> &protocols)
+	{
+		QString protocol_string;
+		for (Protocol p : protocols) {
+			switch (p) {
+			case Protocol::A:
+				protocol_string.append("a/");
+				break;
+			case Protocol::B:
+				protocol_string.append("b/");
+				break;
+			case Protocol::G:
+				protocol_string.append("g/");
+				break;
+			case Protocol::N:
+				protocol_string.append("n/");
+				break;
+			case Protocol::AC:
+				protocol_string.append("ac/");
+				break;
+			case Protocol::AX:
+				protocol_string.append("ax/");
+				break;
+			}
+		}
+		if (protocol_string.endsWith("/")) {
+			protocol_string.chop(1);
+		}
+		return protocol_string;
+	}
 } // namespace
 
 AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent) {}
