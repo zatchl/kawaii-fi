@@ -32,7 +32,7 @@ namespace {
 				rates_string += QString::number(supported_rates[i]);
 			}
 		}
-		return rates_string;
+		return rates_string + " Mbit/s";
 	}
 } // namespace
 
