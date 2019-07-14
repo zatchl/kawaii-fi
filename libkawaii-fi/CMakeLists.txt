@@ -19,6 +19,7 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/vht_capabilities.h"
 	"include/${PROJECT_NAME}/vht_operations.h"
 	"include/${PROJECT_NAME}/kawaiifi.h"
+	"include/${PROJECT_NAME}/util.h"
 
 	"src/access_point.cpp"
 	"src/information_elements.cpp"
