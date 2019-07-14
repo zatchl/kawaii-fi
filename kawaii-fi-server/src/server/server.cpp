@@ -9,6 +9,7 @@
 #include <QDBusConnection>
 #include <QDBusMetaType>
 #include <QDBusObjectPath>
+#include <QtConcurrent/QtConcurrentRun>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -92,21 +93,28 @@ QStringList KawaiiFi::Server::wireless_nic_names() { return wireless_nics().keys
 
 void KawaiiFi::Server::trigger_wifi_scan(const QString &nic_name)
 {
-	// Check to see if the given interface name is connected
-	const QHash<QString, unsigned int> nics = wireless_nics();
-	if (!nics.contains(nic_name)) {
-		return;
-	}
+	QtConcurrent::run([=]() {
+		// Check to see if the given interface name is connected
+		const QHash<QString, unsigned int> nics = wireless_nics();
+		if (!nics.contains(nic_name)) {
+			return;
+		}
 
-	// Attempt to trigger a Wi-Fi scan using the interface's index
-	// Return if triggering the scan was not successful
-	if (trigger_scan_with_interface(nics[nic_name])) {
-		return;
-	}
+		// Attempt to trigger a Wi-Fi scan using the interface's index
+		// Return if triggering the scan was not successful
+		if (trigger_scan_with_interface(nics[nic_name])) {
+			return;
+		}
 
-	// Wait for the new scan results to come in
-	wait_for_new_wifi_scan_results();
-	emit wifi_scan_completed(nic_name);
+		// Wait for the new scan results to come in
+		// Return if waiting for the scan results was not successful
+		if (wait_for_new_wifi_scan_results()) {
+			return;
+		}
+
+		QMetaObject::invokeMethod(this, "wifi_scan_completed", Qt::QueuedConnection,
+		                          Q_ARG(QString, nic_name));
+	});
 }
 
 QVector<AccessPoint> KawaiiFi::Server::access_points(const QString &nic_name)
