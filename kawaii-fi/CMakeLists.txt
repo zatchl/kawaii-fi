@@ -28,6 +28,8 @@ add_executable(${PROJECT_NAME}
 	"src/ui/mainwindow.cpp"
 	"src/ui/mainwindow.h"
 	"src/ui/mainwindow.ui"
+	"src/ui/access_point_chart.cpp"
+	"src/ui/access_point_chart.h"
 	${dbus_src}
 )
 
