@@ -4,8 +4,11 @@
 #include "kawaiifi_server_interface.h"
 #include "models/access_point_table_model.h"
 
+#include <QComboBox>
+#include <QLineEdit>
 #include <QMainWindow>
 #include <QProgressBar>
+#include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <libkawaii-fi/kawaiifi.h>
@@ -22,6 +25,7 @@ namespace KawaiiFi {
 		~MainWindow();
 
 	private:
+		void create_toolbar();
 		void set_up_server_interface();
 		void scan();
 		void handle_scan_completed(const QString &nic_name);

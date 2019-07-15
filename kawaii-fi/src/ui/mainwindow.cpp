@@ -11,19 +11,26 @@
 #include <QMainWindow>
 #include <QProgressBar>
 #include <QSortFilterProxyModel>
+#include <QMap>
 #include <QString>
 #include <QTableView>
 #include <QTimer>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/kawaiifi.h>
 
+namespace {
+	const QMap<QString, int> scan_interval_map = {{QT_TR_NOOP("10 seconds"), 10},
+	                                              {QT_TR_NOOP("30 seconds"), 30},
+	                                              {QT_TR_NOOP("60 seconds"), 60}};
+
+	const int toolbar_bottom_margin = 5;
+} // namespace
+
 using namespace KawaiiFi;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow)
 {
 	_ui->setupUi(this);
-	_ui->scanIntervalComboBox->addItems(QStringList({"10 seconds", "30 seconds", "1 minute"}));
-
 	// Remove the rounded corners around the chart view
 	_ui->apSpectrumChartView->chart()->layout()->setContentsMargins(0, 0, 0, 0);
 
@@ -36,16 +43,39 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 
 	_ui->apTableView->setModel(_ap_proxy_model);
 	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	create_toolbar();
 
-	_ui->scanButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	set_up_server_interface();
 
-	_ui->filterLineEdit->setFocus();
 
 	_progress_bar = new QProgressBar();
 	_progress_bar->setRange(0, 0);
 	statusBar()->addPermanentWidget(_progress_bar);
 	_progress_bar->hide();
+void MainWindow::create_toolbar()
+{
+	_scan_pause_resume_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	connect(_scan_pause_resume_button, &QPushButton::clicked, [=]() {
+	});
+
+	_scan_interval_combo_box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	_scan_interval_combo_box->addItems(scan_interval_map.keys());
+	connect(_scan_interval_combo_box, &QComboBox::currentTextChanged, [=]() {
+	});
+
+	_ap_filter_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	_ap_filter_line_edit->setPlaceholderText(tr("Add filter..."));
+
+	_wireless_interface_combo_box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+	QToolBar *toolbar = addToolBar("");
+	toolbar->setMovable(false);
+	toolbar->setContentsMargins(0, 0, 0, toolbar_bottom_margin);
+	toolbar->addWidget(_scan_pause_resume_button);
+	toolbar->addWidget(_scan_interval_combo_box);
+	toolbar->addWidget(_ap_filter_line_edit);
+	toolbar->addWidget(_wireless_interface_combo_box);
 }
 
 MainWindow::~MainWindow() { delete _ui; }
