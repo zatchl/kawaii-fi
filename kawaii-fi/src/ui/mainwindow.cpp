@@ -44,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	create_table();
 
 	set_up_server_interface();
+	refresh_wireless_nics();
+	scan();
 	connect(_scan_timer, &QTimer::timeout, this, &MainWindow::scan);
 	start_scan_timer(current_scan_interval());
 }
