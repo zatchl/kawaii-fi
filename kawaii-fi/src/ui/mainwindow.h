@@ -32,6 +32,7 @@ namespace KawaiiFi {
 		void scan();
 		void handle_scan_completed(const QString &nic_name);
 		void refresh_wireless_nics();
+		int current_scan_interval();
 		Ui::MainWindow *_ui;
 		QPushButton *const _scan_pause_resume_button = new QPushButton(this);
 		QComboBox *const _scan_interval_combo_box = new QComboBox(this);

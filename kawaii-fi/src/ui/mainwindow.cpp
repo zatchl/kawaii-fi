@@ -124,6 +124,11 @@ void MainWindow::refresh_wireless_nics()
 	QStringList nic_names = _server_interface->wireless_nic_names().value();
 	for (const QString &nic_name : nic_names) {
 		_ui->interfaceComboBox->addItem(nic_name);
+
+int MainWindow::current_scan_interval()
+{
+	return scan_interval_map[_scan_interval_combo_box->currentText()];
+}
 	}
 	_ui->interfaceComboBox->setCurrentIndex(0);
 }
