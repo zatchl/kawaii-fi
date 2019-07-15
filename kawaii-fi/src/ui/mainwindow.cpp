@@ -5,10 +5,6 @@
 #include "ui/access_point_chart.h"
 #include "ui_mainwindow.h"
 
-#include <QChartView>
-#include <QComboBox>
-#include <QDBusConnection>
-#include <QDBusObjectPath>
 #include <QMainWindow>
 #include <QMap>
 #include <QString>
