@@ -33,7 +33,10 @@ namespace KawaiiFi {
 		void handle_scan_completed(const QString &nic_name);
 		void refresh_wireless_nics();
 		int current_scan_interval();
+		void start_scan_timer(int interval_sec);
+		void stop_scan_timer();
 		Ui::MainWindow *_ui;
+		bool _scanning_enabled = true;
 		QPushButton *const _scan_pause_resume_button = new QPushButton(this);
 		QComboBox *const _scan_interval_combo_box = new QComboBox(this);
 		QLineEdit *const _ap_filter_line_edit = new QLineEdit(this);
@@ -43,6 +46,7 @@ namespace KawaiiFi {
 		AccessPointChart *const _two_point_four_ghz_chart =
 		        new AccessPointChart(WifiBand::TwoPointFourGhz);
 		AccessPointChart *const _five_ghz_chart = new AccessPointChart(WifiBand::FiveGhz);
+		QTimer *const _scan_timer = new QTimer(this);
 		org::kawaiifi::Server *const _server_interface =
 		        new org::kawaiifi::Server(KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath,
 		                                  QDBusConnection::systemBus(), this);

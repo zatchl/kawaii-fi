@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	create_table();
 
 	set_up_server_interface();
+	connect(_scan_timer, &QTimer::timeout, this, &MainWindow::scan);
+	start_scan_timer(current_scan_interval());
+}
 
 
 void MainWindow::create_toolbar()
@@ -46,11 +49,22 @@ void MainWindow::create_toolbar()
 	_scan_pause_resume_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 	_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	connect(_scan_pause_resume_button, &QPushButton::clicked, [=]() {
+		_scanning_enabled = !_scanning_enabled;
+		if (_scanning_enabled) {
+			start_scan_timer(current_scan_interval());
+			_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+		} else {
+			stop_scan_timer();
+			_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+		}
 	});
 
 	_scan_interval_combo_box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	_scan_interval_combo_box->addItems(scan_interval_map.keys());
 	connect(_scan_interval_combo_box, &QComboBox::currentTextChanged, [=]() {
+		if (_scanning_enabled) {
+			start_scan_timer(current_scan_interval());
+		}
 	});
 
 	_ap_filter_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -129,6 +143,13 @@ int MainWindow::current_scan_interval()
 {
 	return scan_interval_map[_scan_interval_combo_box->currentText()];
 }
+
+void MainWindow::start_scan_timer(int interval_sec)
+{
+	if (interval_sec > 0) {
+		_scan_timer->start(interval_sec * 1000);
 	}
 	_ui->interfaceComboBox->setCurrentIndex(0);
 }
+
+void MainWindow::stop_scan_timer() { _scan_timer->stop(); }
