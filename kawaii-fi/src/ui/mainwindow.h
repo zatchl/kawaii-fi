@@ -33,6 +33,10 @@ namespace KawaiiFi {
 		void handle_scan_completed(const QString &nic_name);
 		void refresh_wireless_nics();
 		Ui::MainWindow *_ui;
+		QPushButton *const _scan_pause_resume_button = new QPushButton(this);
+		QComboBox *const _scan_interval_combo_box = new QComboBox(this);
+		QLineEdit *const _ap_filter_line_edit = new QLineEdit(this);
+		QComboBox *const _wireless_interface_combo_box = new QComboBox(this);
 		AccessPointTableModel *const _ap_table_model = new AccessPointTableModel(this);
 		QSortFilterProxyModel *const _ap_proxy_model = new QSortFilterProxyModel(this);
 		AccessPointChart *const _two_point_four_ghz_chart =
