@@ -24,6 +24,7 @@ namespace {
 
 	const int window_content_margin = 5;
 	const int toolbar_bottom_margin = 5;
+	const int status_message_timeout_ms = 2000;
 } // namespace
 
 using namespace KawaiiFi;
@@ -120,8 +121,8 @@ void MainWindow::scan()
 		return;
 	}
 
-	_ui->interfaceComboBox->setEnabled(false);
-	_server_interface->trigger_wifi_scan(_ui->interfaceComboBox->currentText());
+	_ui->statusBar->showMessage("Starting new scan", status_message_timeout_ms);
+	_server_interface->trigger_wifi_scan(_wireless_interface_combo_box->currentText());
 }
 
 void MainWindow::handle_scan_completed(const QString &nic_name)
