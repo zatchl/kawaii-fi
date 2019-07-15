@@ -17,6 +17,7 @@ namespace {
 		ChannelWidth,
 		SignalStrength,
 		Protocol,
+		Security,
 		BasicRates,
 		SupportedRates
 	};
@@ -122,6 +123,8 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 			                       SecondaryChannelOffset::NoSecondaryChannel
 			               ? "20 MHz"
 			               : "40 MHz";
+		case ApColumn::Security:
+			return "";
 		}
 		return "20 MHz";
 	case ApColumn::SignalStrength:
@@ -160,6 +163,8 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 			return tr("Signal");
 		case ApColumn::Protocol:
 			return tr("Protocol");
+		case ApColumn::Security:
+			return tr("Security");
 		case ApColumn::BasicRates:
 			return tr("Basic Rates");
 		case ApColumn::SupportedRates:
