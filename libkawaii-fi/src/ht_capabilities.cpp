@@ -1,8 +1,5 @@
 #include "libkawaii-fi/ht_capabilities.h"
 
-#include <QDBusArgument>
-#include <QString>
-
 QDBusArgument &operator<<(QDBusArgument &argument, const HtCapabilities &ht_cap)
 {
 	argument.beginStructure();

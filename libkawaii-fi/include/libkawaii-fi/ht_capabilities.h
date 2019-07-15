@@ -4,6 +4,7 @@
 #include <QDBusArgument>
 #include <QMetaType>
 #include <QVector>
+#include <cstdint>
 
 enum class HtSupportedChannelWidth { TwentyMhz, TwentyOrFortyMhz };
 
@@ -36,7 +37,7 @@ struct HtCapabilities {
 	unsigned int mpdu_density_usec = 0;
 
 	// MCS
-	QVector<uint8_t> rx_mcs;
+	QVector<std::uint8_t> rx_mcs;
 	unsigned int highest_supported_data_rate = 0;
 	bool tx_mcs_defined = false;
 	bool tx_rx_mcs_equal = true;

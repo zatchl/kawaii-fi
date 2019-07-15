@@ -5,13 +5,20 @@
 #include "models/access_point_table_model.h"
 #include "ui/access_point_chart.h"
 
+#include <QByteArrayData>
 #include <QComboBox>
+#include <QDBusConnection>
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QString>
+#include <QTimer>
+#include <libkawaii-fi/channel.h>
 #include <libkawaii-fi/kawaiifi.h>
+
+class QObject;
+class QWidget;
 
 namespace KawaiiFi {
 	namespace Ui {

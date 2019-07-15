@@ -8,6 +8,7 @@
 
 #include <QDBusArgument>
 #include <QMetaType>
+#include <QString>
 #include <QVector>
 
 struct InformationElements {

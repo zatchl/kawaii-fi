@@ -1,5 +1,7 @@
 #include "libkawaii-fi/vht_operations.h"
 
+#include "libkawaii-fi/vht_capabilities.h"
+
 QDBusArgument &operator<<(QDBusArgument &argument, const VhtOperations &vht_op)
 {
 	argument.beginStructure();

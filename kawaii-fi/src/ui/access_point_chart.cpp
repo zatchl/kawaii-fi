@@ -1,10 +1,18 @@
 #include "access_point_chart.h"
 
 #include <QCategoryAxis>
+#include <QLegend>
 #include <QLineSeries>
+#include <QList>
+#include <QMargins>
+#include <QString>
 #include <QValueAxis>
 #include <QVector>
+#include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/channel.h>
 #include <libkawaii-fi/util.h>
+
+class QGraphicsItem;
 
 namespace {
 	const int min_signal_dbm = -100;

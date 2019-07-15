@@ -1,8 +1,10 @@
 #ifndef NL_WIFI_SCAN_H
 #define NL_WIFI_SCAN_H
 
-#include <QVector>
-#include <libkawaii-fi/access_point.h>
+struct AccessPoint;
+
+template <typename T>
+class QVector;
 
 namespace KawaiiFi {
 	int trigger_scan_with_interface(unsigned int interface_index);

@@ -1,5 +1,7 @@
 #include "libkawaii-fi/ht_operations.h"
 
+#include "libkawaii-fi/ht_capabilities.h"
+
 QDBusArgument &operator<<(QDBusArgument &argument, const HtOperations &ht_op)
 {
 	argument.beginStructure();

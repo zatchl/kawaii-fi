@@ -2,8 +2,10 @@
 #define ACCESSPOINTTABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <QString>
 #include <QVariant>
 #include <QVector>
+#include <QtCore>
 #include <libkawaii-fi/access_point.h>
 
 namespace KawaiiFi {

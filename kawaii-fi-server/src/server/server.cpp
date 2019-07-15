@@ -6,21 +6,21 @@
 // clang-format off
 #include <net/if.h>
 // clang-format on
+#include <QArgument>
+#include <QtConcurrent/QtConcurrentRun>
+#include <QtCore>
 #include <QDBusConnection>
 #include <QDBusMetaType>
-#include <QDBusObjectPath>
-#include <QtConcurrent/QtConcurrentRun>
-#include <QObject>
-#include <QString>
-#include <QStringList>
-#include <QVector>
+#include <QMetaObject>
+#include <QMetaType>
 #include <cstring>
 #include <ifaddrs.h>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/kawaiifi.h>
+#include <linux/if.h>
 #include <linux/wireless.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
+#include <sys/socket.h>
 #include <unistd.h>
 
 KawaiiFi::Server::Server(QObject *parent) : QObject(parent)

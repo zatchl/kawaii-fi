@@ -1,7 +1,7 @@
 #include "server/server.h"
 
+#include <QCoreApplication>
 #include <QDBusConnection>
-#include <QtCore/QCoreApplication>
 #include <libkawaii-fi/kawaiifi.h>
 
 int main(int argc, char *argv[])

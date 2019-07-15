@@ -1,7 +1,9 @@
 #include "libkawaii-fi/information_elements.h"
 
-#include <QDBusArgument>
-#include <libkawaii-fi/ht_capabilities.h>
+#include "libkawaii-fi/ht_capabilities.h"
+#include "libkawaii-fi/ht_operations.h"
+#include "libkawaii-fi/vht_capabilities.h"
+#include "libkawaii-fi/vht_operations.h"
 
 QDBusArgument &operator<<(QDBusArgument &argument, const InformationElements &ies)
 {

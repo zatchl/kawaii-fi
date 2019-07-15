@@ -2,10 +2,10 @@
 #define NL_WIFI_PARSE_H
 
 #include <QString>
-#include <QVector>
 #include <libkawaii-fi/access_point.h>
-#include <libkawaii-fi/information_elements.h>
-#include <libnl3/netlink/attr.h>
+
+struct InformationElements;
+struct nlattr;
 
 namespace KawaiiFi {
 	QString parse_bssid(nlattr *bssid_attr);

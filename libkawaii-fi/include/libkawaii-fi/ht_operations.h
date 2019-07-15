@@ -6,6 +6,7 @@
 #include <QDBusArgument>
 #include <QMetaType>
 #include <QVector>
+#include <cstdint>
 
 enum class SecondaryChannelOffset { NoSecondaryChannel, Above, Below };
 
@@ -30,7 +31,7 @@ struct HtOperations {
 	bool pco_active = false;
 	PcoPhase pco_phase = PcoPhase::TwentyMhz;
 
-	QVector<uint8_t> rx_mcs;
+	QVector<std::uint8_t> rx_mcs;
 	unsigned int highest_supported_data_rate = 0;
 	bool tx_mcs_defined = false;
 	bool tx_rx_mcs_equal = true;

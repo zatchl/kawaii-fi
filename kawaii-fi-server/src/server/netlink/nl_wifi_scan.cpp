@@ -1,18 +1,30 @@
 #include "nl_wifi_scan.h"
 
+#include "libkawaii-fi/ht_capabilities.h"
+#include "libkawaii-fi/information_elements.h"
+#include "libkawaii-fi/vht_capabilities.h"
 #include "nl_wifi_command.h"
 #include "nl_wifi_parse.h"
 
 #include <QString>
 #include <QVector>
-#include <algorithm>
 #include <array>
 #include <chrono>
 #include <libkawaii-fi/access_point.h>
+#include <libnl3/netlink/attr.h>
 #include <libnl3/netlink/genl/ctrl.h>
 #include <libnl3/netlink/genl/genl.h>
 #include <libnl3/netlink/handlers.h>
+#include <libnl3/netlink/msg.h>
+#include <libnl3/netlink/netlink.h>
+#include <libnl3/netlink/socket.h>
+#include <linux/genetlink.h>
+#include <linux/netlink.h>
 #include <linux/nl80211.h>
+
+struct nl_cb;
+struct nl_msg;
+struct nl_sock;
 
 namespace {
 	const int max_two_point_four_ghz_freq_mhz = 2500;

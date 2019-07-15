@@ -2,8 +2,12 @@
 #define ACCESS_POINT_CHART_H
 
 #include <QChart>
-#include <libkawaii-fi/access_point.h>
+#include <Qt>
 #include <libkawaii-fi/channel.h>
+
+struct AccessPoint;
+
+class QGraphicsItem;
 
 class AccessPointChart : public QtCharts::QChart {
 public:

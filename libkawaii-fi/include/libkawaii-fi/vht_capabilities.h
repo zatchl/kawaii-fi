@@ -3,7 +3,6 @@
 
 #include <QDBusArgument>
 #include <QMetaType>
-#include <QVector>
 
 enum class VhtSupportedChannelWidth {
 	NoOneSixtyMhzNoEightyPlusEightyMhz,

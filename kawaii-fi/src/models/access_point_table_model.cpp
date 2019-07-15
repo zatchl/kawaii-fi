@@ -1,10 +1,12 @@
 #include "access_point_table_model.h"
 
-#include <QAbstractTableModel>
-#include <QBrush>
-#include <QVariant>
-#include <QVector>
+#include <QColor>
+#include <QModelIndex>
 #include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/channel.h>
+#include <libkawaii-fi/ht_operations.h>
+#include <libkawaii-fi/information_elements.h>
+#include <libkawaii-fi/vht_operations.h>
 
 using namespace KawaiiFi;
 

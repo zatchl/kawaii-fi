@@ -1,12 +1,11 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <QHash>
+#include <QByteArrayData>
 #include <QObject>
 #include <QString>
 #include <QStringList>
 #include <QVector>
-#include <QtDBus/QDBusObjectPath>
 #include <libkawaii-fi/access_point.h>
 
 namespace KawaiiFi {

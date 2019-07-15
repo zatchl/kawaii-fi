@@ -5,6 +5,7 @@
 #include "information_elements.h"
 
 #include <QDBusArgument>
+#include <QMetaType>
 #include <QString>
 #include <QVector>
 

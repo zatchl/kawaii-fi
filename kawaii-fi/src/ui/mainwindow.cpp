@@ -5,13 +5,24 @@
 #include "ui/access_point_chart.h"
 #include "ui_mainwindow.h"
 
-#include <QMainWindow>
+#include <QAbstractButton>
+#include <QChartView>
+#include <QDBusMetaType>
+#include <QDBusPendingReply>
+#include <QHeaderView>
 #include <QMap>
-#include <QString>
+#include <QSizePolicy>
+#include <QStatusBar>
+#include <QStringList>
+#include <QStyle>
 #include <QTableView>
-#include <QTimer>
+#include <QToolBar>
+#include <QVector>
+#include <QtGlobal>
 #include <libkawaii-fi/access_point.h>
-#include <libkawaii-fi/kawaiifi.h>
+#include <libkawaii-fi/channel.h>
+
+class QWidget;
 
 namespace {
 	const QMap<QString, int> scan_interval_map = {{QT_TR_NOOP("10 seconds"), 10},

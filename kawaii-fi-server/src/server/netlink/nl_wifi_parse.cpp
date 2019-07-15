@@ -3,13 +3,20 @@
 #include "ieee80211.h"
 
 #include <QByteArray>
-#include <QString>
+#include <QVector>
 #include <algorithm>
+#include <cstdint>
+#include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/ht_capabilities.h>
+#include <libkawaii-fi/ht_operations.h>
 #include <libkawaii-fi/information_elements.h>
+#include <libkawaii-fi/vht_capabilities.h>
+#include <libkawaii-fi/vht_operations.h>
 #include <libnl3/netlink/attr.h>
-#include <libnl3/netlink/data.h>
 #include <linux/nl80211.h>
 #include <string_view>
+
+struct nlattr;
 
 namespace {
 	const unsigned int max_ssid_data_length = 32;
@@ -19,20 +26,20 @@ namespace {
 	const unsigned int vht_capability_data_length = 12;
 	const unsigned int vht_operation_data_length = 5;
 
-	const uint8_t supported_rate_mask = 0x7f;                   // 0111 1111
-	const uint8_t basic_rate_mask = 0x80;                       // 1000 0000
-	const uint8_t secondary_channel_offset_mask = 0x3;          // 0000 0011
-	const uint8_t supported_channel_width_mask = 0x4;           // 0000 0100
-	const uint8_t rifs_mask = 0x8;                              // 0000 1000
-	const uint8_t ht_protection_mask = 0x3;                     // 0000 0011
-	const uint8_t non_greenfield_stas_present_mask = 0x4;       // 0000 0100
-	const uint8_t obss_non_ht_stas_present_mask = 0x10;         // 0001 0000
-	const uint8_t dual_beacon_mask = 0x40;                      // 0100 0000
-	const uint8_t dual_cts_protection_mask = 0x80;              // 1000 0000
-	const uint8_t stbc_beacon_mask = 0x1;                       // 0000 0001
-	const uint8_t lsig_txop_protection_full_support_mask = 0x2; // 0000 0010
-	const uint8_t pco_active_mask = 0x4;                        // 0000 0100
-	const uint8_t pco_phase_mask = 0x8;                         // 0000 1000
+	const std::uint8_t supported_rate_mask = 0x7f;                   // 0111 1111
+	const std::uint8_t basic_rate_mask = 0x80;                       // 1000 0000
+	const std::uint8_t secondary_channel_offset_mask = 0x3;          // 0000 0011
+	const std::uint8_t supported_channel_width_mask = 0x4;           // 0000 0100
+	const std::uint8_t rifs_mask = 0x8;                              // 0000 1000
+	const std::uint8_t ht_protection_mask = 0x3;                     // 0000 0011
+	const std::uint8_t non_greenfield_stas_present_mask = 0x4;       // 0000 0100
+	const std::uint8_t obss_non_ht_stas_present_mask = 0x10;         // 0001 0000
+	const std::uint8_t dual_beacon_mask = 0x40;                      // 0100 0000
+	const std::uint8_t dual_cts_protection_mask = 0x80;              // 1000 0000
+	const std::uint8_t stbc_beacon_mask = 0x1;                       // 0000 0001
+	const std::uint8_t lsig_txop_protection_full_support_mask = 0x2; // 0000 0010
+	const std::uint8_t pco_active_mask = 0x4;                        // 0000 0100
+	const std::uint8_t pco_phase_mask = 0x8;                         // 0000 1000
 } // namespace
 
 QString KawaiiFi::parse_bssid(nlattr *bssid_attr)
