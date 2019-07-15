@@ -12,6 +12,16 @@ enum class WifiBand {
 	Unknown
 };
 
+enum class ChannelWidth {
+	TwentyMhz,
+	TwentyTwoMhz,
+	FortyMhz,
+	EightyMhz,
+	OneSixtyMhz,
+	EightyPlusEightyMhz,
+	Other
+};
+
 class Channel {
 public:
 	Channel(unsigned int start_freq, unsigned int end_freq);
@@ -29,6 +39,7 @@ public:
 	[[nodiscard]] unsigned int number_two() const;
 	[[nodiscard]] bool contains(unsigned int freq) const;
 	[[nodiscard]] WifiBand band() const;
+	[[nodiscard]] ChannelWidth width() const;
 
 private:
 	unsigned int _start_freq = 0;

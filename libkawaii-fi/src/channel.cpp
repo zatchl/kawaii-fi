@@ -97,5 +97,22 @@ WifiBand Channel::band() const
 	}
 
 	return WifiBand::Unknown;
+}
+
+ChannelWidth Channel::width() const
+{
+	switch (width_mhz()) {
+	case 20:
+		return ChannelWidth::TwentyMhz;
+	case 22:
+		return ChannelWidth::TwentyTwoMhz;
+	case 40:
+		return ChannelWidth::FortyMhz;
+	case 80:
+		return (width_mhz_two() == 80) ? ChannelWidth::EightyPlusEightyMhz
+		                               : ChannelWidth::EightyMhz;
+	case 160:
+		return ChannelWidth::OneSixtyMhz;
 	}
+	return ChannelWidth::Other;
 }
