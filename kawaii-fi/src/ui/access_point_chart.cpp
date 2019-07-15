@@ -43,7 +43,7 @@ void AccessPointChart::add_access_point(const AccessPoint &ap)
 
 void AccessPointChart::add_x_axis(WifiBand band)
 {
-	QtCharts::QCategoryAxis *x_axis = new QtCharts::QCategoryAxis(this);
+	auto *x_axis = new QtCharts::QCategoryAxis(this);
 	x_axis->setTitleText(tr("Channel"));
 	x_axis->setGridLineVisible(false);
 	x_axis->setLabelsPosition(QtCharts::QCategoryAxis::AxisLabelsPositionOnValue);
@@ -76,11 +76,12 @@ void AccessPointChart::add_x_axis(WifiBand band)
 
 void AccessPointChart::add_y_axis()
 {
-	QtCharts::QValueAxis *y_axis = new QtCharts::QValueAxis(this);
+	auto *y_axis = new QtCharts::QValueAxis(this);
 	y_axis->setTitleText(tr("Signal (dBm)"));
 	y_axis->setGridLineVisible(false);
 	y_axis->setLabelFormat("%i");
 	y_axis->setRange(min_signal_dbm, max_signal_dbm);
 	y_axis->setTickCount(y_axis_ticks);
+
 	addAxis(y_axis, Qt::AlignLeft);
 }
