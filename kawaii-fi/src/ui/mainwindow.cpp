@@ -124,13 +124,26 @@ void MainWindow::scan()
 
 void MainWindow::handle_scan_completed(const QString &nic_name)
 {
-	if (_server_interface && nic_name == _ui->interfaceComboBox->currentText()) {
-		_ap_table_model->update_access_points(_server_interface->access_points(nic_name).value());
+	if (!_scanning_enabled || nic_name != _wireless_interface_combo_box->currentText()) {
+		return;
 	}
 
-	_ui->interfaceComboBox->setEnabled(true);
-
-	QTimer::singleShot(10000, this, &MainWindow::scan);
+	QVector<AccessPoint> aps = _server_interface->access_points(nic_name).value();
+	_ap_table_model->update_access_points(aps);
+	_two_point_four_ghz_chart->removeAllSeries();
+	_five_ghz_chart->removeAllSeries();
+	for (const auto &ap : aps) {
+		switch (ap.channel().band()) {
+		case WifiBand::TwoPointFourGhz:
+			_two_point_four_ghz_chart->add_access_point(ap);
+			break;
+		case WifiBand::FiveGhz:
+			_five_ghz_chart->add_access_point(ap);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void MainWindow::refresh_wireless_nics()
