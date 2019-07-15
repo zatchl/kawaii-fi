@@ -23,6 +23,7 @@ struct AccessPoint {
 
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
+	[[nodiscard]] double signal_strength_dbm() const;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 

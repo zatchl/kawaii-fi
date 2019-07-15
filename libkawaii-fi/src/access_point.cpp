@@ -78,6 +78,12 @@ Channel AccessPoint::channel() const
 	return Channel();
 }
 
+double AccessPoint::signal_strength_dbm() const
+{
+	const int mbm_per_dbm = 100;
+	return static_cast<double>(signal_strength_mbm) / mbm_per_dbm;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
 {
 	QVector<int> protocols;
