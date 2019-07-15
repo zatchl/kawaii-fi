@@ -15,10 +15,19 @@ public:
 	unsigned int number() const;
 	bool contains(unsigned int freq) const;
 	Band band() const;
+	Channel(unsigned int start_freq_one, unsigned int end_freq_one, unsigned int start_freq_two,
+	        unsigned int end_freq_two);
+	[[nodiscard]] unsigned int start_mhz_two() const;
+	[[nodiscard]] unsigned int end_mhz_two() const;
+	[[nodiscard]] unsigned int center_mhz_two() const;
+	[[nodiscard]] unsigned int width_mhz_two() const;
+	[[nodiscard]] unsigned int number_two() const;
 
 private:
 	unsigned int _start_freq = 0;
 	unsigned int _end_freq = 0;
+	unsigned int _start_freq_two = 0;
+	unsigned int _end_freq_two = 0;
 };
 
 inline const QVector<Channel> forty_mhz_channels = {
