@@ -1,10 +1,11 @@
 #ifndef ACCESS_POINT_H
 #define ACCESS_POINT_H
 
+#include "information_elements.h"
+
 #include <QDBusArgument>
 #include <QString>
 #include <QVector>
-#include <libkawaii-fi/information_elements.h>
 
 enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
