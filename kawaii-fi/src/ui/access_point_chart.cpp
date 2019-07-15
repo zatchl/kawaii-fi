@@ -10,6 +10,17 @@ namespace {
 	const int min_signal_dbm = -100;
 	const int max_signal_dbm = -20;
 	const int y_axis_ticks = ((max_signal_dbm - min_signal_dbm) / 10) + 1;
+
+	const int two_point_four_ghz_x_min = 2400;
+	const int two_point_four_ghz_x_max = 2496;
+	const QVector<int> two_point_four_ghz_x_freqs = {2412, 2417, 2422, 2427, 2432, 2437, 2442,
+	                                                 2447, 2452, 2457, 2462, 2467, 2472, 2484};
+
+	const int five_ghz_x_min = 5150;
+	const int five_ghz_x_max = 5875;
+	const QVector<int> five_ghz_x_freqs = {5180, 5200, 5220, 5240, 5260, 5280, 5300, 5320, 5500,
+	                                       5520, 5540, 5560, 5580, 5600, 5620, 5640, 5660, 5680,
+	                                       5700, 5720, 5745, 5765, 5785, 5805, 5825};
 } // namespace
 
 AccessPointChart::AccessPointChart(WifiBand band, QGraphicsItem *parent, Qt::WindowFlags flags)
@@ -43,34 +54,29 @@ void AccessPointChart::add_access_point(const AccessPoint &ap)
 
 void AccessPointChart::add_x_axis(WifiBand band)
 {
+	if ((band != WifiBand::TwoPointFourGhz) && (band != WifiBand::FiveGhz)) {
+		return;
+	}
+
 	auto *x_axis = new QtCharts::QCategoryAxis(this);
 	x_axis->setTitleText(tr("Channel"));
 	x_axis->setGridLineVisible(false);
 	x_axis->setLabelsPosition(QtCharts::QCategoryAxis::AxisLabelsPositionOnValue);
-	int x_axis_min = 0;
-	int x_axis_max = 0;
-	QVector<int> x_freqs;
-	switch (band) {
-	case Band::TwoPointFourGhz:
-		x_axis_min = 2400;
-		x_axis_max = 2496;
-		x_freqs = {2412, 2417, 2422, 2427, 2432, 2437, 2442,
-		           2447, 2452, 2457, 2462, 2467, 2472, 2484};
-		break;
-	case Band::FiveGhz:
-		x_axis_min = 5150;
-		x_axis_max = 5875;
-		x_freqs = {5180, 5200, 5220, 5240, 5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580,
-		           5600, 5620, 5640, 5660, 5680, 5700, 5720, 5745, 5765, 5785, 5805, 5825};
-		break;
-	default:
-		break;
-	}
+
+	// Use different values for the x-axis depending on the band of the access points to be charted
+	const int x_axis_min =
+	        (band == WifiBand::TwoPointFourGhz) ? two_point_four_ghz_x_min : five_ghz_x_min;
+	const int x_axis_max =
+	        (band == WifiBand::TwoPointFourGhz) ? two_point_four_ghz_x_max : five_ghz_x_max;
+	const QVector<int> &x_freqs =
+	        (band == WifiBand::TwoPointFourGhz) ? two_point_four_ghz_x_freqs : five_ghz_x_freqs;
+
 	x_axis->setMin(x_axis_min);
 	x_axis->setMax(x_axis_max);
 	for (int freq : x_freqs) {
 		x_axis->append(QString::number(ieee80211_frequency_to_channel(freq)), freq);
 	}
+
 	addAxis(x_axis, Qt::AlignBottom);
 }
 
