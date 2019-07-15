@@ -20,6 +20,26 @@ AccessPointChart::AccessPointChart(WifiBand band, QGraphicsItem *parent, Qt::Win
 	add_y_axis();
 }
 
+void AccessPointChart::add_access_point(const AccessPoint &ap)
+{
+	const Channel channel = ap.channel();
+	auto *series = new QtCharts::QLineSeries(this);
+	series->append(channel.start_mhz(), min_signal_dbm);
+	series->append(channel.start_mhz(), ap.signal_strength_dbm());
+	series->append(channel.end_mhz(), ap.signal_strength_dbm());
+	series->append(channel.end_mhz(), min_signal_dbm);
+	if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {
+		series->append(channel.start_mhz_two(), min_signal_dbm);
+		series->append(channel.start_mhz_two(), ap.signal_strength_dbm());
+		series->append(channel.end_mhz_two(), ap.signal_strength_dbm());
+		series->append(channel.end_mhz_two(), min_signal_dbm);
+	}
+	addSeries(series);
+	for (const auto axis : axes()) {
+		series->attachAxis(axis);
+	}
+}
+
 void AccessPointChart::add_x_axis(WifiBand band)
 {
 	QtCharts::QCategoryAxis *x_axis = new QtCharts::QCategoryAxis(this);
