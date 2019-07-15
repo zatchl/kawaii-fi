@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
 
 	KawaiiFi::MainWindow w;
 	w.show();
-	w.connect_to_server();
 
 	return QApplication::exec();
 }
