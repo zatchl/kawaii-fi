@@ -1,13 +1,14 @@
 #ifndef INFORMATION_ELEMENTS_H
 #define INFORMATION_ELEMENTS_H
 
+#include "ht_capabilities.h"
+#include "ht_operations.h"
+#include "vht_capabilities.h"
+#include "vht_operations.h"
+
 #include <QDBusArgument>
 #include <QMetaType>
 #include <QVector>
-#include <libkawaii-fi/ht_capabilities.h>
-#include <libkawaii-fi/ht_operations.h>
-#include <libkawaii-fi/vht_capabilities.h>
-#include <libkawaii-fi/vht_operations.h>
 
 struct InformationElements {
 	QString ssid;
