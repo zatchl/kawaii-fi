@@ -15,19 +15,19 @@ enum class WifiBand {
 class Channel {
 public:
 	Channel(unsigned int start_freq, unsigned int end_freq);
-	unsigned int start_mhz() const;
-	unsigned int end_mhz() const;
-	unsigned int center_mhz() const;
-	unsigned int width_mhz() const;
-	unsigned int number() const;
-	bool contains(unsigned int freq) const;
 	Channel(unsigned int start_freq_one, unsigned int end_freq_one, unsigned int start_freq_two,
 	        unsigned int end_freq_two);
+	[[nodiscard]] unsigned int start_mhz() const;
+	[[nodiscard]] unsigned int end_mhz() const;
+	[[nodiscard]] unsigned int center_mhz() const;
+	[[nodiscard]] unsigned int width_mhz() const;
+	[[nodiscard]] unsigned int number() const;
 	[[nodiscard]] unsigned int start_mhz_two() const;
 	[[nodiscard]] unsigned int end_mhz_two() const;
 	[[nodiscard]] unsigned int center_mhz_two() const;
 	[[nodiscard]] unsigned int width_mhz_two() const;
 	[[nodiscard]] unsigned int number_two() const;
+	[[nodiscard]] bool contains(unsigned int freq) const;
 	[[nodiscard]] WifiBand band() const;
 
 private:
