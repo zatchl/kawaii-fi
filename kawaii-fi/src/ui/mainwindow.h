@@ -3,6 +3,7 @@
 
 #include "kawaiifi_server_interface.h"
 #include "models/access_point_table_model.h"
+#include "ui/access_point_chart.h"
 
 #include <QComboBox>
 #include <QLineEdit>
@@ -25,6 +26,7 @@ namespace KawaiiFi {
 
 	private:
 		void create_toolbar();
+		void create_charts();
 		void set_up_server_interface();
 		void scan();
 		void handle_scan_completed(const QString &nic_name);
@@ -32,6 +34,9 @@ namespace KawaiiFi {
 		Ui::MainWindow *_ui;
 		AccessPointTableModel *_ap_table_model = nullptr;
 		QSortFilterProxyModel *_ap_proxy_model = nullptr;
+		AccessPointChart *const _two_point_four_ghz_chart =
+		        new AccessPointChart(WifiBand::TwoPointFourGhz);
+		AccessPointChart *const _five_ghz_chart = new AccessPointChart(WifiBand::FiveGhz);
 		org::kawaiifi::Server *const _server_interface =
 		        new org::kawaiifi::Server(KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath,
 		                                  QDBusConnection::systemBus(), this);

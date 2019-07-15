@@ -2,6 +2,7 @@
 
 #include "kawaiifi_server_interface.h"
 #include "models/access_point_table_model.h"
+#include "ui/access_point_chart.h"
 #include "ui_mainwindow.h"
 
 #include <QChartView>
@@ -30,8 +31,6 @@ using namespace KawaiiFi;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow)
 {
 	_ui->setupUi(this);
-	// Remove the rounded corners around the chart view
-	_ui->apSpectrumChartView->chart()->layout()->setContentsMargins(0, 0, 0, 0);
 
 	// Divide the splitter in half
 	_ui->splitter->setSizes({INT_MAX, INT_MAX});
@@ -43,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ui->apTableView->setModel(_ap_proxy_model);
 	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	create_toolbar();
+	create_charts();
 
 	set_up_server_interface();
 
@@ -74,6 +74,11 @@ void MainWindow::create_toolbar()
 }
 
 MainWindow::~MainWindow() { delete _ui; }
+void MainWindow::create_charts()
+{
+	_ui->two_four_ghz_chart_view->setChart(_two_point_four_ghz_chart);
+	_ui->five_ghz_chart_view->setChart(_five_ghz_chart);
+}
 
 {
 	if (_server_interface && _server_interface->isValid()) {
