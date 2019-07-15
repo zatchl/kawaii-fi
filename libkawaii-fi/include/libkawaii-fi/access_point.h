@@ -1,6 +1,7 @@
 #ifndef ACCESS_POINT_H
 #define ACCESS_POINT_H
 
+#include "channel.h"
 #include "information_elements.h"
 
 #include <QDBusArgument>
@@ -19,6 +20,9 @@ struct AccessPoint {
 	unsigned int age_ms = 0;
 	QVector<Protocol> protocols;
 	InformationElements information_elements;
+
+	[[nodiscard]] ChannelWidth channel_width() const;
+	[[nodiscard]] Channel channel() const;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 
