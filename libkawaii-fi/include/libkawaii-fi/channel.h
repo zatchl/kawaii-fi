@@ -24,6 +24,7 @@ enum class ChannelWidth {
 
 class Channel {
 public:
+	Channel() = default;
 	Channel(unsigned int start_freq, unsigned int end_freq);
 	Channel(unsigned int start_freq_one, unsigned int end_freq_one, unsigned int start_freq_two,
 	        unsigned int end_freq_two);
