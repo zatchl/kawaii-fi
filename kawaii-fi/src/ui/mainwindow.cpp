@@ -10,7 +10,6 @@
 #include <QDBusConnection>
 #include <QDBusObjectPath>
 #include <QMainWindow>
-#include <QSortFilterProxyModel>
 #include <QMap>
 #include <QString>
 #include <QTableView>
@@ -35,14 +34,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	// Divide the splitter in half
 	_ui->splitter->setSizes({INT_MAX, INT_MAX});
 
-	_ap_table_model = new AccessPointTableModel(this);
-	_ap_proxy_model = new QSortFilterProxyModel(this);
-	_ap_proxy_model->setSourceModel(_ap_table_model);
-
-	_ui->apTableView->setModel(_ap_proxy_model);
-	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	create_toolbar();
 	create_charts();
+	create_table();
 
 	set_up_server_interface();
 
@@ -80,10 +74,12 @@ void MainWindow::create_charts()
 	_ui->five_ghz_chart_view->setChart(_five_ghz_chart);
 }
 
+void MainWindow::create_table()
 {
-	if (_server_interface && _server_interface->isValid()) {
-		return;
-	}
+	_ap_proxy_model->setSourceModel(_ap_table_model);
+	_ui->apTableView->setModel(_ap_proxy_model);
+	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+}
 
 void MainWindow::set_up_server_interface()
 {

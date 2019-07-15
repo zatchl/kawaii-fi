@@ -27,13 +27,14 @@ namespace KawaiiFi {
 	private:
 		void create_toolbar();
 		void create_charts();
+		void create_table();
 		void set_up_server_interface();
 		void scan();
 		void handle_scan_completed(const QString &nic_name);
 		void refresh_wireless_nics();
 		Ui::MainWindow *_ui;
-		AccessPointTableModel *_ap_table_model = nullptr;
-		QSortFilterProxyModel *_ap_proxy_model = nullptr;
+		AccessPointTableModel *const _ap_table_model = new AccessPointTableModel(this);
+		QSortFilterProxyModel *const _ap_proxy_model = new QSortFilterProxyModel(this);
 		AccessPointChart *const _two_point_four_ghz_chart =
 		        new AccessPointChart(WifiBand::TwoPointFourGhz);
 		AccessPointChart *const _five_ghz_chart = new AccessPointChart(WifiBand::FiveGhz);
