@@ -14,8 +14,8 @@ enum class HtProtection { None, Nonmember, TwentyMhz, NonHtMixed };
 enum class PcoPhase { TwentyMhz, FourtyMhz };
 
 struct HtOperations {
-	bool supported;
-	unsigned int primary_channel;
+	bool supported = false;
+	unsigned int primary_channel = 0;
 	SecondaryChannelOffset secondary_channel_offset = SecondaryChannelOffset::NoSecondaryChannel;
 	HtSupportedChannelWidth supported_channel_width = HtSupportedChannelWidth::TwentyMhz;
 	bool rifs = false;
