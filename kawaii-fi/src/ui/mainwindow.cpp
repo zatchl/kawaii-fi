@@ -9,7 +9,6 @@
 #include <QDBusConnection>
 #include <QDBusObjectPath>
 #include <QMainWindow>
-#include <QProgressBar>
 #include <QSortFilterProxyModel>
 #include <QMap>
 #include <QString>
@@ -48,10 +47,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	set_up_server_interface();
 
 
-	_progress_bar = new QProgressBar();
-	_progress_bar->setRange(0, 0);
-	statusBar()->addPermanentWidget(_progress_bar);
-	_progress_bar->hide();
 void MainWindow::create_toolbar()
 {
 	_scan_pause_resume_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -104,7 +99,6 @@ void MainWindow::scan()
 	}
 
 	_ui->interfaceComboBox->setEnabled(false);
-	_progress_bar->show();
 	_server_interface->trigger_wifi_scan(_ui->interfaceComboBox->currentText());
 }
 
@@ -115,7 +109,6 @@ void MainWindow::handle_scan_completed(const QString &nic_name)
 	}
 
 	_ui->interfaceComboBox->setEnabled(true);
-	_progress_bar->hide();
 
 	QTimer::singleShot(10000, this, &MainWindow::scan);
 }

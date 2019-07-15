@@ -7,7 +7,6 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QMainWindow>
-#include <QProgressBar>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QString>
@@ -31,7 +30,6 @@ namespace KawaiiFi {
 		void handle_scan_completed(const QString &nic_name);
 		void refresh_wireless_nics();
 		Ui::MainWindow *_ui;
-		QProgressBar *_progress_bar;
 		AccessPointTableModel *_ap_table_model = nullptr;
 		QSortFilterProxyModel *_ap_proxy_model = nullptr;
 		org::kawaiifi::Server *const _server_interface =
