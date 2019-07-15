@@ -1,6 +1,7 @@
 #include "access_point_chart.h"
 
 #include <QCategoryAxis>
+#include <QLineSeries>
 #include <QValueAxis>
 #include <QVector>
 #include <libkawaii-fi/util.h>
