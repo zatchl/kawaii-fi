@@ -2,6 +2,23 @@
 
 #include "libkawaii-fi/util.h"
 
+namespace {
+	const unsigned int two_point_four_ghz_min = 2400;
+	const unsigned int two_point_four_ghz_max = 2500;
+
+	const unsigned int three_point_six_ghz_min = 3650;
+	const unsigned int three_point_six_ghz_max = 3700;
+
+	const unsigned int four_point_nine_ghz_min = 4900;
+	const unsigned int four_point_nine_ghz_max = 5000;
+
+	const unsigned int five_ghz_min = 5000;
+	const unsigned int five_ghz_max = 5900;
+
+	const unsigned int sixty_ghz_min = 57240;
+	const unsigned int sixty_ghz_max = 70200;
+} // namespace
+
 Channel::Channel(unsigned int start_freq, unsigned int end_freq)
     : Channel(start_freq, end_freq, 0, 0)
 {
@@ -58,16 +75,27 @@ bool Channel::contains(unsigned int freq) const
 WifiBand Channel::band() const
 {
 	const unsigned int center = center_mhz();
-	if (center > 2400 && center < 2500) {
-		return Band::TwoPointFourGhz;
-	} else if (center > 3650 && center < 3700) {
-		return Band::ThreePointSixGhz;
-	} else if (center > 4900 && center < 5000) {
-		return Band::FourPointNineGhz;
-	} else if (center > 5000 && center < 5900) {
-		return Band::FiveGhz;
-	} else if (center > 57240 && center < 70200) {
-		return Band::SixtyGhz;
+
+	if (center > two_point_four_ghz_min && center < two_point_four_ghz_max) {
+		return WifiBand::TwoPointFourGhz;
 	}
-	return Band::Unknown;
+
+	if (center > three_point_six_ghz_min && center < three_point_six_ghz_max) {
+		return WifiBand::ThreePointSixGhz;
+	}
+
+	if (center > four_point_nine_ghz_min && center < four_point_nine_ghz_max) {
+		return WifiBand::FourPointNineGhz;
+	}
+
+	if (center > five_ghz_min && center < five_ghz_max) {
+		return WifiBand::FiveGhz;
+	}
+
+	if (center > sixty_ghz_min && center < sixty_ghz_max) {
+		return WifiBand::SixtyGhz;
+	}
+
+	return WifiBand::Unknown;
+	}
 }
