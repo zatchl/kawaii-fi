@@ -22,6 +22,7 @@ namespace {
 	                                              {QT_TR_NOOP("30 seconds"), 30},
 	                                              {QT_TR_NOOP("60 seconds"), 60}};
 
+	const int window_content_margin = 5;
 	const int toolbar_bottom_margin = 5;
 } // namespace
 
@@ -31,8 +32,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 {
 	_ui->setupUi(this);
 
-	// Divide the splitter in half
-	_ui->splitter->setSizes({INT_MAX, INT_MAX});
+	// Adjust the margins between widgets and the edges of the window
+	setContentsMargins(window_content_margin, window_content_margin, window_content_margin,
+	                   window_content_margin);
+	// Make the width of separators (which is the distance between the central widget and dock
+	// widgets) the same as the margin between widgets and the edges of the window
+	setStyleSheet("QMainWindow::separator { width: 5px; height: 5px; }");
 
 	create_toolbar();
 	create_charts();
