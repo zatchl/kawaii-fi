@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	start_scan_timer(current_scan_interval());
 }
 
+MainWindow::~MainWindow() { delete _ui; }
 
 void MainWindow::create_toolbar()
 {
@@ -85,7 +86,6 @@ void MainWindow::create_toolbar()
 	toolbar->addWidget(_wireless_interface_combo_box);
 }
 
-MainWindow::~MainWindow() { delete _ui; }
 void MainWindow::create_charts()
 {
 	_ui->two_four_ghz_chart_view->setChart(_two_point_four_ghz_chart);
@@ -151,10 +151,13 @@ void MainWindow::refresh_wireless_nics()
 		return;
 	}
 	// Set wireless nics
-	_ui->interfaceComboBox->clear();
+	_wireless_interface_combo_box->clear();
 	QStringList nic_names = _server_interface->wireless_nic_names().value();
 	for (const QString &nic_name : nic_names) {
-		_ui->interfaceComboBox->addItem(nic_name);
+		_wireless_interface_combo_box->addItem(nic_name);
+	}
+	_wireless_interface_combo_box->setCurrentIndex(0);
+}
 
 int MainWindow::current_scan_interval()
 {
@@ -166,7 +169,6 @@ void MainWindow::start_scan_timer(int interval_sec)
 	if (interval_sec > 0) {
 		_scan_timer->start(interval_sec * 1000);
 	}
-	_ui->interfaceComboBox->setCurrentIndex(0);
 }
 
 void MainWindow::stop_scan_timer() { _scan_timer->stop(); }
