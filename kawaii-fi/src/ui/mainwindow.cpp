@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	_ui->scanButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	set_up_server_interface();
 
 	_ui->filterLineEdit->setFocus();
 
@@ -49,21 +50,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 
 MainWindow::~MainWindow() { delete _ui; }
 
-void MainWindow::connect_to_server()
 {
 	if (_server_interface && _server_interface->isValid()) {
 		return;
 	}
 
+void MainWindow::set_up_server_interface()
+{
+	// Register the AccessPoint type with the Qt D-Bus Type System and the Qt meta-type system
 	qDBusRegisterMetaType<AccessPoint>();
 	qDBusRegisterMetaType<QVector<AccessPoint>>();
 
-	_server_interface = new org::kawaiifi::Server(KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath,
-	                                              QDBusConnection::systemBus(), this);
+	// When a Wi-Fi scan has completed, the server emits a signal
+	// Connect that signal to the handle_scan_completed function
 	connect(_server_interface, &org::kawaiifi::Server::wifi_scan_completed, this,
 	        &MainWindow::handle_scan_completed);
-	refresh_wireless_nics();
-	scan();
 }
 
 void MainWindow::scan()

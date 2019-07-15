@@ -8,6 +8,7 @@
 #include <QProgressBar>
 #include <QSortFilterProxyModel>
 #include <QString>
+#include <libkawaii-fi/kawaiifi.h>
 
 namespace KawaiiFi {
 	namespace Ui {
@@ -19,17 +20,19 @@ namespace KawaiiFi {
 	public:
 		explicit MainWindow(QWidget *parent = nullptr);
 		~MainWindow();
-		void connect_to_server();
 
 	private:
+		void set_up_server_interface();
 		void scan();
 		void handle_scan_completed(const QString &nic_name);
 		void refresh_wireless_nics();
 		Ui::MainWindow *_ui;
 		QProgressBar *_progress_bar;
-		org::kawaiifi::Server *_server_interface = nullptr;
 		AccessPointTableModel *_ap_table_model = nullptr;
 		QSortFilterProxyModel *_ap_proxy_model = nullptr;
+		org::kawaiifi::Server *const _server_interface =
+		        new org::kawaiifi::Server(KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath,
+		                                  QDBusConnection::systemBus(), this);
 	};
 } // namespace KawaiiFi
 
