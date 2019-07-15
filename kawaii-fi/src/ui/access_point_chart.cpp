@@ -11,7 +11,7 @@ namespace {
 	const int y_axis_ticks = ((max_signal_dbm - min_signal_dbm) / 10) + 1;
 } // namespace
 
-AccessPointChart::AccessPointChart(Band band, QGraphicsItem *parent, Qt::WindowFlags flags)
+AccessPointChart::AccessPointChart(WifiBand band, QGraphicsItem *parent, Qt::WindowFlags flags)
     : QtCharts::QChart(parent, flags)
 {
 	legend()->setVisible(false);
@@ -20,7 +20,7 @@ AccessPointChart::AccessPointChart(Band band, QGraphicsItem *parent, Qt::WindowF
 	add_y_axis();
 }
 
-void AccessPointChart::add_x_axis(Band band)
+void AccessPointChart::add_x_axis(WifiBand band)
 {
 	QtCharts::QCategoryAxis *x_axis = new QtCharts::QCategoryAxis(this);
 	x_axis->setTitleText(tr("Channel"));

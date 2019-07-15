@@ -55,7 +55,7 @@ bool Channel::contains(unsigned int freq) const
 	       ((freq >= _start_freq_two) && (freq <= _end_freq_two));
 }
 
-Band Channel::band() const
+WifiBand Channel::band() const
 {
 	const unsigned int center = center_mhz();
 	if (center > 2400 && center < 2500) {

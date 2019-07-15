@@ -3,7 +3,14 @@
 
 #include <QVector>
 
-enum class Band { TwoPointFourGhz, ThreePointSixGhz, FourPointNineGhz, FiveGhz, SixtyGhz, Unknown };
+enum class WifiBand {
+	TwoPointFourGhz,
+	ThreePointSixGhz,
+	FourPointNineGhz,
+	FiveGhz,
+	SixtyGhz,
+	Unknown
+};
 
 class Channel {
 public:
@@ -14,7 +21,6 @@ public:
 	unsigned int width_mhz() const;
 	unsigned int number() const;
 	bool contains(unsigned int freq) const;
-	Band band() const;
 	Channel(unsigned int start_freq_one, unsigned int end_freq_one, unsigned int start_freq_two,
 	        unsigned int end_freq_two);
 	[[nodiscard]] unsigned int start_mhz_two() const;
@@ -22,6 +28,7 @@ public:
 	[[nodiscard]] unsigned int center_mhz_two() const;
 	[[nodiscard]] unsigned int width_mhz_two() const;
 	[[nodiscard]] unsigned int number_two() const;
+	[[nodiscard]] WifiBand band() const;
 
 private:
 	unsigned int _start_freq = 0;
