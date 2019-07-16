@@ -96,36 +96,36 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 	case Qt::DisplayRole:
 		switch (static_cast<ApColumn>(index.column())) {
 		case ApColumn::SSID:
-			return ap.information_elements.ssid;
+			return ap.information_elements().ssid;
 		case ApColumn::BSSID:
-			return ap.bssid;
+			return ap.bssid();
 		case ApColumn::Vendor:
 			return "";
 		case ApColumn::Frequency:
-			return QString("%1 MHz").arg(ap.frequency);
+			return QString("%1 MHz").arg(ap.frequency());
 		case ApColumn::Channel:
 			// For VHT channels, use the VHT convention of referencing the channel according to the
 			// center frequency of the entire channel
 			// For HT channels, use the HT convention of referencing the channel using the primary
 			// channel and '+1' or '-1' if there's a secondary channel above or below the primary
-			if (ap.information_elements.vht_operations.supported) {
+			if (ap.information_elements().vht_operations.supported) {
 				const Channel channel = ap.channel();
 				auto channel_string = QString::number(channel.number());
 				if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {
 					channel_string.append(QString(", %1").arg(channel.number_two()));
 				}
 				return channel_string;
-			} else if (ap.information_elements.ht_operations.supported) {
-				switch (ap.information_elements.ht_operations.secondary_channel_offset) {
+			} else if (ap.information_elements().ht_operations.supported) {
+				switch (ap.information_elements().ht_operations.secondary_channel_offset) {
 				case SecondaryChannelOffset::Above: // 40 MHz
-					return QString("%1+1").arg(ap.information_elements.channel);
+					return QString("%1+1").arg(ap.information_elements().channel);
 				case SecondaryChannelOffset::Below: // 40 MHz
-					return QString("%1-1").arg(ap.information_elements.channel);
+					return QString("%1-1").arg(ap.information_elements().channel);
 				case SecondaryChannelOffset::NoSecondaryChannel: // 20 MHz
-					return ap.information_elements.channel;
+					return ap.information_elements().channel;
 				}
 			}
-			return ap.information_elements.channel;
+			return ap.information_elements().channel;
 		case ApColumn::ChannelWidth:
 			switch (ap.channel_width()) {
 			case ChannelWidth::TwentyMhz:
@@ -147,19 +147,19 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		case ApColumn::SignalStrength:
 			return QString("%1 dBm").arg(ap.signal_strength_dbm());
 		case ApColumn::Protocol:
-			return protocols_string(ap.protocols);
+			return protocols_string(ap.protocols());
 		case ApColumn::Security:
 			return "";
 		case ApColumn::BasicRates:
-			return supported_rates_string(ap.information_elements.basic_rates);
+			return supported_rates_string(ap.information_elements().basic_rates);
 		case ApColumn::SupportedRates:
-			return supported_rates_string(ap.information_elements.supported_rates);
+			return supported_rates_string(ap.information_elements().supported_rates);
 		}
 		break;
 	case Qt::DecorationRole:
 		switch (static_cast<ApColumn>(index.column())) {
 		case ApColumn::SSID:
-			return QColor("#" + QString(ap.bssid).remove(':'));
+			return QColor("#" + QString(ap.bssid()).remove(':'));
 		default:
 			return QVariant();
 		}

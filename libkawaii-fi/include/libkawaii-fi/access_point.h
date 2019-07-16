@@ -13,18 +13,37 @@ enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
 enum class Protocol { B, A, G, N, AC, AX };
 
-struct AccessPoint {
-	QString bssid;
-	ConnectionStatus status = ConnectionStatus::Unknown;
-	int signal_strength_mbm = 0;
-	unsigned int frequency = 0;
-	unsigned int age_ms = 0;
-	QVector<Protocol> protocols;
-	InformationElements information_elements;
-
+class AccessPoint {
+public:
+	[[nodiscard]] const QString &bssid() const;
+	[[nodiscard]] ConnectionStatus connection_status() const;
+	[[nodiscard]] int signal_strength_mbm() const;
+	[[nodiscard]] double signal_strength_dbm() const;
+	[[nodiscard]] unsigned int frequency() const;
+	[[nodiscard]] unsigned int age_ms() const;
+	[[nodiscard]] const QVector<Protocol> &protocols() const;
+	[[nodiscard]] QVector<Protocol> &protocols();
+	[[nodiscard]] const InformationElements &information_elements() const;
+	[[nodiscard]] InformationElements &information_elements();
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
-	[[nodiscard]] double signal_strength_dbm() const;
+
+	void set_bssid(const QString &bssid);
+	void set_connection_status(ConnectionStatus connection_status);
+	void set_signal_strength_mbm(int signal_strength_mbm);
+	void set_frequency(unsigned int frequency);
+	void set_age_ms(unsigned int age_ms);
+	void set_protocols(const QVector<Protocol> &protocols);
+	void set_information_elements(const InformationElements &information_elements);
+
+private:
+	QString bssid_;
+	ConnectionStatus connection_status_ = ConnectionStatus::Unknown;
+	int signal_strength_mbm_ = 0;
+	unsigned int frequency_ = 0;
+	unsigned int age_ms_ = 0;
+	QVector<Protocol> protocols_;
+	InformationElements information_elements_;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 

@@ -68,62 +68,62 @@ namespace {
 			return NL_SKIP;
 		}
 
-		ap.bssid = KawaiiFi::parse_bssid(bss[NL80211_BSS_BSSID]);
+		ap.set_bssid(KawaiiFi::parse_bssid(bss[NL80211_BSS_BSSID]));
 
 		if (bss[NL80211_BSS_STATUS]) {
-			ap.status = KawaiiFi::parse_status(bss[NL80211_BSS_STATUS]);
+			ap.set_connection_status(KawaiiFi::parse_status(bss[NL80211_BSS_STATUS]));
 		}
 
 		if (bss[NL80211_BSS_SIGNAL_MBM]) {
-			ap.signal_strength_mbm =
-			        KawaiiFi::parse_signal_strength_mbm(bss[NL80211_BSS_SIGNAL_MBM]);
+			ap.set_signal_strength_mbm(
+			        KawaiiFi::parse_signal_strength_mbm(bss[NL80211_BSS_SIGNAL_MBM]));
 		}
 
 		if (bss[NL80211_BSS_FREQUENCY]) {
-			ap.frequency = KawaiiFi::parse_frequency(bss[NL80211_BSS_FREQUENCY]);
+			ap.set_frequency(KawaiiFi::parse_frequency(bss[NL80211_BSS_FREQUENCY]));
 		}
 
 		if (bss[NL80211_BSS_SEEN_MS_AGO]) {
-			ap.age_ms = KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]);
+			ap.set_age_ms(KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]));
 		}
 
 		if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
 			KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS],
-			                                     ap.information_elements);
+			                                     ap.information_elements());
 		}
 
 		static const std::array<double, 4> b_data_rates = {1, 2, 5.5, 11};
 		static const std::array<double, 8> g_data_rates = {6, 9, 12, 18, 24, 36, 48, 54};
 		static const std::array<double, 3> a_data_rates = {6, 12, 24};
 
-		if (ap.frequency < max_two_point_four_ghz_freq_mhz) {
+		if (ap.frequency() < max_two_point_four_ghz_freq_mhz) {
 			for (const auto rate : b_data_rates) {
-				if (ap.information_elements.supported_rates.contains(rate)) {
-					ap.protocols.append(Protocol::B);
+				if (ap.information_elements().supported_rates.contains(rate)) {
+					ap.protocols().append(Protocol::B);
 					break;
 				}
 			}
 			for (const auto rate : g_data_rates) {
-				if (ap.information_elements.supported_rates.contains(rate)) {
-					ap.protocols.append(Protocol::G);
+				if (ap.information_elements().supported_rates.contains(rate)) {
+					ap.protocols().append(Protocol::G);
 					break;
 				}
 			}
-			if (ap.information_elements.ht_capabilities.supported) {
-				ap.protocols.append(Protocol::N);
+			if (ap.information_elements().ht_capabilities.supported) {
+				ap.protocols().append(Protocol::N);
 			}
 		} else {
 			for (const auto rate : a_data_rates) {
-				if (ap.information_elements.supported_rates.contains(rate)) {
-					ap.protocols.append(Protocol::A);
+				if (ap.information_elements().supported_rates.contains(rate)) {
+					ap.protocols().append(Protocol::A);
 					break;
 				}
 			}
-			if (ap.information_elements.ht_capabilities.supported) {
-				ap.protocols.append(Protocol::N);
+			if (ap.information_elements().ht_capabilities.supported) {
+				ap.protocols().append(Protocol::N);
 			}
-			if (ap.information_elements.vht_capabilities.supported) {
-				ap.protocols.append(Protocol::AC);
+			if (ap.information_elements().vht_capabilities.supported) {
+				ap.protocols().append(Protocol::AC);
 			}
 		}
 
