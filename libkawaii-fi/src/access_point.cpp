@@ -46,8 +46,8 @@ ChannelWidth AccessPoint::channel_width() const
 			return ChannelWidth::EightyPlusEightyMhz;
 		}
 	}
-	if (information_elements_.ht_operations.supported &&
-	    information_elements_.ht_operations.secondary_channel_offset !=
+	if (information_elements_.ht_operations.supported() &&
+	    information_elements_.ht_operations.secondary_channel_offset() !=
 	            SecondaryChannelOffset::NoSecondaryChannel) {
 		return ChannelWidth::FortyMhz;
 	}

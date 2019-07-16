@@ -115,8 +115,8 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 					channel_string.append(QString(", %1").arg(channel.number_two()));
 				}
 				return channel_string;
-			} else if (ap.information_elements().ht_operations.supported) {
-				switch (ap.information_elements().ht_operations.secondary_channel_offset) {
+			} else if (ap.information_elements().ht_operations.supported()) {
+				switch (ap.information_elements().ht_operations.secondary_channel_offset()) {
 				case SecondaryChannelOffset::Above: // 40 MHz
 					return QString("%1+1").arg(ap.information_elements().channel);
 				case SecondaryChannelOffset::Below: // 40 MHz

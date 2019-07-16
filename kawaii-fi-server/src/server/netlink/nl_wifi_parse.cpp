@@ -111,52 +111,53 @@ void KawaiiFi::parse_information_elements(nlattr *ies_attr, InformationElements 
 			if (element_data_length != ht_operation_data_length) {
 				break;
 			}
-			ies.ht_operations.supported = true;
-			ies.ht_operations.primary_channel = static_cast<unsigned char>(ie_data_bytes[0]);
+			ies.ht_operations.set_supported(true);
+			ies.ht_operations.set_primary_channel(static_cast<unsigned char>(ie_data_bytes[0]));
 			switch (ie_data_bytes[1] & secondary_channel_offset_mask) {
 			case 0:
-				ies.ht_operations.secondary_channel_offset =
-				        SecondaryChannelOffset::NoSecondaryChannel;
+				ies.ht_operations.set_secondary_channel_offset(
+				        SecondaryChannelOffset::NoSecondaryChannel);
 				break;
 			case 1:
-				ies.ht_operations.secondary_channel_offset = SecondaryChannelOffset::Above;
+				ies.ht_operations.set_secondary_channel_offset(SecondaryChannelOffset::Above);
 				break;
 			case 3:
-				ies.ht_operations.secondary_channel_offset = SecondaryChannelOffset::Below;
+				ies.ht_operations.set_secondary_channel_offset(SecondaryChannelOffset::Below);
 				break;
 			}
-			ies.ht_operations.supported_channel_width =
+			ies.ht_operations.set_supported_channel_width(
 			        (ie_data_bytes[1] & supported_channel_width_mask)
 			                ? HtSupportedChannelWidth::TwentyOrFortyMhz
-			                : HtSupportedChannelWidth::TwentyMhz;
-			ies.ht_operations.rifs = ie_data_bytes[1] & rifs_mask;
+			                : HtSupportedChannelWidth::TwentyMhz);
+			ies.ht_operations.set_rifs(ie_data_bytes[1] & rifs_mask);
 			switch (ie_data_bytes[2] & ht_protection_mask) {
 			case 0:
-				ies.ht_operations.ht_protection = HtProtection::None;
+				ies.ht_operations.set_ht_protection(HtProtection::None);
 				break;
 			case 1:
-				ies.ht_operations.ht_protection = HtProtection::Nonmember;
+				ies.ht_operations.set_ht_protection(HtProtection::Nonmember);
 				break;
 			case 2:
-				ies.ht_operations.ht_protection = HtProtection::TwentyMhz;
+				ies.ht_operations.set_ht_protection(HtProtection::TwentyMhz);
 				break;
 			case 3:
-				ies.ht_operations.ht_protection = HtProtection::NonHtMixed;
+				ies.ht_operations.set_ht_protection(HtProtection::NonHtMixed);
 				break;
 			}
-			ies.ht_operations.non_greenfield_stas_present =
-			        ie_data_bytes[2] & non_greenfield_stas_present_mask;
-			ies.ht_operations.obss_non_ht_stas_present =
-			        ie_data_bytes[2] & obss_non_ht_stas_present_mask;
+			ies.ht_operations.set_non_greenfield_stas_present(ie_data_bytes[2] &
+			                                                  non_greenfield_stas_present_mask);
+			ies.ht_operations.set_obss_non_ht_stas_present(ie_data_bytes[2] &
+			                                               obss_non_ht_stas_present_mask);
 			// ies.ht_operations.center_freq_segment_two = ;
-			ies.ht_operations.dual_beacon = ie_data_bytes[4] & dual_beacon_mask;
-			ies.ht_operations.dual_cts_protection = ie_data_bytes[4] & dual_cts_protection_mask;
-			ies.ht_operations.stbc_beacon = ie_data_bytes[5] & stbc_beacon_mask;
-			ies.ht_operations.lsig_txop_protection_full_support =
-			        ie_data_bytes[5] & lsig_txop_protection_full_support_mask;
-			ies.ht_operations.pco_active = ie_data_bytes[5] & pco_active_mask;
-			ies.ht_operations.pco_phase =
-			        (ie_data_bytes[5] & pco_phase_mask) ? PcoPhase::FourtyMhz : PcoPhase::TwentyMhz;
+			ies.ht_operations.set_dual_beacon(ie_data_bytes[4] & dual_beacon_mask);
+			ies.ht_operations.set_dual_cts_protection(ie_data_bytes[4] & dual_cts_protection_mask);
+			ies.ht_operations.set_stbc_beacon(ie_data_bytes[5] & stbc_beacon_mask);
+			ies.ht_operations.set_lsig_txop_protection_full_support(
+			        ie_data_bytes[5] & lsig_txop_protection_full_support_mask);
+			ies.ht_operations.set_pco_active(ie_data_bytes[5] & pco_active_mask);
+			ies.ht_operations.set_pco_phase((ie_data_bytes[5] & pco_phase_mask)
+			                                        ? PcoPhase::FourtyMhz
+			                                        : PcoPhase::TwentyMhz);
 			//			ies.ht_operations.rx_mcs;
 			//			ies.ht_operations.highest_supported_data_rate;
 			//			ies.ht_operations.tx_mcs_defined;
