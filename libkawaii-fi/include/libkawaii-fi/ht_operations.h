@@ -3,11 +3,12 @@
 
 #include "ht_capabilities.h"
 
-#include <QDBusArgument>
 #include <QMetaType>
 #include <QVector>
 #include <cstdint>
 #include <string_view>
+
+class QDBusArgument;
 
 enum class SecondaryChannelOffset { NoSecondaryChannel, Above, Below };
 
@@ -34,7 +35,6 @@ public:
 	[[nodiscard]] PcoPhase pco_phase() const;
 
 	[[nodiscard]] const QVector<std::uint8_t> &rx_mcs() const;
-	[[nodiscard]] QVector<std::uint8_t> &rx_mcs();
 	[[nodiscard]] unsigned int highest_supported_data_rate() const;
 	[[nodiscard]] bool tx_mcs_defined() const;
 	[[nodiscard]] bool tx_rx_mcs_equal() const;
@@ -42,28 +42,12 @@ public:
 	[[nodiscard]] bool tx_unequal_modulation() const;
 
 	void parse_ie(std::string_view ie_data);
-	void set_supported(bool supported);
-	void set_primary_channel(unsigned int primary_channel);
-	void set_secondary_channel_offset(SecondaryChannelOffset secondary_channel_offset);
-	void set_supported_channel_width(HtSupportedChannelWidth supported_channel_width);
-	void set_rifs(bool rifs);
-	void set_ht_protection(HtProtection ht_protection);
-	void set_non_greenfield_stas_present(bool non_greenfield_stas_present);
-	void set_obss_non_ht_stas_present(bool obss_non_ht_stas_present);
-	void set_center_freq_segment_two(unsigned int center_freq_segment_two);
-	void set_dual_beacon(bool dual_beacon);
-	void set_dual_cts_protection(bool dual_cts_protection);
-	void set_stbc_beacon(bool stbc_beacon);
-	void set_lsig_txop_protection_full_support(bool lsig_txop_protection_full_support);
-	void set_pco_active(bool pco_active);
-	void set_pco_phase(PcoPhase pco_phase);
 
-	void set_rx_mcs(const QVector<std::uint8_t> &rx_mcs);
-	void set_highest_supported_data_rate(unsigned int highest_supported_data_rate);
-	void set_tx_mcs_defined(bool tx_mcs_defined);
-	void set_tx_rx_mcs_equal(bool tx_rx_mcs_equal);
-	void set_max_tx_spatial_streams(unsigned int max_tx_spatial_streams);
-	void set_tx_unequal_modulation(bool tx_unequal_modulation);
+	// Marshall the HT Operation data into a D-Bus argument
+	friend QDBusArgument &operator<<(QDBusArgument &argument, const HtOperations &ht_op);
+
+	// Retrieve the HT Operation data from the D-Bus argument
+	friend const QDBusArgument &operator>>(const QDBusArgument &argument, HtOperations &ht_op);
 
 private:
 	bool supported_ = false;
@@ -90,11 +74,5 @@ private:
 	bool tx_unequal_modulation_ = false;
 };
 Q_DECLARE_METATYPE(HtOperations)
-
-// Marshall the HT Operation data into a D-Bus argument
-QDBusArgument &operator<<(QDBusArgument &argument, const HtOperations &ht_op);
-
-// Retrieve the HT Operation data from the D-Bus argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, HtOperations &ht_op);
 
 #endif // HT_OPERATIONS_H
