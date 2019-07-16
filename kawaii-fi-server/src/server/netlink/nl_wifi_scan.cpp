@@ -6,7 +6,6 @@
 #include "nl_wifi_command.h"
 #include "nl_wifi_parse.h"
 
-#include <QString>
 #include <QVector>
 #include <array>
 #include <chrono>
