@@ -42,19 +42,19 @@ namespace KawaiiFi {
 		int current_scan_interval();
 		void start_scan_timer(int interval_sec);
 		void stop_scan_timer();
-		Ui::MainWindow *_ui;
-		bool _scanning_enabled = true;
-		QPushButton *const _scan_pause_resume_button = new QPushButton(this);
-		QComboBox *const _scan_interval_combo_box = new QComboBox(this);
-		QLineEdit *const _ap_filter_line_edit = new QLineEdit(this);
-		QComboBox *const _wireless_interface_combo_box = new QComboBox(this);
-		AccessPointTableModel *const _ap_table_model = new AccessPointTableModel(this);
-		QSortFilterProxyModel *const _ap_proxy_model = new QSortFilterProxyModel(this);
-		AccessPointChart *const _two_point_four_ghz_chart =
+		Ui::MainWindow *ui_;
+		bool scanning_enabled_ = true;
+		QPushButton *const scan_pause_resume_button_ = new QPushButton(this);
+		QComboBox *const scan_interval_combo_box_ = new QComboBox(this);
+		QLineEdit *const ap_filter_line_edit_ = new QLineEdit(this);
+		QComboBox *const wireless_interface_combo_box_ = new QComboBox(this);
+		AccessPointTableModel *const ap_table_model_ = new AccessPointTableModel(this);
+		QSortFilterProxyModel *const ap_proxy_model_ = new QSortFilterProxyModel(this);
+		AccessPointChart *const two_point_four_ghz_chart_ =
 		        new AccessPointChart(WifiBand::TwoPointFourGhz);
-		AccessPointChart *const _five_ghz_chart = new AccessPointChart(WifiBand::FiveGhz);
-		QTimer *const _scan_timer = new QTimer(this);
-		org::kawaiifi::Server *const _server_interface =
+		AccessPointChart *const five_ghz_chart_ = new AccessPointChart(WifiBand::FiveGhz);
+		QTimer *const scan_timer_ = new QTimer(this);
+		org::kawaiifi::Server *const server_interface_ =
 		        new org::kawaiifi::Server(KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath,
 		                                  QDBusConnection::systemBus(), this);
 	};

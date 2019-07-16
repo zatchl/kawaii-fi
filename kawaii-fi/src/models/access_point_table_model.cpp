@@ -76,11 +76,11 @@ AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableMo
 void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &access_points)
 {
 	emit layoutAboutToBeChanged();
-	_accessPoints = access_points;
+	access_points_ = access_points;
 	emit layoutChanged();
 }
 
-int AccessPointTableModel::rowCount(const QModelIndex &) const { return _accessPoints.size(); }
+int AccessPointTableModel::rowCount(const QModelIndex &) const { return access_points_.size(); }
 
 int AccessPointTableModel::columnCount(const QModelIndex &) const { return total_columns; }
 
@@ -90,7 +90,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	const AccessPoint &ap = _accessPoints[index.row()];
+	const AccessPoint &ap = access_points_[index.row()];
 
 	switch (role) {
 	case Qt::DisplayRole:

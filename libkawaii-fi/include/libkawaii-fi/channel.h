@@ -43,10 +43,10 @@ public:
 	[[nodiscard]] ChannelWidth width() const;
 
 private:
-	unsigned int _start_freq = 0;
-	unsigned int _end_freq = 0;
-	unsigned int _start_freq_two = 0;
-	unsigned int _end_freq_two = 0;
+	unsigned int start_freq_ = 0;
+	unsigned int end_freq_ = 0;
+	unsigned int start_freq_two_ = 0;
+	unsigned int end_freq_two_ = 0;
 };
 
 inline const QVector<Channel> forty_mhz_channels = {

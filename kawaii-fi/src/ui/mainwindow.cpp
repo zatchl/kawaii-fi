@@ -36,9 +36,9 @@ namespace {
 
 using namespace KawaiiFi;
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui_(new Ui::MainWindow)
 {
-	_ui->setupUi(this);
+	ui_->setupUi(this);
 
 	// Adjust the margins between widgets and the edges of the window
 	setContentsMargins(window_content_margin, window_content_margin, window_content_margin,
@@ -54,60 +54,60 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainW
 	set_up_server_interface();
 	refresh_wireless_nics();
 	scan();
-	connect(_scan_timer, &QTimer::timeout, this, &MainWindow::scan);
+	connect(scan_timer_, &QTimer::timeout, this, &MainWindow::scan);
 	start_scan_timer(current_scan_interval());
 }
 
-MainWindow::~MainWindow() { delete _ui; }
+MainWindow::~MainWindow() { delete ui_; }
 
 void MainWindow::create_toolbar()
 {
-	_scan_pause_resume_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-	_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
-	connect(_scan_pause_resume_button, &QPushButton::clicked, [=]() {
-		_scanning_enabled = !_scanning_enabled;
-		if (_scanning_enabled) {
+	scan_pause_resume_button_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	scan_pause_resume_button_->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	connect(scan_pause_resume_button_, &QPushButton::clicked, [=]() {
+		scanning_enabled_ = !scanning_enabled_;
+		if (scanning_enabled_) {
 			start_scan_timer(current_scan_interval());
-			_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+			scan_pause_resume_button_->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 		} else {
 			stop_scan_timer();
-			_scan_pause_resume_button->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+			scan_pause_resume_button_->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 		}
 	});
 
-	_scan_interval_combo_box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-	_scan_interval_combo_box->addItems(scan_interval_map.keys());
-	connect(_scan_interval_combo_box, &QComboBox::currentTextChanged, [=]() {
-		if (_scanning_enabled) {
+	scan_interval_combo_box_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	scan_interval_combo_box_->addItems(scan_interval_map.keys());
+	connect(scan_interval_combo_box_, &QComboBox::currentTextChanged, [=]() {
+		if (scanning_enabled_) {
 			start_scan_timer(current_scan_interval());
 		}
 	});
 
-	_ap_filter_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	_ap_filter_line_edit->setPlaceholderText(tr("Add filter..."));
+	ap_filter_line_edit_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ap_filter_line_edit_->setPlaceholderText(tr("Add filter..."));
 
-	_wireless_interface_combo_box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	wireless_interface_combo_box_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
 	QToolBar *toolbar = addToolBar("");
 	toolbar->setMovable(false);
 	toolbar->setContentsMargins(0, 0, 0, toolbar_bottom_margin);
-	toolbar->addWidget(_scan_pause_resume_button);
-	toolbar->addWidget(_scan_interval_combo_box);
-	toolbar->addWidget(_ap_filter_line_edit);
-	toolbar->addWidget(_wireless_interface_combo_box);
+	toolbar->addWidget(scan_pause_resume_button_);
+	toolbar->addWidget(scan_interval_combo_box_);
+	toolbar->addWidget(ap_filter_line_edit_);
+	toolbar->addWidget(wireless_interface_combo_box_);
 }
 
 void MainWindow::create_charts()
 {
-	_ui->two_four_ghz_chart_view->setChart(_two_point_four_ghz_chart);
-	_ui->five_ghz_chart_view->setChart(_five_ghz_chart);
+	ui_->two_four_ghz_chart_view->setChart(two_point_four_ghz_chart_);
+	ui_->five_ghz_chart_view->setChart(five_ghz_chart_);
 }
 
 void MainWindow::create_table()
 {
-	_ap_proxy_model->setSourceModel(_ap_table_model);
-	_ui->apTableView->setModel(_ap_proxy_model);
-	_ui->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ap_proxy_model_->setSourceModel(ap_table_model_);
+	ui_->apTableView->setModel(ap_proxy_model_);
+	ui_->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 
 void MainWindow::set_up_server_interface()
@@ -118,37 +118,37 @@ void MainWindow::set_up_server_interface()
 
 	// When a Wi-Fi scan has completed, the server emits a signal
 	// Connect that signal to the handle_scan_completed function
-	connect(_server_interface, &org::kawaiifi::Server::wifi_scan_completed, this,
+	connect(server_interface_, &org::kawaiifi::Server::wifi_scan_completed, this,
 	        &MainWindow::handle_scan_completed);
 }
 
 void MainWindow::scan()
 {
-	if (!_server_interface || !_server_interface->isValid()) {
+	if (!server_interface_ || !server_interface_->isValid()) {
 		return;
 	}
 
-	_ui->statusBar->showMessage("Starting new scan", status_message_timeout_ms);
-	_server_interface->trigger_wifi_scan(_wireless_interface_combo_box->currentText());
+	ui_->statusBar->showMessage("Starting new scan", status_message_timeout_ms);
+	server_interface_->trigger_wifi_scan(wireless_interface_combo_box_->currentText());
 }
 
 void MainWindow::handle_scan_completed(const QString &nic_name)
 {
-	if (!_scanning_enabled || nic_name != _wireless_interface_combo_box->currentText()) {
+	if (!scanning_enabled_ || nic_name != wireless_interface_combo_box_->currentText()) {
 		return;
 	}
 
-	QVector<AccessPoint> aps = _server_interface->access_points(nic_name).value();
-	_ap_table_model->update_access_points(aps);
-	_two_point_four_ghz_chart->removeAllSeries();
-	_five_ghz_chart->removeAllSeries();
+	QVector<AccessPoint> aps = server_interface_->access_points(nic_name).value();
+	ap_table_model_->update_access_points(aps);
+	two_point_four_ghz_chart_->removeAllSeries();
+	five_ghz_chart_->removeAllSeries();
 	for (const auto &ap : aps) {
 		switch (ap.channel().band()) {
 		case WifiBand::TwoPointFourGhz:
-			_two_point_four_ghz_chart->add_access_point(ap);
+			two_point_four_ghz_chart_->add_access_point(ap);
 			break;
 		case WifiBand::FiveGhz:
-			_five_ghz_chart->add_access_point(ap);
+			five_ghz_chart_->add_access_point(ap);
 			break;
 		default:
 			break;
@@ -158,28 +158,28 @@ void MainWindow::handle_scan_completed(const QString &nic_name)
 
 void MainWindow::refresh_wireless_nics()
 {
-	if (!_server_interface || !_server_interface->isValid()) {
+	if (!server_interface_ || !server_interface_->isValid()) {
 		return;
 	}
 	// Set wireless nics
-	_wireless_interface_combo_box->clear();
-	QStringList nic_names = _server_interface->wireless_nic_names().value();
+	wireless_interface_combo_box_->clear();
+	QStringList nic_names = server_interface_->wireless_nic_names().value();
 	for (const QString &nic_name : nic_names) {
-		_wireless_interface_combo_box->addItem(nic_name);
+		wireless_interface_combo_box_->addItem(nic_name);
 	}
-	_wireless_interface_combo_box->setCurrentIndex(0);
+	wireless_interface_combo_box_->setCurrentIndex(0);
 }
 
 int MainWindow::current_scan_interval()
 {
-	return scan_interval_map[_scan_interval_combo_box->currentText()];
+	return scan_interval_map[scan_interval_combo_box_->currentText()];
 }
 
 void MainWindow::start_scan_timer(int interval_sec)
 {
 	if (interval_sec > 0) {
-		_scan_timer->start(interval_sec * 1000);
+		scan_timer_->start(interval_sec * 1000);
 	}
 }
 
-void MainWindow::stop_scan_timer() { _scan_timer->stop(); }
+void MainWindow::stop_scan_timer() { scan_timer_->stop(); }

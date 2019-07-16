@@ -20,7 +20,7 @@ namespace KawaiiFi {
 		QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
 	private:
-		QVector<AccessPoint> _accessPoints;
+		QVector<AccessPoint> access_points_;
 	};
 } // namespace KawaiiFi
 

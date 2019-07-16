@@ -28,23 +28,23 @@ Channel::Channel(unsigned int start_freq_one, unsigned int end_freq_one,
                  unsigned int start_freq_two, unsigned int end_freq_two)
 {
 	if (end_freq_one >= start_freq_one) {
-		_start_freq = start_freq_one;
-		_end_freq = end_freq_one;
+		start_freq_ = start_freq_one;
+		end_freq_ = end_freq_one;
 	}
 
 	if (end_freq_two >= start_freq_two) {
-		_start_freq_two = start_freq_two;
-		_end_freq_two = end_freq_two;
+		start_freq_two_ = start_freq_two;
+		end_freq_two_ = end_freq_two;
 	}
 }
 
-unsigned int Channel::start_mhz() const { return _start_freq; }
+unsigned int Channel::start_mhz() const { return start_freq_; }
 
-unsigned int Channel::end_mhz() const { return _end_freq; }
+unsigned int Channel::end_mhz() const { return end_freq_; }
 
-unsigned int Channel::center_mhz() const { return (_start_freq + _end_freq) / 2; }
+unsigned int Channel::center_mhz() const { return (start_freq_ + end_freq_) / 2; }
 
-unsigned int Channel::width_mhz() const { return _end_freq - _start_freq; }
+unsigned int Channel::width_mhz() const { return end_freq_ - start_freq_; }
 
 unsigned int Channel::number() const
 {
@@ -52,13 +52,13 @@ unsigned int Channel::number() const
 	        ieee80211_frequency_to_channel(static_cast<int>(center_mhz())));
 }
 
-unsigned int Channel::start_mhz_two() const { return _start_freq_two; }
+unsigned int Channel::start_mhz_two() const { return start_freq_two_; }
 
-unsigned int Channel::end_mhz_two() const { return _end_freq_two; }
+unsigned int Channel::end_mhz_two() const { return end_freq_two_; }
 
-unsigned int Channel::center_mhz_two() const { return (_start_freq_two + _end_freq_two) / 2; }
+unsigned int Channel::center_mhz_two() const { return (start_freq_two_ + end_freq_two_) / 2; }
 
-unsigned int Channel::width_mhz_two() const { return _end_freq_two - _end_freq; }
+unsigned int Channel::width_mhz_two() const { return end_freq_two_ - end_freq_; }
 
 unsigned int Channel::number_two() const
 {
@@ -68,8 +68,8 @@ unsigned int Channel::number_two() const
 
 bool Channel::contains(unsigned int freq) const
 {
-	return ((freq >= _start_freq) && (freq <= _end_freq)) ||
-	       ((freq >= _start_freq_two) && (freq <= _end_freq_two));
+	return ((freq >= start_freq_) && (freq <= end_freq_)) ||
+	       ((freq >= start_freq_two_) && (freq <= end_freq_two_));
 }
 
 WifiBand Channel::band() const
