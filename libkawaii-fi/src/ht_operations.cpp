@@ -2,6 +2,24 @@
 
 #include "libkawaii-fi/ht_capabilities.h"
 
+#include <string_view>
+
+namespace {
+	const unsigned int ht_operation_ie_length = 22;
+	const std::uint8_t secondary_channel_offset_mask = 0x3;          // 0000 0011
+	const std::uint8_t supported_channel_width_mask = 0x4;           // 0000 0100
+	const std::uint8_t rifs_mask = 0x8;                              // 0000 1000
+	const std::uint8_t ht_protection_mask = 0x3;                     // 0000 0011
+	const std::uint8_t non_greenfield_stas_present_mask = 0x4;       // 0000 0100
+	const std::uint8_t obss_non_ht_stas_present_mask = 0x10;         // 0001 0000
+	const std::uint8_t dual_beacon_mask = 0x40;                      // 0100 0000
+	const std::uint8_t dual_cts_protection_mask = 0x80;              // 1000 0000
+	const std::uint8_t stbc_beacon_mask = 0x1;                       // 0000 0001
+	const std::uint8_t lsig_txop_protection_full_support_mask = 0x2; // 0000 0010
+	const std::uint8_t pco_active_mask = 0x4;                        // 0000 0100
+	const std::uint8_t pco_phase_mask = 0x8;                         // 0000 1000
+} // namespace
+
 bool HtOperations::supported() const { return supported_; }
 
 unsigned int HtOperations::primary_channel() const { return primary_channel_; }
@@ -57,6 +75,59 @@ bool HtOperations::tx_rx_mcs_equal() const { return tx_rx_mcs_equal_; }
 unsigned int HtOperations::max_tx_spatial_streams() const { return max_tx_spatial_streams_; }
 
 bool HtOperations::tx_unequal_modulation() const { return tx_unequal_modulation_; }
+
+void HtOperations::parse_ie(std::string_view ie_data)
+{
+	if (ie_data.size() != ht_operation_ie_length) {
+		return;
+	}
+
+	supported_ = true;
+	primary_channel_ = static_cast<unsigned char>(ie_data[0]);
+	switch (ie_data[1] & secondary_channel_offset_mask) {
+	case 0:
+		secondary_channel_offset_ = SecondaryChannelOffset::NoSecondaryChannel;
+		break;
+	case 1:
+		secondary_channel_offset_ = SecondaryChannelOffset::Above;
+		break;
+	case 3:
+		secondary_channel_offset_ = SecondaryChannelOffset::Below;
+		break;
+	}
+	supported_channel_width_ = (ie_data[1] & supported_channel_width_mask)
+	                                   ? HtSupportedChannelWidth::TwentyOrFortyMhz
+	                                   : HtSupportedChannelWidth::TwentyMhz;
+	rifs_ = (ie_data[1] & rifs_mask);
+	switch (ie_data[2] & ht_protection_mask) {
+	case 0:
+		ht_protection_ = HtProtection::None;
+		break;
+	case 1:
+		ht_protection_ = HtProtection::Nonmember;
+		break;
+	case 2:
+		ht_protection_ = HtProtection::TwentyMhz;
+		break;
+	case 3:
+		ht_protection_ = HtProtection::NonHtMixed;
+		break;
+	}
+	non_greenfield_stas_present_ = ie_data[2] & non_greenfield_stas_present_mask;
+	obss_non_ht_stas_present_ = ie_data[2] & obss_non_ht_stas_present_mask;
+	// ies.ht_operations.center_freq_segment_two = ;
+	dual_beacon_ = ie_data[4] & dual_beacon_mask;
+	dual_cts_protection_ = ie_data[4] & dual_cts_protection_mask;
+	stbc_beacon_ = ie_data[5] & stbc_beacon_mask;
+	lsig_txop_protection_full_support_ = ie_data[5] & lsig_txop_protection_full_support_mask;
+	pco_active_ = ie_data[5] & pco_active_mask;
+	pco_phase_ = (ie_data[5] & pco_phase_mask) ? PcoPhase::FourtyMhz : PcoPhase::TwentyMhz;
+	// rx_mcs;
+	// highest_supported_data_rate;
+	// tx_mcs_defined;
+	// tx_rx_mcs_equal;
+	// tx_unequal_modulation;
+}
 
 void HtOperations::set_supported(bool supported) { supported_ = supported; }
 

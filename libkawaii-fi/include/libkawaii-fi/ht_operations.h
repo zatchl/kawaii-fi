@@ -7,6 +7,7 @@
 #include <QMetaType>
 #include <QVector>
 #include <cstdint>
+#include <string_view>
 
 enum class SecondaryChannelOffset { NoSecondaryChannel, Above, Below };
 
@@ -40,6 +41,7 @@ public:
 	[[nodiscard]] unsigned int max_tx_spatial_streams() const;
 	[[nodiscard]] bool tx_unequal_modulation() const;
 
+	void parse_ie(std::string_view ie_data);
 	void set_supported(bool supported);
 	void set_primary_channel(unsigned int primary_channel);
 	void set_secondary_channel_offset(SecondaryChannelOffset secondary_channel_offset);

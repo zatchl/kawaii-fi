@@ -22,24 +22,11 @@ namespace {
 	const unsigned int max_ssid_data_length = 32;
 	const unsigned int ds_params_data_length = 1;
 	const unsigned int ht_capability_data_length = 26;
-	const unsigned int ht_operation_data_length = 22;
 	const unsigned int vht_capability_data_length = 12;
 	const unsigned int vht_operation_data_length = 5;
 
-	const std::uint8_t supported_rate_mask = 0x7f;                   // 0111 1111
-	const std::uint8_t basic_rate_mask = 0x80;                       // 1000 0000
-	const std::uint8_t secondary_channel_offset_mask = 0x3;          // 0000 0011
-	const std::uint8_t supported_channel_width_mask = 0x4;           // 0000 0100
-	const std::uint8_t rifs_mask = 0x8;                              // 0000 1000
-	const std::uint8_t ht_protection_mask = 0x3;                     // 0000 0011
-	const std::uint8_t non_greenfield_stas_present_mask = 0x4;       // 0000 0100
-	const std::uint8_t obss_non_ht_stas_present_mask = 0x10;         // 0001 0000
-	const std::uint8_t dual_beacon_mask = 0x40;                      // 0100 0000
-	const std::uint8_t dual_cts_protection_mask = 0x80;              // 1000 0000
-	const std::uint8_t stbc_beacon_mask = 0x1;                       // 0000 0001
-	const std::uint8_t lsig_txop_protection_full_support_mask = 0x2; // 0000 0010
-	const std::uint8_t pco_active_mask = 0x4;                        // 0000 0100
-	const std::uint8_t pco_phase_mask = 0x8;                         // 0000 1000
+	const std::uint8_t supported_rate_mask = 0x7f; // 0111 1111
+	const std::uint8_t basic_rate_mask = 0x80;     // 1000 0000
 } // namespace
 
 QString KawaiiFi::parse_bssid(nlattr *bssid_attr)
@@ -108,61 +95,7 @@ void KawaiiFi::parse_information_elements(nlattr *ies_attr, InformationElements 
 			ies.ht_capabilities.supported = true;
 			break;
 		case WLAN_EID_HT_OPERATION:
-			if (element_data_length != ht_operation_data_length) {
-				break;
-			}
-			ies.ht_operations.set_supported(true);
-			ies.ht_operations.set_primary_channel(static_cast<unsigned char>(ie_data_bytes[0]));
-			switch (ie_data_bytes[1] & secondary_channel_offset_mask) {
-			case 0:
-				ies.ht_operations.set_secondary_channel_offset(
-				        SecondaryChannelOffset::NoSecondaryChannel);
-				break;
-			case 1:
-				ies.ht_operations.set_secondary_channel_offset(SecondaryChannelOffset::Above);
-				break;
-			case 3:
-				ies.ht_operations.set_secondary_channel_offset(SecondaryChannelOffset::Below);
-				break;
-			}
-			ies.ht_operations.set_supported_channel_width(
-			        (ie_data_bytes[1] & supported_channel_width_mask)
-			                ? HtSupportedChannelWidth::TwentyOrFortyMhz
-			                : HtSupportedChannelWidth::TwentyMhz);
-			ies.ht_operations.set_rifs(ie_data_bytes[1] & rifs_mask);
-			switch (ie_data_bytes[2] & ht_protection_mask) {
-			case 0:
-				ies.ht_operations.set_ht_protection(HtProtection::None);
-				break;
-			case 1:
-				ies.ht_operations.set_ht_protection(HtProtection::Nonmember);
-				break;
-			case 2:
-				ies.ht_operations.set_ht_protection(HtProtection::TwentyMhz);
-				break;
-			case 3:
-				ies.ht_operations.set_ht_protection(HtProtection::NonHtMixed);
-				break;
-			}
-			ies.ht_operations.set_non_greenfield_stas_present(ie_data_bytes[2] &
-			                                                  non_greenfield_stas_present_mask);
-			ies.ht_operations.set_obss_non_ht_stas_present(ie_data_bytes[2] &
-			                                               obss_non_ht_stas_present_mask);
-			// ies.ht_operations.center_freq_segment_two = ;
-			ies.ht_operations.set_dual_beacon(ie_data_bytes[4] & dual_beacon_mask);
-			ies.ht_operations.set_dual_cts_protection(ie_data_bytes[4] & dual_cts_protection_mask);
-			ies.ht_operations.set_stbc_beacon(ie_data_bytes[5] & stbc_beacon_mask);
-			ies.ht_operations.set_lsig_txop_protection_full_support(
-			        ie_data_bytes[5] & lsig_txop_protection_full_support_mask);
-			ies.ht_operations.set_pco_active(ie_data_bytes[5] & pco_active_mask);
-			ies.ht_operations.set_pco_phase((ie_data_bytes[5] & pco_phase_mask)
-			                                        ? PcoPhase::FourtyMhz
-			                                        : PcoPhase::TwentyMhz);
-			//			ies.ht_operations.rx_mcs;
-			//			ies.ht_operations.highest_supported_data_rate;
-			//			ies.ht_operations.tx_mcs_defined;
-			//			ies.ht_operations.tx_rx_mcs_equal;
-			//			ies.ht_operations.tx_unequal_modulation;
+			ies.ht_operations.parse_ie(ie_data_bytes);
 			break;
 		case WLAN_EID_VHT_CAPABILITY:
 			if (element_data_length != vht_capability_data_length) {
