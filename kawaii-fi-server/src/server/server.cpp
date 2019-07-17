@@ -23,23 +23,28 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-KawaiiFi::Server::Server(QObject *parent) : QObject(parent)
+KawaiiFi::Server::Server(QObject *parent)
+    : QObject(parent), object_registered_(QDBusConnection::systemBus().registerObject(
+                               KawaiiFi::ServerObjectPath, this,
+                               QDBusConnection::RegisterOption::ExportAllSlots |
+                                       QDBusConnection::RegisterOption::ExportAllSignal)),
+      service_name_registered_(QDBusConnection::systemBus().registerService(KawaiiFi::ServiceName))
 {
 	qRegisterMetaType<AccessPoint>("AccessPoint");
 	qDBusRegisterMetaType<AccessPoint>();
 	qDBusRegisterMetaType<QVector<AccessPoint>>();
 
 	new KawaiiFiServerAdaptor(this);
-	QDBusConnection::systemBus().registerObject(
-	        KawaiiFi::ServerObjectPath, this,
-	        QDBusConnection::RegisterOption::ExportAllSlots |
-	                QDBusConnection::RegisterOption::ExportAllSignal);
 }
 
 KawaiiFi::Server::~Server()
 {
 	QDBusConnection::systemBus().unregisterObject(KawaiiFi::ServerObjectPath);
 }
+
+bool KawaiiFi::Server::object_registered() const { return object_registered_; }
+
+bool KawaiiFi::Server::service_name_registered() const { return service_name_registered_; }
 
 namespace {
 	// Adapted from https://gist.github.com/edufelipe/6108057
