@@ -124,7 +124,7 @@ void MainWindow::set_up_server_interface()
 
 void MainWindow::scan()
 {
-	if (!server_interface_ || !server_interface_->isValid()) {
+	if (!server_interface_->isValid()) {
 		return;
 	}
 
@@ -158,9 +158,6 @@ void MainWindow::handle_scan_completed(const QString &nic_name)
 
 void MainWindow::refresh_wireless_nics()
 {
-	if (!server_interface_ || !server_interface_->isValid()) {
-		return;
-	}
 	// Set wireless nics
 	wireless_interface_combo_box_->clear();
 	QStringList nic_names = server_interface_->wireless_nic_names().value();
