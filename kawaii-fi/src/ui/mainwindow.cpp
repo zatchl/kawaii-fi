@@ -31,7 +31,15 @@ namespace {
 
 	const int window_content_margin = 5;
 	const int toolbar_bottom_margin = 5;
+	const int toolbar_widget_spacing = 5;
 	const int status_message_timeout_ms = 2000;
+
+	void add_spacer(QToolBar *toolbar, int spacer_width = toolbar_widget_spacing)
+	{
+		QWidget *spacer = new QWidget(toolbar);
+		spacer->setFixedWidth(spacer_width);
+		toolbar->addWidget(spacer);
+	}
 } // namespace
 
 using namespace KawaiiFi;
@@ -92,8 +100,11 @@ void MainWindow::create_toolbar()
 	toolbar->setMovable(false);
 	toolbar->setContentsMargins(0, 0, 0, toolbar_bottom_margin);
 	toolbar->addWidget(scan_pause_resume_button_);
+	add_spacer(toolbar);
 	toolbar->addWidget(scan_interval_combo_box_);
+	add_spacer(toolbar);
 	toolbar->addWidget(ap_filter_line_edit_);
+	add_spacer(toolbar);
 	toolbar->addWidget(wireless_interface_combo_box_);
 }
 
