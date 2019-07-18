@@ -50,22 +50,28 @@ namespace {
 	// Adapted from https://gist.github.com/edufelipe/6108057
 	bool is_nic_wireless(const char *ifname)
 	{
-		int sock = -1;
+		// Create a structure for exchanging data with ioctl
 		struct iwreq pwrq = {};
 		memset(&pwrq, 0, sizeof(pwrq));
+		// Set the structure's interface name to the name passed into this function
 		strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
 
-		if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		// Create an IP domain stream socket
+		// A return value of -1 indicates an error
+		int sock = socket(AF_INET, SOCK_STREAM, 0);
+		if (sock == -1) {
 			return false;
 		}
 
-		if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
+		// Check for the presence of wireless extensions
+		// A return value of -1 indicates an error
+		if (ioctl(sock, SIOCGIWNAME, &pwrq) == -1) {
 			close(sock);
-			return true;
+			return false;
 		}
 
 		close(sock);
-		return false;
+		return true;
 	}
 
 	QHash<QString, unsigned int> wireless_nics()
