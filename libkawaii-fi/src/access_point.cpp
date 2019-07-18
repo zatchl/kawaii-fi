@@ -34,8 +34,8 @@ InformationElements &AccessPoint::information_elements() { return information_el
 
 ChannelWidth AccessPoint::channel_width() const
 {
-	if (information_elements_.vht_operations.supported) {
-		switch (information_elements_.vht_operations.channel_width) {
+	if (information_elements_.vht_operations.supported()) {
+		switch (information_elements_.vht_operations.channel_width()) {
 		case VhtChannelWidth::TwentyOrFortyMhz:
 			break;
 		case VhtChannelWidth::EightyMhz:
@@ -87,8 +87,9 @@ Channel AccessPoint::channel() const
 		Channel second_eighty_mhz_channel;
 		for (const auto &channel : eighty_mhz_channels) {
 			if (channel.contains(
-			            information_elements_.vht_operations.channel_center_segment_zero) ||
-			    channel.contains(information_elements_.vht_operations.channel_center_segment_one)) {
+			            information_elements_.vht_operations.channel_center_segment_zero()) ||
+			    channel.contains(
+			            information_elements_.vht_operations.channel_center_segment_one())) {
 				if (first_eighty_mhz_channel.center_mhz() == 0) {
 					first_eighty_mhz_channel = channel;
 				} else {

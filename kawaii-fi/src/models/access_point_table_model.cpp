@@ -108,7 +108,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 			// center frequency of the entire channel
 			// For HT channels, use the HT convention of referencing the channel using the primary
 			// channel and '+1' or '-1' if there's a secondary channel above or below the primary
-			if (ap.information_elements().vht_operations.supported) {
+			if (ap.information_elements().vht_operations.supported()) {
 				const Channel channel = ap.channel();
 				auto channel_string = QString::number(channel.number());
 				if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {

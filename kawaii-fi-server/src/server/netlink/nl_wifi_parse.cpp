@@ -23,7 +23,6 @@ namespace {
 	const unsigned int ds_params_data_length = 1;
 	const unsigned int ht_capability_data_length = 26;
 	const unsigned int vht_capability_data_length = 12;
-	const unsigned int vht_operation_data_length = 5;
 
 	const std::uint8_t supported_rate_mask = 0x7f; // 0111 1111
 	const std::uint8_t basic_rate_mask = 0x80;     // 1000 0000
@@ -104,28 +103,7 @@ void KawaiiFi::parse_information_elements(nlattr *ies_attr, InformationElements 
 			ies.vht_capabilities.supported = true;
 			break;
 		case WLAN_EID_VHT_OPERATION:
-			if (element_data_length != vht_operation_data_length) {
-				break;
-			}
-			ies.vht_operations.supported = true;
-			switch (ie_data_bytes[0]) {
-			case 0:
-				ies.vht_operations.channel_width = VhtChannelWidth::TwentyOrFortyMhz;
-				break;
-			case 1:
-				ies.vht_operations.channel_width = VhtChannelWidth::EightyMhz;
-				break;
-			case 2:
-				ies.vht_operations.channel_width = VhtChannelWidth::OneSixtyMhz;
-				break;
-			case 3:
-				ies.vht_operations.channel_width = VhtChannelWidth::EightyPlusEightyMhz;
-				break;
-			}
-			ies.vht_operations.channel_center_segment_zero =
-			        static_cast<unsigned char>(ie_data_bytes[1]);
-			ies.vht_operations.channel_center_segment_one =
-			        static_cast<unsigned char>(ie_data_bytes[2]);
+			ies.vht_operations.parse_ie(ie_data_bytes);
 			break;
 		}
 
