@@ -21,7 +21,6 @@ struct nlattr;
 namespace {
 	const unsigned int max_ssid_data_length = 32;
 	const unsigned int ds_params_data_length = 1;
-	const unsigned int ht_capability_data_length = 26;
 
 	const std::uint8_t supported_rate_mask = 0x7f; // 0111 1111
 	const std::uint8_t basic_rate_mask = 0x80;     // 1000 0000
@@ -87,10 +86,7 @@ void KawaiiFi::parse_information_elements(nlattr *ies_attr, InformationElements 
 			ies.channel = static_cast<unsigned char>(ie_data_bytes[0]);
 			break;
 		case WLAN_EID_HT_CAPABILITY:
-			if (element_data_length != ht_capability_data_length) {
-				break;
-			}
-			ies.ht_capabilities.supported = true;
+			ies.ht_capabilities.parse_ie(ie_data_bytes);
 			break;
 		case WLAN_EID_HT_OPERATION:
 			ies.ht_operations.parse_ie(ie_data_bytes);
