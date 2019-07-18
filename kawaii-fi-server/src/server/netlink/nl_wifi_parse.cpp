@@ -22,7 +22,6 @@ namespace {
 	const unsigned int max_ssid_data_length = 32;
 	const unsigned int ds_params_data_length = 1;
 	const unsigned int ht_capability_data_length = 26;
-	const unsigned int vht_capability_data_length = 12;
 
 	const std::uint8_t supported_rate_mask = 0x7f; // 0111 1111
 	const std::uint8_t basic_rate_mask = 0x80;     // 1000 0000
@@ -97,10 +96,7 @@ void KawaiiFi::parse_information_elements(nlattr *ies_attr, InformationElements 
 			ies.ht_operations.parse_ie(ie_data_bytes);
 			break;
 		case WLAN_EID_VHT_CAPABILITY:
-			if (element_data_length != vht_capability_data_length) {
-				break;
-			}
-			ies.vht_capabilities.supported = true;
+			ies.vht_capabilities.parse_ie(ie_data_bytes);
 			break;
 		case WLAN_EID_VHT_OPERATION:
 			ies.vht_operations.parse_ie(ie_data_bytes);

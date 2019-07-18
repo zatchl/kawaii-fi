@@ -121,7 +121,7 @@ namespace {
 			if (ap.information_elements().ht_capabilities.supported) {
 				ap.protocols().append(Protocol::N);
 			}
-			if (ap.information_elements().vht_capabilities.supported) {
+			if (ap.information_elements().vht_capabilities.supported()) {
 				ap.protocols().append(Protocol::AC);
 			}
 		}
