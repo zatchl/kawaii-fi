@@ -135,10 +135,6 @@ void MainWindow::set_up_server_interface()
 
 void MainWindow::scan()
 {
-	if (!server_interface_->isValid()) {
-		return;
-	}
-
 	ui_->statusBar->showMessage("Starting new scan", status_message_timeout_ms);
 	server_interface_->trigger_wifi_scan(wireless_interface_combo_box_->currentText());
 }
