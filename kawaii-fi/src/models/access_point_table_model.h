@@ -21,6 +21,7 @@ namespace KawaiiFi {
 
 	private:
 		QVector<AccessPoint> access_points_;
+		QHash<QString, QColor> access_point_colors_;
 	};
 } // namespace KawaiiFi
 

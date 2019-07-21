@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QModelIndex>
+#include <QVector>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/channel.h>
 #include <libkawaii-fi/ht_operations.h>
@@ -69,6 +70,19 @@ namespace {
 		}
 		return protocol_string;
 	}
+
+	const QVector<QColor> colors = {
+	        QColor("#bf616a"), QColor("#d08770"), QColor("#a3be8c"), QColor("#b48ead"),
+	        QColor("#5e81ac"), QColor("#ebcb8b"), QColor("#4c566a"), QColor("#8fbcbb"),
+	        QColor("#de356a"), QColor("#216583"), QColor("#ffb961"), QColor("#c8dad3"),
+	        QColor("#4b3f72"), QColor("#697175"), QColor("#a8dadc"), QColor("#e55934"),
+	        QColor("#f2b5d4"), QColor("#32936f"), QColor("#bfef45"), QColor("#42d4f4"),
+	        QColor("#e4b660"), QColor("#1d6a96"), QColor("#9bcfb8"), QColor("#bc5f6a"),
+	        QColor("#504e63"), QColor("#9a1b27"), QColor("#6b799e"), QColor("#0a5b54"),
+	        QColor("#d9cfe7"), QColor("#ffa289"), QColor("#706fab"), QColor("#9d1e31"),
+	        QColor("#7a2d59"), QColor("#37419a"), QColor("#eb9772"), QColor("#695d85"),
+	        QColor("#a6c2ce")};
+	int color_index = 0;
 } // namespace
 
 AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent) {}
@@ -77,6 +91,15 @@ void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &acc
 {
 	emit layoutAboutToBeChanged();
 	access_points_ = access_points;
+	for (const auto &ap : access_points_) {
+		if (access_point_colors_.contains(ap.bssid())) {
+			continue;
+		}
+		access_point_colors_[ap.bssid()] = colors[color_index++];
+		if (color_index >= colors.size()) {
+			color_index = 0;
+		}
+	}
 	emit layoutChanged();
 }
 
@@ -159,9 +182,12 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 	case Qt::DecorationRole:
 		switch (static_cast<ApColumn>(index.column())) {
 		case ApColumn::SSID:
-			return QColor("#" + QString(ap.bssid()).remove(':'));
+			if (access_point_colors_.contains(ap.bssid())) {
+				return access_point_colors_[ap.bssid()];
+			}
+			break;
 		default:
-			return QVariant();
+			break;
 		}
 	}
 
