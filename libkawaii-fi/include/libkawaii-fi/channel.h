@@ -1,6 +1,7 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
+#include <QString>
 #include <QVector>
 
 enum class WifiBand {
@@ -60,5 +61,7 @@ inline const QVector<Channel> eighty_mhz_channels = {Channel(5170, 5250), Channe
                                                      Channel(5650, 5730), Channel(5735, 5815)};
 
 inline const QVector<Channel> one_sixty_mhz_channels = {Channel(5170, 5330), Channel(5490, 5650)};
+
+QString channel_width_to_string(ChannelWidth channel_width);
 
 #endif // CHANNEL_H

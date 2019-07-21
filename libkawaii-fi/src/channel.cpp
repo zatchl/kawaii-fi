@@ -2,6 +2,8 @@
 
 #include "libkawaii-fi/util.h"
 
+#include <QString>
+
 namespace {
 	const unsigned int two_point_four_ghz_min = 2400;
 	const unsigned int two_point_four_ghz_max = 2500;
@@ -115,4 +117,24 @@ ChannelWidth Channel::width() const
 		return ChannelWidth::OneSixtyMhz;
 	}
 	return ChannelWidth::Other;
+}
+
+QString channel_width_to_string(ChannelWidth channel_width)
+{
+	switch (channel_width) {
+	case ChannelWidth::TwentyMhz:
+		return "20 MHz";
+	case ChannelWidth::TwentyTwoMhz:
+		return "22 MHz";
+	case ChannelWidth::FortyMhz:
+		return "40 MHz";
+	case ChannelWidth::EightyMhz:
+		return "80 MHz";
+	case ChannelWidth::EightyPlusEightyMhz:
+		return "80+80 MHz";
+	case ChannelWidth::OneSixtyMhz:
+		return "160 MHz";
+	default:
+		return QString();
+	}
 }

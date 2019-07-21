@@ -150,23 +150,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 			}
 			return ap.information_elements().channel;
 		case ApColumn::ChannelWidth:
-			switch (ap.channel_width()) {
-			case ChannelWidth::TwentyMhz:
-				return "20 MHz";
-			case ChannelWidth::TwentyTwoMhz:
-				return "22 MHz";
-			case ChannelWidth::FortyMhz:
-				return "40 MHz";
-			case ChannelWidth::EightyMhz:
-				return "80 MHz";
-			case ChannelWidth::OneSixtyMhz:
-				return "160 MHz";
-			case ChannelWidth::EightyPlusEightyMhz:
-				return "80+80 MHz";
-			case ChannelWidth::Other:
-				return QVariant();
-			}
-			break;
+			return channel_width_to_string(ap.channel_width());
 		case ApColumn::SignalStrength:
 			return QString("%1 dBm").arg(ap.signal_strength_dbm());
 		case ApColumn::Protocol:
