@@ -19,11 +19,9 @@
 #include <QTableView>
 #include <QToolBar>
 #include <QVector>
+#include <QWidget>
 #include <QtGlobal>
 #include <libkawaii-fi/access_point.h>
-#include <libkawaii-fi/channel.h>
-
-class QWidget;
 
 namespace {
 	const QMap<QString, int> scan_interval_map = {{QT_TR_NOOP("10 seconds"), 10},
@@ -111,7 +109,9 @@ void MainWindow::create_toolbar()
 
 void MainWindow::create_charts()
 {
+	two_point_four_ghz_chart_->set_model(ap_proxy_model_);
 	ui_->two_four_ghz_chart_view->setChart(two_point_four_ghz_chart_);
+	five_ghz_chart_->set_model(ap_proxy_model_);
 	ui_->five_ghz_chart_view->setChart(five_ghz_chart_);
 }
 
@@ -149,20 +149,6 @@ void MainWindow::handle_scan_completed(const QString &nic_name)
 
 	QVector<AccessPoint> aps = server_interface_->access_points(nic_name).value();
 	ap_table_model_->update_access_points(aps);
-	two_point_four_ghz_chart_->removeAllSeries();
-	five_ghz_chart_->removeAllSeries();
-	for (const auto &ap : aps) {
-		switch (ap.channel().band()) {
-		case WifiBand::TwoPointFourGhz:
-			two_point_four_ghz_chart_->add_access_point(ap);
-			break;
-		case WifiBand::FiveGhz:
-			five_ghz_chart_->add_access_point(ap);
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 void MainWindow::refresh_wireless_nics()

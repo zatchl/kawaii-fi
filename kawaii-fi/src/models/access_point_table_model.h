@@ -11,6 +11,20 @@
 class QColor;
 
 namespace KawaiiFi {
+	enum class ApColumn {
+		SSID,
+		BSSID,
+		Vendor,
+		Frequency,
+		Channel,
+		ChannelWidth,
+		SignalStrength,
+		Protocol,
+		Security,
+		BasicRates,
+		SupportedRates
+	};
+
 	class AccessPointTableModel : public QAbstractTableModel {
 		Q_OBJECT
 	public:

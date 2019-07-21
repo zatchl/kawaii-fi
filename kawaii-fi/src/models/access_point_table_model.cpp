@@ -12,19 +12,6 @@
 using namespace KawaiiFi;
 
 namespace {
-	enum class ApColumn {
-		SSID,
-		BSSID,
-		Vendor,
-		Frequency,
-		Channel,
-		ChannelWidth,
-		SignalStrength,
-		Protocol,
-		Security,
-		BasicRates,
-		SupportedRates
-	};
 	const int total_columns = static_cast<int>(ApColumn::SupportedRates) + 1;
 
 	QString supported_rates_string(const QVector<double> &supported_rates)
@@ -173,6 +160,20 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		default:
 			break;
 		}
+		break;
+	case Qt::UserRole:
+		switch (static_cast<ApColumn>(index.column())) {
+		case ApColumn::Channel: {
+			QVariant v;
+			v.setValue(ap.channel());
+			return v;
+		}
+		case ApColumn::SignalStrength:
+			return ap.signal_strength_dbm();
+		default:
+			break;
+		}
+		break;
 	}
 
 	return QVariant();
