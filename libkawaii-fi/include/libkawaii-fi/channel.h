@@ -1,6 +1,7 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
+#include <QMetaType>
 #include <QString>
 #include <QVector>
 
@@ -49,6 +50,7 @@ private:
 	unsigned int start_freq_two_ = 0;
 	unsigned int end_freq_two_ = 0;
 };
+Q_DECLARE_METATYPE(Channel)
 
 inline const QVector<Channel> forty_mhz_channels = {
         Channel(5150, 5190), Channel(5170, 5210), Channel(5210, 5250), Channel(5250, 5290),
