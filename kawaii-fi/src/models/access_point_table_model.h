@@ -8,6 +8,8 @@
 #include <QtCore>
 #include <libkawaii-fi/access_point.h>
 
+class QColor;
+
 namespace KawaiiFi {
 	class AccessPointTableModel : public QAbstractTableModel {
 		Q_OBJECT
