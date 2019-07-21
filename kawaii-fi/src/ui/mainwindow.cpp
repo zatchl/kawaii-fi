@@ -6,6 +6,7 @@
 #include "ui_mainwindow.h"
 
 #include <QAbstractButton>
+#include <QAbstractItemView>
 #include <QChartView>
 #include <QDBusMetaType>
 #include <QDBusPendingReply>
@@ -119,6 +120,7 @@ void MainWindow::create_table()
 	ap_proxy_model_->setSourceModel(ap_table_model_);
 	ui_->apTableView->setModel(ap_proxy_model_);
 	ui_->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui_->apTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
 void MainWindow::set_up_server_interface()
