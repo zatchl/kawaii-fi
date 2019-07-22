@@ -105,9 +105,7 @@ void AccessPointChart::update_access_points()
 	for (int i = 0; i < ap_model_->rowCount(); ++i) {
 		QVariant bssid =
 		        ap_model_->data(ap_model_->index(i, static_cast<int>(KawaiiFi::ApColumn::BSSID)));
-		QVariant color =
-		        ap_model_->data(ap_model_->index(i, static_cast<int>(KawaiiFi::ApColumn::SSID)),
-		                        Qt::DecorationRole);
+		QVariant color = ap_model_->headerData(i, Qt::Orientation::Vertical, Qt::BackgroundRole);
 		QVariant channel = ap_model_->data(
 		        ap_model_->index(i, static_cast<int>(KawaiiFi::ApColumn::Channel)), Qt::UserRole);
 		QVariant signal_dbm = ap_model_->data(

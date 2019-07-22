@@ -150,17 +150,6 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 			return supported_rates_string(ap.information_elements().supported_rates);
 		}
 		break;
-	case Qt::DecorationRole:
-		switch (static_cast<ApColumn>(index.column())) {
-		case ApColumn::SSID:
-			if (access_point_colors_.contains(ap.bssid())) {
-				return access_point_colors_[ap.bssid()];
-			}
-			break;
-		default:
-			break;
-		}
-		break;
 	case Qt::UserRole:
 		switch (static_cast<ApColumn>(index.column())) {
 		case ApColumn::Channel: {
@@ -181,11 +170,8 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 
 QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (role != Qt::DisplayRole) {
-		return QVariant();
-	}
-
-	if (orientation == Qt::Orientation::Horizontal) {
+	// The horizontal header contains the column names
+	if (orientation == Qt::Orientation::Horizontal && role == Qt::DisplayRole) {
 		switch (static_cast<ApColumn>(section)) {
 		case ApColumn::SSID:
 			return tr("SSID");
@@ -210,6 +196,12 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 		case ApColumn::SupportedRates:
 			return tr("Supported Rates");
 		}
+	}
+
+	// The vertical header contains the color associated with each access point
+	if (orientation == Qt::Orientation::Vertical && role == Qt::BackgroundRole &&
+	    section < access_points_.size()) {
+		return access_point_colors_[access_points_[section].bssid()];
 	}
 
 	return QVariant();
