@@ -1,11 +1,14 @@
 #include "nl_wifi_scan.h"
 
 #include "libkawaii-fi/ht_capabilities.h"
-#include "libkawaii-fi/information_elements.h"
+#include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/supported_rates.h"
 #include "libkawaii-fi/vht_capabilities.h"
 #include "nl_wifi_command.h"
 #include "nl_wifi_parse.h"
 
+#include <QHashNode>
+#include <QSet>
 #include <QVector>
 #include <array>
 #include <chrono>
@@ -95,33 +98,38 @@ namespace {
 		static const std::array<double, 8> g_data_rates = {6, 9, 12, 18, 24, 36, 48, 54};
 		static const std::array<double, 3> a_data_rates = {6, 12, 24};
 
+		QSet<double> supported_rates =
+		        SupportedRates(ap.information_elements()[WLAN_EID_SUPP_RATES]).rates();
+		supported_rates.unite(
+		        SupportedRates(ap.information_elements()[WLAN_EID_EXT_SUPP_RATES]).rates());
+
 		if (ap.frequency() < max_two_point_four_ghz_freq_mhz) {
 			for (const auto rate : b_data_rates) {
-				if (ap.information_elements().supported_rates.contains(rate)) {
+				if (supported_rates.contains(rate)) {
 					ap.protocols().append(Protocol::B);
 					break;
 				}
 			}
 			for (const auto rate : g_data_rates) {
-				if (ap.information_elements().supported_rates.contains(rate)) {
+				if (supported_rates.contains(rate)) {
 					ap.protocols().append(Protocol::G);
 					break;
 				}
 			}
-			if (ap.information_elements().ht_capabilities.supported()) {
+			if (ap.information_elements().contains(WLAN_EID_HT_CAPABILITY)) {
 				ap.protocols().append(Protocol::N);
 			}
 		} else {
 			for (const auto rate : a_data_rates) {
-				if (ap.information_elements().supported_rates.contains(rate)) {
+				if (supported_rates.contains(rate)) {
 					ap.protocols().append(Protocol::A);
 					break;
 				}
 			}
-			if (ap.information_elements().ht_capabilities.supported()) {
+			if (ap.information_elements().contains(WLAN_EID_HT_CAPABILITY)) {
 				ap.protocols().append(Protocol::N);
 			}
-			if (ap.information_elements().vht_capabilities.supported()) {
+			if (ap.information_elements().contains(WLAN_EID_VHT_CAPABILITY)) {
 				ap.protocols().append(Protocol::AC);
 			}
 		}

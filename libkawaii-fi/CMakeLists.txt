@@ -13,21 +13,29 @@ find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
-	"include/${PROJECT_NAME}/information_elements.h"
+	"include/${PROJECT_NAME}/information_element.h"
+	"include/${PROJECT_NAME}/ssid.h"
+	"include/${PROJECT_NAME}/ds_parameter.h"
+	"include/${PROJECT_NAME}/supported_rates.h"
 	"include/${PROJECT_NAME}/ht_capabilities.h"
 	"include/${PROJECT_NAME}/ht_operations.h"
 	"include/${PROJECT_NAME}/vht_capabilities.h"
 	"include/${PROJECT_NAME}/vht_operations.h"
+	"include/${PROJECT_NAME}/robust_security_network.h"
 	"include/${PROJECT_NAME}/channel.h"
 	"include/${PROJECT_NAME}/kawaiifi.h"
 	"include/${PROJECT_NAME}/util.h"
 
 	"src/access_point.cpp"
-	"src/information_elements.cpp"
+	"src/information_element.cpp"
+	"src/ssid.cpp"
+	"src/ds_parameter.cpp"
+	"src/supported_rates.cpp"
 	"src/ht_capabilities.cpp"
 	"src/ht_operations.cpp"
 	"src/vht_capabilities.cpp"
 	"src/vht_operations.cpp"
+	"src/robust_security_network.cpp"
 	"src/channel.cpp"
 )
 

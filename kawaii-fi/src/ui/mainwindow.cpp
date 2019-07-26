@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QtGlobal>
 #include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/information_element.h>
 
 namespace {
 	const QMap<QString, int> scan_interval_map = {{QT_TR_NOOP("10 seconds"), 10},
@@ -128,6 +129,7 @@ void MainWindow::set_up_server_interface()
 	// Register the AccessPoint type with the Qt D-Bus Type System and the Qt meta-type system
 	qDBusRegisterMetaType<AccessPoint>();
 	qDBusRegisterMetaType<QVector<AccessPoint>>();
+	qDBusRegisterMetaType<InformationElement>();
 
 	// When a Wi-Fi scan has completed, the server emits a signal
 	// Connect that signal to the handle_scan_completed function

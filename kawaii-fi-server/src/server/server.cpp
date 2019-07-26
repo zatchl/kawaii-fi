@@ -16,6 +16,7 @@
 #include <cstring>
 #include <ifaddrs.h>
 #include <libkawaii-fi/access_point.h>
+#include <libkawaii-fi/information_element.h>
 #include <libkawaii-fi/kawaiifi.h>
 #include <linux/if.h>
 #include <linux/wireless.h>
@@ -33,6 +34,7 @@ KawaiiFi::Server::Server(QObject *parent)
 	qRegisterMetaType<AccessPoint>("AccessPoint");
 	qDBusRegisterMetaType<AccessPoint>();
 	qDBusRegisterMetaType<QVector<AccessPoint>>();
+	qDBusRegisterMetaType<InformationElement>();
 
 	new KawaiiFiServerAdaptor(this);
 }

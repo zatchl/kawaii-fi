@@ -2,7 +2,7 @@
 
 #include "libkawaii-fi/channel.h"
 #include "libkawaii-fi/ht_operations.h"
-#include "libkawaii-fi/information_elements.h"
+#include "libkawaii-fi/information_element.h"
 #include "libkawaii-fi/vht_operations.h"
 
 const QString &AccessPoint::bssid() const { return bssid_; }
@@ -25,17 +25,21 @@ const QVector<Protocol> &AccessPoint::protocols() const { return protocols_; }
 
 QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
 
-const InformationElements &AccessPoint::information_elements() const
+const QHash<unsigned int, InformationElement> &AccessPoint::information_elements() const
 {
 	return information_elements_;
 }
 
-InformationElements &AccessPoint::information_elements() { return information_elements_; }
+QHash<unsigned int, InformationElement> &AccessPoint::information_elements()
+{
+	return information_elements_;
+}
 
 ChannelWidth AccessPoint::channel_width() const
 {
-	if (information_elements_.vht_operations.supported()) {
-		switch (information_elements_.vht_operations.channel_width()) {
+	if (information_elements_.contains(WLAN_EID_VHT_OPERATION)) {
+		const VhtOperations &vht_operations = information_elements_[WLAN_EID_VHT_OPERATION];
+		switch (vht_operations.channel_width()) {
 		case VhtChannelWidth::TwentyOrFortyMhz:
 			break;
 		case VhtChannelWidth::EightyMhz:
@@ -46,10 +50,12 @@ ChannelWidth AccessPoint::channel_width() const
 			return ChannelWidth::EightyPlusEightyMhz;
 		}
 	}
-	if (information_elements_.ht_operations.supported() &&
-	    information_elements_.ht_operations.secondary_channel_offset() !=
-	            SecondaryChannelOffset::NoSecondaryChannel) {
-		return ChannelWidth::FortyMhz;
+	if (information_elements_.contains(WLAN_EID_HT_OPERATION)) {
+		const HtOperations &ht_operations = information_elements_[WLAN_EID_HT_OPERATION];
+		if (ht_operations.secondary_channel_offset() !=
+		    SecondaryChannelOffset::NoSecondaryChannel) {
+			return ChannelWidth::FortyMhz;
+		}
 	}
 	return ChannelWidth::TwentyMhz;
 }
@@ -85,11 +91,13 @@ Channel AccessPoint::channel() const
 	case ChannelWidth::EightyPlusEightyMhz: {
 		Channel first_eighty_mhz_channel;
 		Channel second_eighty_mhz_channel;
+		if (!information_elements_.contains(WLAN_EID_VHT_OPERATION)) {
+			break;
+		}
+		const VhtOperations &vht_operations = information_elements_[WLAN_EID_VHT_OPERATION];
 		for (const auto &channel : eighty_mhz_channels) {
-			if (channel.contains(
-			            information_elements_.vht_operations.channel_center_segment_zero()) ||
-			    channel.contains(
-			            information_elements_.vht_operations.channel_center_segment_one())) {
+			if (channel.contains(vht_operations.channel_center_segment_zero()) ||
+			    channel.contains(vht_operations.channel_center_segment_one())) {
 				if (first_eighty_mhz_channel.center_mhz() == 0) {
 					first_eighty_mhz_channel = channel;
 				} else {
@@ -124,11 +132,6 @@ void AccessPoint::set_age_ms(unsigned int age_ms) { age_ms_ = age_ms; }
 
 void AccessPoint::set_protocols(const QVector<Protocol> &protocols) { protocols_ = protocols; }
 
-void AccessPoint::set_information_elements(const InformationElements &information_elements)
-{
-	information_elements_ = information_elements;
-}
-
 QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
 {
 	QVector<int> protocols;
@@ -153,7 +156,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap)
 	for (int i : qdbus_cast<QVector<int>>(argument)) {
 		ap.protocols().append(static_cast<Protocol>(i));
 	}
-	ap.set_information_elements(qdbus_cast<InformationElements>(argument));
+	argument >> ap.information_elements();
 	argument.endStructure();
 	return argument;
 }

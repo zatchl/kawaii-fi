@@ -2,9 +2,10 @@
 #define ACCESS_POINT_H
 
 #include "channel.h"
-#include "information_elements.h"
+#include "information_element.h"
 
 #include <QDBusArgument>
+#include <QHashNode>
 #include <QMetaType>
 #include <QString>
 #include <QVector>
@@ -23,8 +24,8 @@ public:
 	[[nodiscard]] unsigned int age_ms() const;
 	[[nodiscard]] const QVector<Protocol> &protocols() const;
 	[[nodiscard]] QVector<Protocol> &protocols();
-	[[nodiscard]] const InformationElements &information_elements() const;
-	[[nodiscard]] InformationElements &information_elements();
+	[[nodiscard]] const QHash<unsigned int, InformationElement> &information_elements() const;
+	[[nodiscard]] QHash<unsigned int, InformationElement> &information_elements();
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
 
@@ -34,7 +35,6 @@ public:
 	void set_frequency(unsigned int frequency);
 	void set_age_ms(unsigned int age_ms);
 	void set_protocols(const QVector<Protocol> &protocols);
-	void set_information_elements(const InformationElements &information_elements);
 
 private:
 	QString bssid_;
@@ -43,7 +43,7 @@ private:
 	unsigned int frequency_ = 0;
 	unsigned int age_ms_ = 0;
 	QVector<Protocol> protocols_;
-	InformationElements information_elements_;
+	QHash<unsigned int, InformationElement> information_elements_;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 
