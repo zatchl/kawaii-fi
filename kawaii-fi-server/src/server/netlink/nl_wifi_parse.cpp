@@ -58,7 +58,7 @@ void KawaiiFi::parse_information_elements(nlattr *ies_attr,
 	// The total length of each element
 	std::string_view::size_type element_length = element_data_length + 2;
 
-	while (element_start + element_length < ies_bytes.size()) {
+	while (element_start + element_length <= ies_bytes.size()) {
 		// Element ID + Element Data Length + Element Data
 		const std::string_view ie_bytes = ies_bytes.substr(element_start, element_length);
 		// Only Element Data
