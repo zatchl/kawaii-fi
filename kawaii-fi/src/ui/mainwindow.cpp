@@ -121,6 +121,7 @@ void MainWindow::create_table()
 	ap_proxy_model_->setSourceModel(ap_table_model_);
 	ui_->apTableView->setModel(ap_proxy_model_);
 	ui_->apTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	ui_->apTableView->horizontalHeader()->setHighlightSections(false);
 	ui_->apTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
