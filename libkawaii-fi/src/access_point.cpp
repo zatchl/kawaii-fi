@@ -4,7 +4,14 @@
 #include "libkawaii-fi/channel.h"
 #include "libkawaii-fi/ht_operations.h"
 #include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/robust_security_network.h"
+#include "libkawaii-fi/vendor_specific.h"
 #include "libkawaii-fi/vht_operations.h"
+#include "libkawaii-fi/wpa.h"
+
+#include <QList>
+#include <algorithm>
+#include <array>
 
 const QString &AccessPoint::bssid() const { return bssid_; }
 
@@ -38,6 +45,18 @@ const QMultiHash<unsigned int, InformationElement> &AccessPoint::information_ele
 QMultiHash<unsigned int, InformationElement> &AccessPoint::information_elements()
 {
 	return information_elements_;
+}
+
+bool AccessPoint::contains_vendor_element(const std::array<unsigned char, 3> &oui,
+                                          unsigned int type) const
+{
+	for (auto &ie : information_elements_.values(WLAN_EID_VENDOR_SPECIFIC)) {
+		const VendorSpecific v_ie = VendorSpecific(ie);
+		if (v_ie.oui() == oui && v_ie.type() == type) {
+			return true;
+		}
+	}
+	return false;
 }
 
 ChannelWidth AccessPoint::channel_width() const
@@ -117,6 +136,31 @@ Channel AccessPoint::channel() const
 		break;
 	}
 	return Channel();
+}
+
+QVector<Security> AccessPoint::security() const
+{
+	if (!capabilities_.privacy()) {
+		return {Security::None};
+	}
+
+	const bool contains_wpa_ie = contains_vendor_element(WPA_OUI, WPA_VENDOR_TYPE);
+
+	if (!information_elements_.contains(WLAN_EID_RSN) && !contains_wpa_ie) {
+		return {Security::WEP};
+	}
+
+	QVector<Security> security;
+
+	if (contains_wpa_ie) {
+		security.append(Security::WPA);
+	}
+
+	if (information_elements_.contains(WLAN_EID_RSN)) {
+		security.append(Security::WPA2);
+	}
+
+	return security;
 }
 
 void AccessPoint::set_bssid(const QString &bssid) { bssid_ = bssid; }

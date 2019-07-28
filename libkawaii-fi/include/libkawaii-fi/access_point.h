@@ -10,10 +10,13 @@
 #include <QMetaType>
 #include <QString>
 #include <QVector>
+#include <array>
 
 enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
 enum class Protocol { B, A, G, N, AC, AX };
+
+enum class Security { None, WEP, WPA, WPA2, WPA3 };
 
 class AccessPoint {
 public:
@@ -29,8 +32,11 @@ public:
 	[[nodiscard]] Capabilities &capabilites();
 	[[nodiscard]] const QMultiHash<unsigned int, InformationElement> &information_elements() const;
 	[[nodiscard]] QMultiHash<unsigned int, InformationElement> &information_elements();
+	[[nodiscard]] bool contains_vendor_element(const std::array<unsigned char, 3> &oui,
+	                                           unsigned int type) const;
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
+	[[nodiscard]] QVector<Security> security() const;
 
 	void set_bssid(const QString &bssid);
 	void set_connection_status(ConnectionStatus connection_status);

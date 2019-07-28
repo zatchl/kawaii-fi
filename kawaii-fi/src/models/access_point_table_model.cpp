@@ -63,6 +63,34 @@ namespace {
 		return protocol_string;
 	}
 
+	QString security_string(const QVector<Security> &security)
+	{
+		QString security_string;
+		for (Security s : security) {
+			switch (s) {
+			case Security::None:
+				security_string.append("None/");
+				break;
+			case Security::WEP:
+				security_string.append("WEP/");
+				break;
+			case Security::WPA:
+				security_string.append("WPA/");
+				break;
+			case Security::WPA2:
+				security_string.append("WPA2/");
+				break;
+			case Security::WPA3:
+				security_string.append("WPA3/");
+				break;
+			}
+		}
+		if (security_string.endsWith("/")) {
+			security_string.chop(1);
+		}
+		return security_string;
+	}
+
 	const QVector<QColor> colors = {
 	        QColor("#bf616a"), QColor("#d08770"), QColor("#a3be8c"), QColor("#b48ead"),
 	        QColor("#5e81ac"), QColor("#ebcb8b"), QColor("#4c566a"), QColor("#8fbcbb"),
@@ -158,7 +186,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		case ApColumn::Protocol:
 			return protocols_string(ap.protocols());
 		case ApColumn::Security:
-			return "";
+			return security_string(ap.security());
 		case ApColumn::BasicRates: {
 			auto supp_rates = SupportedRates(ap.information_elements().value(WLAN_EID_SUPP_RATES))
 			                          .basic_rates();

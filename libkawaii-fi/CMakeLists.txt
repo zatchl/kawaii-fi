@@ -23,6 +23,8 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/vht_capabilities.h"
 	"include/${PROJECT_NAME}/vht_operations.h"
 	"include/${PROJECT_NAME}/robust_security_network.h"
+	"include/${PROJECT_NAME}/vendor_specific.h"
+	"include/${PROJECT_NAME}/wpa.h"
 	"include/${PROJECT_NAME}/channel.h"
 	"include/${PROJECT_NAME}/kawaiifi.h"
 	"include/${PROJECT_NAME}/util.h"
@@ -38,6 +40,8 @@ add_library(${PROJECT_NAME} SHARED
 	"src/vht_capabilities.cpp"
 	"src/vht_operations.cpp"
 	"src/robust_security_network.cpp"
+	"src/vendor_specific.cpp"
+	"src/wpa.cpp"
 	"src/channel.cpp"
 )
 
