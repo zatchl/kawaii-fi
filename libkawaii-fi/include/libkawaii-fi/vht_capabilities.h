@@ -30,7 +30,6 @@ public:
 	VhtCapabilities() = default;
 	VhtCapabilities(const InformationElement &ie);
 
-	[[nodiscard]] bool supported() const;
 	[[nodiscard]] unsigned int max_mpdu_length() const;
 	[[nodiscard]] VhtSupportedChannelWidth supported_channel_width() const;
 	[[nodiscard]] bool rx_ldpc() const;

@@ -20,7 +20,6 @@ public:
 	HtCapabilities() = default;
 	HtCapabilities(const InformationElement &ie);
 
-	[[nodiscard]] bool supported() const;
 	[[nodiscard]] bool ldpc_coding_capability() const;
 	[[nodiscard]] HtSupportedChannelWidth supported_channel_width_set() const;
 	[[nodiscard]] SmPowerSave sm_power_save() const;

@@ -8,8 +8,6 @@ namespace {
 
 VhtCapabilities::VhtCapabilities(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 
-bool VhtCapabilities::supported() const { return false; }
-
 unsigned int VhtCapabilities::max_mpdu_length() const { return 0; }
 
 VhtSupportedChannelWidth VhtCapabilities::supported_channel_width() const

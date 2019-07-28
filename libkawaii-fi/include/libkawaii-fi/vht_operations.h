@@ -13,7 +13,6 @@ public:
 	VhtOperations() = default;
 	VhtOperations(const InformationElement &ie);
 
-	[[nodiscard]] bool supported() const;
 	[[nodiscard]] VhtChannelWidth channel_width() const;
 	[[nodiscard]] unsigned int channel_center_segment_zero() const;
 	[[nodiscard]] unsigned int channel_center_segment_one() const;
