@@ -1,5 +1,6 @@
 #include "libkawaii-fi/access_point.h"
 
+#include "libkawaii-fi/capabilities.h"
 #include "libkawaii-fi/channel.h"
 #include "libkawaii-fi/ht_operations.h"
 #include "libkawaii-fi/information_element.h"
@@ -26,6 +27,9 @@ const QVector<Protocol> &AccessPoint::protocols() const { return protocols_; }
 QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
 
 const QHash<unsigned int, InformationElement> &AccessPoint::information_elements() const
+const Capabilities &AccessPoint::capabilities() const { return capabilities_; }
+
+Capabilities &AccessPoint::capabilites() { return capabilities_; }
 {
 	return information_elements_;
 }
@@ -130,6 +134,11 @@ void AccessPoint::set_frequency(unsigned int frequency) { frequency_ = frequency
 
 void AccessPoint::set_age_ms(unsigned int age_ms) { age_ms_ = age_ms; }
 
+void AccessPoint::set_capabilities(const char *bytes, int size)
+{
+	capabilities_ = Capabilities(bytes, size);
+}
+
 void AccessPoint::set_protocols(const QVector<Protocol> &protocols) { protocols_ = protocols; }
 
 QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
@@ -140,7 +149,8 @@ QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
 	}
 	argument.beginStructure();
 	argument << ap.bssid() << static_cast<int>(ap.connection_status()) << ap.signal_strength_mbm()
-	         << ap.frequency() << ap.age_ms() << protocols << ap.information_elements();
+	         << ap.frequency() << ap.age_ms() << protocols << ap.capabilities()
+	         << ap.information_elements();
 	argument.endStructure();
 	return argument;
 }
@@ -156,6 +166,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap)
 	for (int i : qdbus_cast<QVector<int>>(argument)) {
 		ap.protocols().append(static_cast<Protocol>(i));
 	}
+	argument >> ap.capabilites();
 	argument >> ap.information_elements();
 	argument.endStructure();
 	return argument;

@@ -89,6 +89,11 @@ namespace {
 			ap.set_age_ms(KawaiiFi::parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]));
 		}
 
+		if (bss[NL80211_BSS_CAPABILITY]) {
+			ap.set_capabilities(nla_get_string(bss[NL80211_BSS_CAPABILITY]),
+			                    nla_len(bss[NL80211_BSS_CAPABILITY]));
+		}
+
 		if (bss[NL80211_BSS_INFORMATION_ELEMENTS]) {
 			KawaiiFi::parse_information_elements(bss[NL80211_BSS_INFORMATION_ELEMENTS],
 			                                     ap.information_elements());

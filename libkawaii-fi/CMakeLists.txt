@@ -13,6 +13,7 @@ find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
+	"include/${PROJECT_NAME}/capabilities.h"
 	"include/${PROJECT_NAME}/information_element.h"
 	"include/${PROJECT_NAME}/ssid.h"
 	"include/${PROJECT_NAME}/ds_parameter.h"
@@ -27,6 +28,7 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/util.h"
 
 	"src/access_point.cpp"
+	"src/capabilities.cpp"
 	"src/information_element.cpp"
 	"src/ssid.cpp"
 	"src/ds_parameter.cpp"

@@ -1,6 +1,7 @@
 #ifndef ACCESS_POINT_H
 #define ACCESS_POINT_H
 
+#include "capabilities.h"
 #include "channel.h"
 #include "information_element.h"
 
@@ -26,6 +27,8 @@ public:
 	[[nodiscard]] QVector<Protocol> &protocols();
 	[[nodiscard]] const QHash<unsigned int, InformationElement> &information_elements() const;
 	[[nodiscard]] QHash<unsigned int, InformationElement> &information_elements();
+	[[nodiscard]] const Capabilities &capabilities() const;
+	[[nodiscard]] Capabilities &capabilites();
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
 
@@ -34,6 +37,7 @@ public:
 	void set_signal_strength_mbm(int signal_strength_mbm);
 	void set_frequency(unsigned int frequency);
 	void set_age_ms(unsigned int age_ms);
+	void set_capabilities(const char *bytes, int size);
 	void set_protocols(const QVector<Protocol> &protocols);
 
 private:
@@ -44,6 +48,7 @@ private:
 	unsigned int age_ms_ = 0;
 	QVector<Protocol> protocols_;
 	QHash<unsigned int, InformationElement> information_elements_;
+	Capabilities capabilities_;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 
