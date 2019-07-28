@@ -25,10 +25,10 @@ public:
 	[[nodiscard]] unsigned int age_ms() const;
 	[[nodiscard]] const QVector<Protocol> &protocols() const;
 	[[nodiscard]] QVector<Protocol> &protocols();
-	[[nodiscard]] const QHash<unsigned int, InformationElement> &information_elements() const;
-	[[nodiscard]] QHash<unsigned int, InformationElement> &information_elements();
 	[[nodiscard]] const Capabilities &capabilities() const;
 	[[nodiscard]] Capabilities &capabilites();
+	[[nodiscard]] const QMultiHash<unsigned int, InformationElement> &information_elements() const;
+	[[nodiscard]] QMultiHash<unsigned int, InformationElement> &information_elements();
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
 
@@ -47,8 +47,8 @@ private:
 	unsigned int frequency_ = 0;
 	unsigned int age_ms_ = 0;
 	QVector<Protocol> protocols_;
-	QHash<unsigned int, InformationElement> information_elements_;
 	Capabilities capabilities_;
+	QMultiHash<unsigned int, InformationElement> information_elements_;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 

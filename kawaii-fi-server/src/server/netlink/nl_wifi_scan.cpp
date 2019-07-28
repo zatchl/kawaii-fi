@@ -1,7 +1,6 @@
 #include "nl_wifi_scan.h"
 
 #include "libkawaii-fi/ht_capabilities.h"
-#include "libkawaii-fi/information_element.h"
 #include "libkawaii-fi/supported_rates.h"
 #include "libkawaii-fi/vht_capabilities.h"
 #include "nl_wifi_command.h"
@@ -104,9 +103,9 @@ namespace {
 		static const std::array<double, 3> a_data_rates = {6, 12, 24};
 
 		QSet<double> supported_rates =
-		        SupportedRates(ap.information_elements()[WLAN_EID_SUPP_RATES]).rates();
+		        SupportedRates(ap.information_elements().value(WLAN_EID_SUPP_RATES)).rates();
 		supported_rates.unite(
-		        SupportedRates(ap.information_elements()[WLAN_EID_EXT_SUPP_RATES]).rates());
+		        SupportedRates(ap.information_elements().value(WLAN_EID_EXT_SUPP_RATES)).rates());
 
 		if (ap.frequency() < max_two_point_four_ghz_freq_mhz) {
 			for (const auto rate : b_data_rates) {

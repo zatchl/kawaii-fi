@@ -26,15 +26,16 @@ const QVector<Protocol> &AccessPoint::protocols() const { return protocols_; }
 
 QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
 
-const QHash<unsigned int, InformationElement> &AccessPoint::information_elements() const
 const Capabilities &AccessPoint::capabilities() const { return capabilities_; }
 
 Capabilities &AccessPoint::capabilites() { return capabilities_; }
+
+const QMultiHash<unsigned int, InformationElement> &AccessPoint::information_elements() const
 {
 	return information_elements_;
 }
 
-QHash<unsigned int, InformationElement> &AccessPoint::information_elements()
+QMultiHash<unsigned int, InformationElement> &AccessPoint::information_elements()
 {
 	return information_elements_;
 }
@@ -42,7 +43,7 @@ QHash<unsigned int, InformationElement> &AccessPoint::information_elements()
 ChannelWidth AccessPoint::channel_width() const
 {
 	if (information_elements_.contains(WLAN_EID_VHT_OPERATION)) {
-		const VhtOperations &vht_operations = information_elements_[WLAN_EID_VHT_OPERATION];
+		const VhtOperations &vht_operations = information_elements_.value(WLAN_EID_VHT_OPERATION);
 		switch (vht_operations.channel_width()) {
 		case VhtChannelWidth::TwentyOrFortyMhz:
 			break;
@@ -55,7 +56,7 @@ ChannelWidth AccessPoint::channel_width() const
 		}
 	}
 	if (information_elements_.contains(WLAN_EID_HT_OPERATION)) {
-		const HtOperations &ht_operations = information_elements_[WLAN_EID_HT_OPERATION];
+		const HtOperations &ht_operations = information_elements_.value(WLAN_EID_HT_OPERATION);
 		if (ht_operations.secondary_channel_offset() !=
 		    SecondaryChannelOffset::NoSecondaryChannel) {
 			return ChannelWidth::FortyMhz;
@@ -98,7 +99,7 @@ Channel AccessPoint::channel() const
 		if (!information_elements_.contains(WLAN_EID_VHT_OPERATION)) {
 			break;
 		}
-		const VhtOperations &vht_operations = information_elements_[WLAN_EID_VHT_OPERATION];
+		const VhtOperations &vht_operations = information_elements_.value(WLAN_EID_VHT_OPERATION);
 		for (const auto &channel : eighty_mhz_channels) {
 			if (channel.contains(vht_operations.channel_center_segment_zero()) ||
 			    channel.contains(vht_operations.channel_center_segment_one())) {

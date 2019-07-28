@@ -10,7 +10,6 @@
 #include <libkawaii-fi/channel.h>
 #include <libkawaii-fi/ds_parameter.h>
 #include <libkawaii-fi/ht_operations.h>
-#include <libkawaii-fi/information_element.h>
 #include <libkawaii-fi/ssid.h>
 #include <libkawaii-fi/supported_rates.h>
 #include <libkawaii-fi/vht_operations.h>
@@ -113,7 +112,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		switch (static_cast<ApColumn>(index.column())) {
 		case ApColumn::SSID:
 			if (ap.information_elements().contains(WLAN_EID_SSID)) {
-				Ssid ssid = ap.information_elements()[WLAN_EID_SSID];
+				Ssid ssid = ap.information_elements().value(WLAN_EID_SSID);
 				return ssid.bytes();
 			}
 			return QVariant();
@@ -136,19 +135,22 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 				}
 				return channel_string;
 			} else if (ap.information_elements().contains(WLAN_EID_HT_OPERATION)) {
-				switch (HtOperations(ap.information_elements()[WLAN_EID_HT_OPERATION])
+				switch (HtOperations(ap.information_elements().value(WLAN_EID_HT_OPERATION))
 				                .secondary_channel_offset()) {
 				case SecondaryChannelOffset::Above: // 40 MHz
 					return QString("%1+1").arg(
-					        DsParameter(ap.information_elements()[WLAN_EID_DS_PARAMS]).channel());
+					        DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS))
+					                .channel());
 				case SecondaryChannelOffset::Below: // 40 MHz
 					return QString("%1-1").arg(
-					        DsParameter(ap.information_elements()[WLAN_EID_DS_PARAMS]).channel());
+					        DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS))
+					                .channel());
 				case SecondaryChannelOffset::NoSecondaryChannel: // 20 MHz
-					return DsParameter(ap.information_elements()[WLAN_EID_DS_PARAMS]).channel();
+					return DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS))
+					        .channel();
 				}
 			}
-			return DsParameter(ap.information_elements()[WLAN_EID_DS_PARAMS]).channel();
+			return DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS)).channel();
 		case ApColumn::ChannelWidth:
 			return channel_width_to_string(ap.channel_width());
 		case ApColumn::SignalStrength:
@@ -158,19 +160,21 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		case ApColumn::Security:
 			return "";
 		case ApColumn::BasicRates: {
-			auto supp_rates =
-			        SupportedRates(ap.information_elements()[WLAN_EID_SUPP_RATES]).basic_rates();
-			supp_rates.unite(SupportedRates(ap.information_elements()[WLAN_EID_EXT_SUPP_RATES])
-			                         .basic_rates());
+			auto supp_rates = SupportedRates(ap.information_elements().value(WLAN_EID_SUPP_RATES))
+			                          .basic_rates();
+			supp_rates.unite(
+			        SupportedRates(ap.information_elements().value(WLAN_EID_EXT_SUPP_RATES))
+			                .basic_rates());
 			auto rate_list = supp_rates.toList();
 			std::sort(rate_list.begin(), rate_list.end());
 			return supported_rates_string(rate_list);
 		}
 		case ApColumn::SupportedRates: {
 			auto supp_rates =
-			        SupportedRates(ap.information_elements()[WLAN_EID_SUPP_RATES]).rates();
+			        SupportedRates(ap.information_elements().value(WLAN_EID_SUPP_RATES)).rates();
 			supp_rates.unite(
-			        SupportedRates(ap.information_elements()[WLAN_EID_EXT_SUPP_RATES]).rates());
+			        SupportedRates(ap.information_elements().value(WLAN_EID_EXT_SUPP_RATES))
+			                .rates());
 			auto rate_list = supp_rates.toList();
 			std::sort(rate_list.begin(), rate_list.end());
 			return supported_rates_string(rate_list);
