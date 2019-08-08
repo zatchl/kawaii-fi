@@ -30,7 +30,7 @@ AccessPointScanner::AccessPointScanner(QObject *parent) : QObject(parent)
 	// Register the AccessPoint and InformationElement types with the Qt D-Bus type system and the
 	// Qt meta type system
 	qDBusRegisterMetaType<AccessPoint>();
-	qDBusRegisterMetaType<QVector<AccessPoint>>();
+	qDBusRegisterMetaType<QHash<QString, AccessPoint>>();
 	qDBusRegisterMetaType<InformationElement>();
 
 	connect(server_, &org::kawaiifi::Server::wifi_scan_completed, [this](const QString &nic) {
@@ -59,7 +59,10 @@ void AccessPointScanner::scan(const QString &interface_name)
 	server_->trigger_wifi_scan(interface_name);
 }
 
-const QVector<AccessPoint> &AccessPointScanner::access_points() const { return access_points_; }
+const QHash<QString, AccessPoint> &AccessPointScanner::access_points() const
+{
+	return access_points_;
+}
 
 QHash<QString, QColor> AccessPointScanner::access_point_colors() const
 {

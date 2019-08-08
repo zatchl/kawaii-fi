@@ -7,11 +7,10 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <QVector>
 #include <QtCore>
-#include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/kawaiifi.h>
 
+class AccessPoint;
 class QColor;
 
 class AccessPointScanner : public QObject {
@@ -19,7 +18,7 @@ class AccessPointScanner : public QObject {
 public:
 	explicit AccessPointScanner(QObject *parent = nullptr);
 	void scan(const QString &interface_name = "");
-	[[nodiscard]] const QVector<AccessPoint> &access_points() const;
+	[[nodiscard]] const QHash<QString, AccessPoint> &access_points() const;
 	[[nodiscard]] QHash<QString, QColor> access_point_colors() const;
 	[[nodiscard]] QStringList wireless_nic_names() const;
 
@@ -27,7 +26,7 @@ signals:
 	void access_points_updated(const QString &interface_name);
 
 private:
-	QVector<AccessPoint> access_points_;
+	QHash<QString, AccessPoint> access_points_;
 	QHash<QString, QColor> access_point_colors_;
 	QString interface_name_;
 	org::kawaiifi::Server *const server_ = new org::kawaiifi::Server(

@@ -33,7 +33,7 @@ KawaiiFi::Server::Server(QObject *parent)
 {
 	qRegisterMetaType<AccessPoint>("AccessPoint");
 	qDBusRegisterMetaType<AccessPoint>();
-	qDBusRegisterMetaType<QVector<AccessPoint>>();
+	qDBusRegisterMetaType<QHash<QString, AccessPoint>>();
 	qDBusRegisterMetaType<InformationElement>();
 
 	new KawaiiFiServerAdaptor(this);
@@ -130,15 +130,15 @@ void KawaiiFi::Server::trigger_wifi_scan(const QString &nic_name)
 	});
 }
 
-QVector<AccessPoint> KawaiiFi::Server::access_points(const QString &nic_name)
+QHash<QString, AccessPoint> KawaiiFi::Server::access_points(const QString &nic_name)
 {
 	// Check to see if the given interface name is connected
 	QHash<QString, unsigned int> nics = wireless_nics();
 	if (!nics.contains(nic_name)) {
-		return QVector<AccessPoint>();
+		return QHash<QString, AccessPoint>();
 	}
 
-	QVector<AccessPoint> access_points;
+	QHash<QString, AccessPoint> access_points;
 	get_wifi_scan_results(nics[nic_name], access_points);
 	return access_points;
 }
