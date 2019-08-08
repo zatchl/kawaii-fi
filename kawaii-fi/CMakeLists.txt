@@ -22,14 +22,18 @@ qt5_add_dbus_interface(dbus_src org.kawaiifi.Server.xml kawaiifi_server_interfac
 add_executable(${PROJECT_NAME}
 	"src/main.cpp"
 
-	"src/models/access_point_table_model.cpp"
-	"src/models/access_point_table_model.h"
+	"src/scanning/access_point_scanner.cpp"
+	"src/scanning/access_point_scanner.h"
 
 	"src/ui/mainwindow.cpp"
 	"src/ui/mainwindow.h"
 	"src/ui/mainwindow.ui"
+	"src/ui/main_window_toolbar.cpp"
+	"src/ui/main_window_toolbar.h"
 	"src/ui/access_point_chart.cpp"
 	"src/ui/access_point_chart.h"
+	"src/ui/access_point_table.cpp"
+	"src/ui/access_point_table.h"
 	${dbus_src}
 )
 

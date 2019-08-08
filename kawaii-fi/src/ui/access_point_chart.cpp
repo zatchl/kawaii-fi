@@ -1,20 +1,19 @@
 #include "access_point_chart.h"
 
-#include "models/access_point_table_model.h"
+#include "scanning/access_point_scanner.h"
 
-#include <QAbstractItemModel>
 #include <QCategoryAxis>
+#include <QHashNode>
 #include <QLegend>
 #include <QLineSeries>
 #include <QList>
 #include <QMargins>
 #include <QPen>
-#include <QPersistentModelIndex>
 #include <QString>
 #include <QValueAxis>
-#include <QVariant>
 #include <QVector>
 #include <QtGui>
+#include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/channel.h>
 #include <libkawaii-fi/util.h>
 
@@ -39,20 +38,16 @@ namespace {
 	const int series_line_width = 3;
 } // namespace
 
-AccessPointChart::AccessPointChart(WifiBand band, QGraphicsItem *parent, Qt::WindowFlags flags)
-    : QtCharts::QChart(parent, flags), wifi_band_(band)
+AccessPointChart::AccessPointChart(const AccessPointScanner &ap_scanner, WifiBand band,
+                                   QGraphicsItem *parent, Qt::WindowFlags flags)
+    : QtCharts::QChart(parent, flags), ap_scanner_(ap_scanner), wifi_band_(band)
 {
+	connect(&ap_scanner, &AccessPointScanner::access_points_updated, this,
+	        &AccessPointChart::refresh_chart);
 	legend()->setVisible(false);
 	setMargins(QMargins(0, 0, 0, 0));
 	add_x_axis(band);
 	add_y_axis();
-}
-
-void AccessPointChart::set_model(QAbstractItemModel *ap_model)
-{
-	ap_model_ = ap_model;
-	connect(ap_model, &QAbstractItemModel::layoutChanged, this,
-	        &AccessPointChart::update_access_points);
 }
 
 void AccessPointChart::add_x_axis(WifiBand band)
@@ -95,45 +90,33 @@ void AccessPointChart::add_y_axis()
 	addAxis(y_axis, Qt::AlignLeft);
 }
 
-void AccessPointChart::update_access_points()
+void AccessPointChart::refresh_chart()
 {
-	if (!ap_model_) {
-		return;
-	}
-
 	removeAllSeries();
-	for (int i = 0; i < ap_model_->rowCount(); ++i) {
-		QVariant bssid =
-		        ap_model_->data(ap_model_->index(i, static_cast<int>(KawaiiFi::ApColumn::BSSID)));
-		QVariant color = ap_model_->headerData(i, Qt::Orientation::Vertical, Qt::BackgroundRole);
-		QVariant channel = ap_model_->data(
-		        ap_model_->index(i, static_cast<int>(KawaiiFi::ApColumn::Channel)), Qt::UserRole);
-		QVariant signal_dbm = ap_model_->data(
-		        ap_model_->index(i, static_cast<int>(KawaiiFi::ApColumn::SignalStrength)),
-		        Qt::UserRole);
-		add_access_point(bssid.toString(), color.value<QColor>(), channel.value<Channel>(),
-		                 signal_dbm.toDouble());
+	for (const auto &ap : ap_scanner_.access_points()) {
+		add_access_point(ap, ap_scanner_.access_point_colors()[ap.bssid()]);
 	}
 }
 
-void AccessPointChart::add_access_point(const QString &bssid, const QColor &color,
-                                        const Channel &channel, double signal_dbm)
+void AccessPointChart::add_access_point(const AccessPoint &ap, const QColor &color)
 {
+	const Channel channel = ap.channel();
+
 	if (channel.band() != wifi_band_) {
 		return;
 	}
 
 	auto *series = new QtCharts::QLineSeries(this);
-	series->setName(bssid);
+	series->setName(ap.bssid());
 	series->setPen(QPen(QBrush(color), series_line_width));
 	series->append(channel.start_mhz(), min_signal_dbm);
-	series->append(channel.start_mhz(), signal_dbm);
-	series->append(channel.end_mhz(), signal_dbm);
+	series->append(channel.start_mhz(), ap.signal_strength_dbm());
+	series->append(channel.end_mhz(), ap.signal_strength_dbm());
 	series->append(channel.end_mhz(), min_signal_dbm);
 	if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {
 		series->append(channel.start_mhz_two(), min_signal_dbm);
-		series->append(channel.start_mhz_two(), signal_dbm);
-		series->append(channel.end_mhz_two(), signal_dbm);
+		series->append(channel.start_mhz_two(), ap.signal_strength_dbm());
+		series->append(channel.end_mhz_two(), ap.signal_strength_dbm());
 		series->append(channel.end_mhz_two(), min_signal_dbm);
 	}
 	addSeries(series);

@@ -1,9 +1,18 @@
-#include "access_point_table_model.h"
+#include "access_point_table.h"
 
+#include "scanning/access_point_scanner.h"
+
+#include <QAbstractItemView>
+#include <QAbstractTableModel>
 #include <QColor>
+#include <QHeaderView>
+#include <QItemSelection>
+#include <QItemSelectionModel>
 #include <QList>
 #include <QModelIndex>
+#include <QModelIndexList>
 #include <QSet>
+#include <QTableView>
 #include <QVector>
 #include <algorithm>
 #include <libkawaii-fi/access_point.h>
@@ -14,9 +23,23 @@
 #include <libkawaii-fi/supported_rates.h>
 #include <libkawaii-fi/vht_operations.h>
 
-using namespace KawaiiFi;
+class QWidget;
 
 namespace {
+	enum class ApColumn {
+		SSID,
+		BSSID,
+		Vendor,
+		Frequency,
+		Channel,
+		ChannelWidth,
+		SignalStrength,
+		Protocol,
+		Security,
+		BasicRates,
+		SupportedRates
+	};
+
 	const int total_columns = static_cast<int>(ApColumn::SupportedRates) + 1;
 
 	QString supported_rates_string(const QList<double> &supported_rates)
@@ -90,40 +113,19 @@ namespace {
 		}
 		return security_string;
 	}
-
-	const QVector<QColor> colors = {
-	        QColor("#bf616a"), QColor("#d08770"), QColor("#a3be8c"), QColor("#b48ead"),
-	        QColor("#5e81ac"), QColor("#ebcb8b"), QColor("#4c566a"), QColor("#8fbcbb"),
-	        QColor("#de356a"), QColor("#216583"), QColor("#ffb961"), QColor("#c8dad3"),
-	        QColor("#4b3f72"), QColor("#697175"), QColor("#a8dadc"), QColor("#e55934"),
-	        QColor("#f2b5d4"), QColor("#32936f"), QColor("#bfef45"), QColor("#42d4f4"),
-	        QColor("#e4b660"), QColor("#1d6a96"), QColor("#9bcfb8"), QColor("#bc5f6a"),
-	        QColor("#504e63"), QColor("#9a1b27"), QColor("#6b799e"), QColor("#0a5b54"),
-	        QColor("#d9cfe7"), QColor("#ffa289"), QColor("#706fab"), QColor("#9d1e31"),
-	        QColor("#7a2d59"), QColor("#37419a"), QColor("#eb9772"), QColor("#695d85"),
-	        QColor("#a6c2ce")};
-	int color_index = 0;
 } // namespace
 
-AccessPointTableModel::AccessPointTableModel(QObject *parent) : QAbstractTableModel(parent) {}
-
-void AccessPointTableModel::update_access_points(const QVector<AccessPoint> &access_points)
+AccessPointTableModel::AccessPointTableModel(const AccessPointScanner &ap_scanner, QObject *parent)
+    : QAbstractTableModel(parent), ap_scanner_(ap_scanner)
 {
-	emit layoutAboutToBeChanged();
-	access_points_ = access_points;
-	for (const auto &ap : access_points_) {
-		if (access_point_colors_.contains(ap.bssid())) {
-			continue;
-		}
-		access_point_colors_[ap.bssid()] = colors[color_index++];
-		if (color_index >= colors.size()) {
-			color_index = 0;
-		}
-	}
-	emit layoutChanged();
+	connect(&ap_scanner_, &AccessPointScanner::access_points_updated, this,
+	        &AccessPointTableModel::refresh_model);
 }
 
-int AccessPointTableModel::rowCount(const QModelIndex &) const { return access_points_.size(); }
+int AccessPointTableModel::rowCount(const QModelIndex &) const
+{
+	return ap_scanner_.access_points().size();
+}
 
 int AccessPointTableModel::columnCount(const QModelIndex &) const { return total_columns; }
 
@@ -133,7 +135,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	const AccessPoint &ap = access_points_[index.row()];
+	const AccessPoint &ap = ap_scanner_.access_points()[index.row()];
 
 	switch (role) {
 	case Qt::DisplayRole:
@@ -209,19 +211,6 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		}
 		}
 		break;
-	case Qt::UserRole:
-		switch (static_cast<ApColumn>(index.column())) {
-		case ApColumn::Channel: {
-			QVariant v;
-			v.setValue(ap.channel());
-			return v;
-		}
-		case ApColumn::SignalStrength:
-			return ap.signal_strength_dbm();
-		default:
-			break;
-		}
-		break;
 	}
 
 	return QVariant();
@@ -259,9 +248,37 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 
 	// The vertical header contains the color associated with each access point
 	if (orientation == Qt::Orientation::Vertical && role == Qt::BackgroundRole &&
-	    section < access_points_.size()) {
-		return access_point_colors_[access_points_[section].bssid()];
+	    section < ap_scanner_.access_points().size()) {
+		return ap_scanner_.access_point_colors()[ap_scanner_.access_points()[section].bssid()];
 	}
 
 	return QVariant();
+}
+
+void AccessPointTableModel::refresh_model()
+{
+	emit layoutAboutToBeChanged();
+	emit layoutChanged();
+}
+
+AccessPointTableView::AccessPointTableView(const AccessPointScanner &ap_scanner, QWidget *parent)
+    : QTableView(parent)
+{
+	horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	horizontalHeader()->setHighlightSections(false);
+	setSelectionBehavior(QAbstractItemView::SelectRows);
+	setSortingEnabled(true);
+	ap_proxy_model_->setSourceModel(new AccessPointTableModel(ap_scanner, this));
+	setModel(ap_proxy_model_);
+	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
+	        &AccessPointTableView::handle_item_selected);
+}
+
+void AccessPointTableView::handle_item_selected(const QItemSelection &selected,
+                                                const QItemSelection &)
+{
+	QModelIndex model_index =
+	        ap_proxy_model_->index(selected.indexes()[0].row(), static_cast<int>(ApColumn::BSSID));
+	QVariant bssid = ap_proxy_model_->data(model_index);
+	emit access_point_selected(bssid.toString());
 }
