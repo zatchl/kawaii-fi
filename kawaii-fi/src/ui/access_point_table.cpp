@@ -135,7 +135,7 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-	const AccessPoint &ap = (ap_scanner_.access_points().begin() + index.row()).value();
+	const AccessPoint &ap = ap_scanner_.access_points()[index.row()];
 
 	switch (role) {
 	case Qt::DisplayRole:
@@ -249,8 +249,7 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 	// The vertical header contains the color associated with each access point
 	if (orientation == Qt::Orientation::Vertical && role == Qt::BackgroundRole &&
 	    section < ap_scanner_.access_points().size()) {
-		const QString &bssid = (ap_scanner_.access_points().begin() + section).key();
-		return ap_scanner_.access_point_colors()[bssid];
+		return ap_scanner_.access_point_colors()[ap_scanner_.access_points()[section].bssid()];
 	}
 
 	return QVariant();

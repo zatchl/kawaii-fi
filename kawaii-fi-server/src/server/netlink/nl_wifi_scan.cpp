@@ -8,7 +8,6 @@
 
 #include <QHashNode>
 #include <QSet>
-#include <QString>
 #include <QVector>
 #include <array>
 #include <chrono>
@@ -33,7 +32,7 @@ namespace {
 
 	int process_access_point(nl_msg *msg, void *aps)
 	{
-		auto accessPoints = static_cast<QHash<QString, AccessPoint> *>(aps);
+		auto accessPoints = static_cast<QVector<AccessPoint> *>(aps);
 		AccessPoint ap;
 
 		auto gnlh = static_cast<genlmsghdr *>(nlmsg_data(nlmsg_hdr(msg)));
@@ -139,7 +138,7 @@ namespace {
 			}
 		}
 
-		accessPoints->insert(ap.bssid(), ap);
+		accessPoints->push_back(ap);
 		return NL_SKIP;
 	}
 } // namespace
@@ -220,9 +219,9 @@ int KawaiiFi::wait_for_new_wifi_scan_results(unsigned int timeout_seconds)
 	return callback_arg;
 }
 
-int KawaiiFi::get_wifi_scan_results(unsigned int interface_index, QHash<QString, AccessPoint> &aps)
+int KawaiiFi::get_wifi_scan_results(unsigned int interface_index, QVector<AccessPoint> &aps)
 {
-	NlWifiCommand<QHash<QString, AccessPoint>> get_scan_results_command(
-	        NL80211_CMD_GET_SCAN, NLM_F_DUMP, &process_access_point, &aps);
+	NlWifiCommand<QVector<AccessPoint>> get_scan_results_command(NL80211_CMD_GET_SCAN, NLM_F_DUMP,
+	                                                             &process_access_point, &aps);
 	return get_scan_results_command.send(interface_index);
 }

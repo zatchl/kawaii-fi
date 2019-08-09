@@ -2,10 +2,10 @@
 #define SERVER_H
 
 #include <QByteArrayData>
-#include <QHashNode>
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QVector>
 #include <libkawaii-fi/access_point.h>
 
 namespace KawaiiFi {
@@ -23,7 +23,7 @@ namespace KawaiiFi {
 
 	public slots:
 		QStringList wireless_nic_names();
-		QHash<QString, AccessPoint> access_points(const QString &nic_name);
+		QVector<AccessPoint> access_points(const QString &nic_name);
 		void trigger_wifi_scan(const QString &nic_name);
 
 	private:
