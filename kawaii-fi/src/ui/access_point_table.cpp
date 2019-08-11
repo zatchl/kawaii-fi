@@ -17,11 +17,11 @@
 #include <algorithm>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/channel.h>
-#include <libkawaii-fi/ds_parameter.h>
-#include <libkawaii-fi/ht_operations.h>
-#include <libkawaii-fi/ssid.h>
-#include <libkawaii-fi/supported_rates.h>
-#include <libkawaii-fi/vht_operations.h>
+#include <libkawaii-fi/ies/ds_parameter.h>
+#include <libkawaii-fi/ies/ht_operations.h>
+#include <libkawaii-fi/ies/ssid.h>
+#include <libkawaii-fi/ies/supported_rates.h>
+#include <libkawaii-fi/ies/vht_operations.h>
 
 class QWidget;
 

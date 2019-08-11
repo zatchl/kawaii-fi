@@ -16,7 +16,7 @@
 #include <cstring>
 #include <ifaddrs.h>
 #include <libkawaii-fi/access_point.h>
-#include <libkawaii-fi/information_element.h>
+#include <libkawaii-fi/ies/information_element.h>
 #include <libkawaii-fi/kawaiifi.h>
 #include <linux/if.h>
 #include <linux/wireless.h>

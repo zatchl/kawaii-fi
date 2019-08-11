@@ -3,7 +3,7 @@
 
 #include "capabilities.h"
 #include "channel.h"
-#include "information_element.h"
+#include "ies/information_element.h"
 
 #include <QDBusArgument>
 #include <QHashNode>

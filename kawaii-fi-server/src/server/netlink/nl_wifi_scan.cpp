@@ -1,8 +1,8 @@
 #include "nl_wifi_scan.h"
 
-#include "libkawaii-fi/ht_capabilities.h"
-#include "libkawaii-fi/supported_rates.h"
-#include "libkawaii-fi/vht_capabilities.h"
+#include "libkawaii-fi/ies/ht_capabilities.h"
+#include "libkawaii-fi/ies/supported_rates.h"
+#include "libkawaii-fi/ies/vht_capabilities.h"
 #include "nl_wifi_command.h"
 #include "nl_wifi_parse.h"
 

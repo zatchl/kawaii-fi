@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QtDBus>
 #include <libkawaii-fi/access_point.h>
-#include <libkawaii-fi/information_element.h>
+#include <libkawaii-fi/ies/information_element.h>
 
 namespace {
 	const QVector<QColor> colors = {

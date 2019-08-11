@@ -1,6 +1,6 @@
-#include "libkawaii-fi/supported_rates.h"
+#include "libkawaii-fi/ies/supported_rates.h"
 
-#include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/ies/information_element.h"
 
 #include <QByteArray>
 #include <cstdint>

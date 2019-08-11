@@ -1,6 +1,6 @@
-#include "libkawaii-fi/ds_parameter.h"
+#include "libkawaii-fi/ies/ds_parameter.h"
 
-#include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/ies/information_element.h"
 
 #include <QByteArray>
 

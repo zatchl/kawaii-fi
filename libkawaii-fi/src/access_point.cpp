@@ -2,12 +2,12 @@
 
 #include "libkawaii-fi/capabilities.h"
 #include "libkawaii-fi/channel.h"
-#include "libkawaii-fi/ht_operations.h"
-#include "libkawaii-fi/information_element.h"
-#include "libkawaii-fi/robust_security_network.h"
-#include "libkawaii-fi/vendor_specific.h"
-#include "libkawaii-fi/vht_operations.h"
-#include "libkawaii-fi/wpa.h"
+#include "libkawaii-fi/ies/ht_operations.h"
+#include "libkawaii-fi/ies/information_element.h"
+#include "libkawaii-fi/ies/robust_security_network.h"
+#include "libkawaii-fi/ies/vendor_specific.h"
+#include "libkawaii-fi/ies/vht_operations.h"
+#include "libkawaii-fi/ies/wpa.h"
 
 #include <QList>
 #include <algorithm>

@@ -1,6 +1,6 @@
-#include "libkawaii-fi/ht_capabilities.h"
+#include "libkawaii-fi/ies/ht_capabilities.h"
 
-#include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/ies/information_element.h"
 
 namespace {
 	const unsigned int ht_capability_ie_length = 26;

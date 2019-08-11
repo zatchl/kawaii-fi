@@ -1,6 +1,6 @@
-#include "libkawaii-fi/vendor_specific.h"
+#include "libkawaii-fi/ies/vendor_specific.h"
 
-#include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/ies/information_element.h"
 
 #include <QByteArray>
 #include <array>

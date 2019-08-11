@@ -3,7 +3,7 @@
 #include <QByteArray>
 #include <QHashNode>
 #include <libkawaii-fi/access_point.h>
-#include <libkawaii-fi/information_element.h>
+#include <libkawaii-fi/ies/information_element.h>
 #include <libnl3/netlink/attr.h>
 #include <linux/nl80211.h>
 #include <string_view>

@@ -1,7 +1,7 @@
-#include "libkawaii-fi/ht_operations.h"
+#include "libkawaii-fi/ies/ht_operations.h"
 
-#include "libkawaii-fi/ht_capabilities.h"
-#include "libkawaii-fi/information_element.h"
+#include "libkawaii-fi/ies/ht_capabilities.h"
+#include "libkawaii-fi/ies/information_element.h"
 
 #include <QByteArray>
 
