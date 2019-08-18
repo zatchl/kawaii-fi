@@ -51,7 +51,6 @@ public:
 	[[nodiscard]] bool htc_support() const;
 	[[nodiscard]] bool rd_responder() const;
 };
-Q_DECLARE_METATYPE(HtCapabilities)
 
 inline const unsigned int WLAN_EID_HT_CAPABILITY = 45;
 

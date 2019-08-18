@@ -3,7 +3,6 @@
 
 #include "information_element.h"
 
-#include <QMetaType>
 
 enum class VhtSupportedChannelWidth {
 	NoOneSixtyMhzNoEightyPlusEightyMhz,
@@ -70,7 +69,6 @@ public:
 	[[nodiscard]] unsigned int tx_highest_long_gi_data_rate() const;
 	[[nodiscard]] bool extended_nss_bw_capable() const;
 };
-Q_DECLARE_METATYPE(VhtCapabilities)
 
 inline const unsigned int WLAN_EID_VHT_CAPABILITY = 191;
 

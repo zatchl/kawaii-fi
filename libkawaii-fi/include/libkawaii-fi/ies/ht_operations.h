@@ -4,7 +4,6 @@
 #include "ht_capabilities.h"
 #include "information_element.h"
 
-#include <QMetaType>
 #include <QVector>
 #include <cstdint>
 
@@ -42,7 +41,6 @@ public:
 	[[nodiscard]] unsigned int max_tx_spatial_streams() const;
 	[[nodiscard]] bool tx_unequal_modulation() const;
 };
-Q_DECLARE_METATYPE(HtOperations)
 
 inline const unsigned int WLAN_EID_HT_OPERATION = 61;
 

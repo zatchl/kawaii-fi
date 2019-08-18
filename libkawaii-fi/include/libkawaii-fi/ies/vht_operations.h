@@ -4,8 +4,6 @@
 #include "information_element.h"
 #include "vht_capabilities.h"
 
-#include <QMetaType>
-
 enum class VhtChannelWidth { TwentyOrFortyMhz, EightyMhz, OneSixtyMhz, EightyPlusEightyMhz };
 
 class VhtOperations : public InformationElement {
@@ -25,7 +23,6 @@ public:
 	[[nodiscard]] VhtMcs mcs_basic_seven_ss() const;
 	[[nodiscard]] VhtMcs mcs_basic_eight_ss() const;
 };
-Q_DECLARE_METATYPE(VhtOperations)
 
 inline const unsigned int WLAN_EID_VHT_OPERATION = 192;
 

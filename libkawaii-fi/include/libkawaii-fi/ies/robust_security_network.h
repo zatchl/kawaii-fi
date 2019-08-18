@@ -3,8 +3,6 @@
 
 #include "information_element.h"
 
-#include <QMetaType>
-
 class RobustSecurityNetwork : public InformationElement {
 public:
 	RobustSecurityNetwork() = default;
@@ -12,7 +10,6 @@ public:
 
 	[[nodiscard]] unsigned int version() const;
 };
-Q_DECLARE_METATYPE(RobustSecurityNetwork)
 
 inline const unsigned int WLAN_EID_RSN = 48;
 
