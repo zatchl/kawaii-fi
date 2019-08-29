@@ -15,8 +15,8 @@ namespace KawaiiFi {
 	public:
 		explicit Server(QObject *parent = nullptr);
 		~Server();
-		bool object_registered() const;
-		bool service_name_registered() const;
+		[[nodiscard]] bool object_registered() const;
+		[[nodiscard]] bool service_name_registered() const;
 
 	signals:
 		void wifi_scan_completed(const QString &nicName);
