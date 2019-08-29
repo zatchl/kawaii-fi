@@ -228,11 +228,13 @@ QMultiHash<unsigned int, InformationElement> &AccessPoint::information_elements(
 bool AccessPoint::contains_vendor_element(const std::array<unsigned char, 3> &oui,
                                           unsigned int type) const
 {
-	for (auto &ie : information_elements_.values(WLAN_EID_VENDOR_SPECIFIC)) {
-		const VendorSpecific v_ie = VendorSpecific(ie);
+	auto it = information_elements_.find(WLAN_EID_VENDOR_SPECIFIC);
+	while (it != information_elements_.end() && it.key() == WLAN_EID_VENDOR_SPECIFIC) {
+		const VendorSpecific v_ie = VendorSpecific(it.value());
 		if (v_ie.oui() == oui && v_ie.type() == type) {
 			return true;
 		}
+		++it;
 	}
 	return false;
 }
