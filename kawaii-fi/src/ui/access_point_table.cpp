@@ -43,8 +43,7 @@ namespace {
 		SignalStrength,
 		Protocol,
 		Security,
-		BasicRates,
-		SupportedRates
+		SupportedRates,
 		Vendor
 	};
 
@@ -88,8 +87,10 @@ namespace {
 				break;
 			}
 		}
-		if (protocol_string.endsWith("/")) {
-			protocol_string.chop(1);
+		case ApColumn::SupportedRates:
+			return ap.supported_rates().join(", ");
+		case ApColumn::MaxRate:
+			return ap.max_rate();
 		}
 		return protocol_string;
 	}
@@ -297,8 +298,6 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 			return tr("Protocol");
 		case ApColumn::Security:
 			return tr("Security");
-		case ApColumn::BasicRates:
-			return tr("Basic Rates");
 		case ApColumn::SupportedRates:
 			return tr("Supported Rates");
 		case ApColumn::Vendor:
