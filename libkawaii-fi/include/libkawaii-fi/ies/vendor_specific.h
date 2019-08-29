@@ -9,8 +9,8 @@ public:
 	VendorSpecific() = default;
 	VendorSpecific(const InformationElement &ie);
 
-	std::array<unsigned char, 3> oui() const;
-	unsigned int type() const;
+	[[nodiscard]] std::array<unsigned char, 3> oui() const;
+	[[nodiscard]] unsigned int type() const;
 };
 
 inline const unsigned int WLAN_EID_VENDOR_SPECIFIC = 221;
