@@ -24,6 +24,7 @@ inline uint qHash(Protocol key, uint seed) { return qHash(static_cast<int>(key),
 class AccessPoint {
 public:
 	[[nodiscard]] const QString &bssid() const;
+	[[nodiscard]] QString ssid() const;
 	[[nodiscard]] ConnectionStatus connection_status() const;
 	[[nodiscard]] int signal_strength_mbm() const;
 	[[nodiscard]] double signal_strength_dbm() const;

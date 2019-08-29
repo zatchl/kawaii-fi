@@ -5,6 +5,7 @@
 #include "libkawaii-fi/ies/ht_operations.h"
 #include "libkawaii-fi/ies/information_element.h"
 #include "libkawaii-fi/ies/robust_security_network.h"
+#include "libkawaii-fi/ies/ssid.h"
 #include "libkawaii-fi/ies/vendor_specific.h"
 #include "libkawaii-fi/ies/vht_operations.h"
 #include "libkawaii-fi/ies/wpa.h"
@@ -15,6 +16,11 @@
 #include <array>
 
 const QString &AccessPoint::bssid() const { return bssid_; }
+
+QString AccessPoint::ssid() const
+{
+	return information_elements_.value(WLAN_EID_SSID, InformationElement()).bytes();
+}
 
 ConnectionStatus AccessPoint::connection_status() const { return connection_status_; }
 
