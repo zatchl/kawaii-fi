@@ -4,6 +4,7 @@
 #include "capabilities.h"
 #include "channel.h"
 #include "ies/information_element.h"
+#include "security.h"
 
 #include <QDBusArgument>
 #include <QHashNode>
@@ -16,7 +17,6 @@ enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
 enum class Protocol { B, A, G, N, AC, AX };
 
-enum class Security { None, WEP, WPA, WPA2, WPA3 };
 
 class AccessPoint {
 public:
@@ -36,7 +36,8 @@ public:
 	                                           unsigned int type) const;
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
-	[[nodiscard]] QVector<Security> security() const;
+	[[nodiscard]] QVector<SecurityProtocol> security() const;
+	[[nodiscard]] AkmSuiteType authentication() const;
 
 	void set_bssid(const QString &bssid);
 	void set_connection_status(ConnectionStatus connection_status);

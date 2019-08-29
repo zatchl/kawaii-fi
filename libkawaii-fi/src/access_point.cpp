@@ -8,6 +8,7 @@
 #include "libkawaii-fi/ies/vendor_specific.h"
 #include "libkawaii-fi/ies/vht_operations.h"
 #include "libkawaii-fi/ies/wpa.h"
+#include "libkawaii-fi/security.h"
 
 #include <QList>
 #include <algorithm>
@@ -138,29 +139,58 @@ Channel AccessPoint::channel() const
 	return Channel();
 }
 
-QVector<Security> AccessPoint::security() const
+QVector<SecurityProtocol> AccessPoint::security() const
 {
 	if (!capabilities_.privacy()) {
-		return {Security::None};
+		return {SecurityProtocol::None};
 	}
 
 	const bool contains_wpa_ie = contains_vendor_element(WPA_OUI, WPA_VENDOR_TYPE);
 
 	if (!information_elements_.contains(WLAN_EID_RSN) && !contains_wpa_ie) {
-		return {Security::WEP};
+		return {SecurityProtocol::WEP};
 	}
 
-	QVector<Security> security;
+	QVector<SecurityProtocol> security;
 
 	if (contains_wpa_ie) {
-		security.append(Security::WPA);
+		security.append(SecurityProtocol::WPA);
 	}
 
 	if (information_elements_.contains(WLAN_EID_RSN)) {
-		security.append(Security::WPA2);
+		security.append(SecurityProtocol::WPA2);
 	}
 
 	return security;
+}
+
+AkmSuiteType AccessPoint::authentication() const
+{
+	// Check the RSN IE
+	if (information_elements_.contains(WLAN_EID_RSN)) {
+		const auto akm_suites =
+		        RobustSecurityNetwork(information_elements_.value(WLAN_EID_RSN)).akm_suites();
+		if (akm_suites.size() > 0) {
+			return akm_suites[0].type;
+		}
+	}
+
+	// Check the WPA IE
+	auto it = information_elements_.find(WLAN_EID_VENDOR_SPECIFIC);
+	while (it != information_elements_.end() && it.key() == WLAN_EID_VENDOR_SPECIFIC) {
+		const VendorSpecific v_ie = VendorSpecific(it.value());
+		if (v_ie.oui() == WPA_OUI && v_ie.type() == WPA_VENDOR_TYPE) {
+			const Wpa wpa_ie = Wpa(v_ie);
+			const auto akm_suites = Wpa(v_ie).akm_suites();
+			if (akm_suites.size() > 0) {
+				return akm_suites[0].type;
+			}
+			break;
+		}
+		++it;
+	}
+
+	return AkmSuiteType::None;
 }
 
 void AccessPoint::set_bssid(const QString &bssid) { bssid_ = bssid; }
