@@ -18,7 +18,10 @@ class AccessPointScanner : public QObject {
 	Q_OBJECT
 public:
 	explicit AccessPointScanner(QObject *parent = nullptr);
-	void scan(const QString &interface_name = "");
+
+	void scan(const QString &interface_name);
+	void set_is_scanning(bool is_scanning);
+
 	[[nodiscard]] const QVector<AccessPoint> &access_points() const;
 	[[nodiscard]] QHash<QString, QColor> access_point_colors() const;
 	[[nodiscard]] QStringList wireless_nic_names() const;
@@ -32,6 +35,7 @@ private:
 	QString interface_name_;
 	org::kawaiifi::Server *const server_ = new org::kawaiifi::Server(
 	        KawaiiFi::ServiceName, KawaiiFi::ServerObjectPath, QDBusConnection::systemBus(), this);
+	bool is_scanning_ = true;
 };
 
 #endif // ACCESS_POINT_SCANNER_H

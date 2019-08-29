@@ -34,7 +34,7 @@ AccessPointScanner::AccessPointScanner(QObject *parent) : QObject(parent)
 	qDBusRegisterMetaType<InformationElement>();
 
 	connect(server_, &org::kawaiifi::Server::wifi_scan_completed, [this](const QString &nic) {
-		if (nic != interface_name_) {
+		if (!is_scanning_ || nic != interface_name_) {
 			return;
 		}
 		access_points_ = server_->access_points(interface_name_).value();
@@ -53,11 +53,14 @@ AccessPointScanner::AccessPointScanner(QObject *parent) : QObject(parent)
 
 void AccessPointScanner::scan(const QString &interface_name)
 {
-	if (!interface_name.isEmpty()) {
-		interface_name_ = interface_name;
+	interface_name_ = interface_name;
+
+	if (is_scanning_) {
+		server_->trigger_wifi_scan(interface_name_);
 	}
-	server_->trigger_wifi_scan(interface_name);
 }
+
+void AccessPointScanner::set_is_scanning(bool is_scanning) { is_scanning_ = is_scanning; }
 
 const QVector<AccessPoint> &AccessPointScanner::access_points() const { return access_points_; }
 
