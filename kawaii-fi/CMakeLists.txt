@@ -32,6 +32,10 @@ add_executable(${PROJECT_NAME}
 	"src/ui/access_point_chart.h"
 	"src/ui/access_point_table.cpp"
 	"src/ui/access_point_table.h"
+	"src/ui/access_point_detail_tree.cpp"
+	"src/ui/access_point_detail_tree.h"
+	"src/ui/access_point_status_bar.cpp"
+	"src/ui/access_point_status_bar.h"
 
 	"src/ui/tree-items/ht_capability_standard_item.cpp"
 	"src/ui/tree-items/ht_capability_standard_item.h"
@@ -66,6 +70,18 @@ add_executable(${PROJECT_NAME}
 	"src/ui/tree-items/ie_length_standard_item.cpp"
 	"src/ui/tree-items/ie_length_standard_item.h"
 
+	"src/ui/filter-menus/access_point_filter_menu.cpp"
+	"src/ui/filter-menus/access_point_filter_menu.h"
+	"src/ui/filter-menus/ssid_filter_menu.cpp"
+	"src/ui/filter-menus/ssid_filter_menu.h"
+	"src/ui/filter-menus/bssid_filter_menu.cpp"
+	"src/ui/filter-menus/bssid_filter_menu.h"
+	"src/ui/filter-menus/channel_width_filter_menu.cpp"
+	"src/ui/filter-menus/channel_width_filter_menu.h"
+	"src/ui/filter-menus/protocol_filter_menu.cpp"
+	"src/ui/filter-menus/protocol_filter_menu.h"
+	"src/ui/filter-menus/channel_filter_menu.cpp"
+	"src/ui/filter-menus/channel_filter_menu.h"
 	${dbus_src}
 )
 
