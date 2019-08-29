@@ -37,7 +37,6 @@ namespace {
 	enum class ApColumn {
 		SSID,
 		BSSID,
-		Vendor,
 		Frequency,
 		Channel,
 		ChannelWidth,
@@ -46,9 +45,10 @@ namespace {
 		Security,
 		BasicRates,
 		SupportedRates
+		Vendor
 	};
 
-	const int total_columns = static_cast<int>(ApColumn::SupportedRates) + 1;
+	const int total_columns = static_cast<int>(ApColumn::Vendor) + 1;
 
 	QString supported_rates_string(const QList<double> &supported_rates)
 	{
@@ -285,8 +285,6 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 			return tr("SSID");
 		case ApColumn::BSSID:
 			return tr("BSSID");
-		case ApColumn::Vendor:
-			return tr("Vendor");
 		case ApColumn::Frequency:
 			return tr("Frequency");
 		case ApColumn::Channel:
@@ -303,6 +301,8 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 			return tr("Basic Rates");
 		case ApColumn::SupportedRates:
 			return tr("Supported Rates");
+		case ApColumn::Vendor:
+			return tr("Vendor");
 		}
 	}
 
