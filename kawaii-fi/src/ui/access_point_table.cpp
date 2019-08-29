@@ -44,6 +44,7 @@ namespace {
 		Protocol,
 		Security,
 		SupportedRates,
+		MaxRate,
 		Vendor
 	};
 
@@ -300,6 +301,8 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 			return tr("Security");
 		case ApColumn::SupportedRates:
 			return tr("Supported Rates");
+		case ApColumn::MaxRate:
+			return tr("Max Rate");
 		case ApColumn::Vendor:
 			return tr("Vendor");
 		}
