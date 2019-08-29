@@ -7,6 +7,7 @@
 #include "libkawaii-fi/ies/information_element.h"
 #include "libkawaii-fi/ies/robust_security_network.h"
 #include "libkawaii-fi/ies/ssid.h"
+#include "libkawaii-fi/ies/supported_rates.h"
 #include "libkawaii-fi/ies/vendor_specific.h"
 #include "libkawaii-fi/ies/vht_capabilities.h"
 #include "libkawaii-fi/ies/vht_operations.h"
@@ -14,6 +15,7 @@
 #include "libkawaii-fi/security.h"
 
 #include <QList>
+#include <QSet>
 #include <algorithm>
 #include <array>
 
@@ -163,6 +165,34 @@ unsigned int AccessPoint::age_ms() const { return age_ms_; }
 const QVector<Protocol> &AccessPoint::protocols() const { return protocols_; }
 
 QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
+
+QStringList AccessPoint::supported_rates() const
+{
+	const SupportedRates supp_rates =
+	        information_elements_.value(WLAN_EID_SUPP_RATES, InformationElement());
+	QSet<double> rates = supp_rates.rates();
+	QSet<double> basic_rates = supp_rates.basic_rates();
+
+	// If the extended supported rates IE exists, include its rates
+	if (information_elements_.contains(WLAN_EID_EXT_SUPP_RATES)) {
+		const SupportedRates ext_supp_rates = information_elements_.value(WLAN_EID_EXT_SUPP_RATES);
+		rates.unite(ext_supp_rates.rates());
+		basic_rates.unite(ext_supp_rates.basic_rates());
+	}
+
+	// We want the result to be sorted
+	// QSets can't be sorted so we create a separate list and sort the list
+	QList rate_list = rates.toList();
+	std::sort(rate_list.begin(), rate_list.end());
+
+	// Add an asterisk after all the basic rates
+	QStringList rate_string_list;
+	for (const double rate : rate_list) {
+		rate_string_list.append(basic_rates.contains(rate) ? QString("%0*").arg(rate)
+		                                                   : QString::number(rate));
+	}
+	return rate_string_list;
+}
 
 double AccessPoint::max_rate() const
 {
