@@ -1,7 +1,14 @@
 #include "access_point_table.h"
 
 #include "scanning/access_point_scanner.h"
+#include "ui/filter-menus/access_point_filter_menu.h"
+#include "ui/filter-menus/bssid_filter_menu.h"
+#include "ui/filter-menus/channel_filter_menu.h"
+#include "ui/filter-menus/channel_width_filter_menu.h"
+#include "ui/filter-menus/protocol_filter_menu.h"
+#include "ui/filter-menus/ssid_filter_menu.h"
 
+#include <QAbstractItemModel>
 #include <QAbstractItemView>
 #include <QAbstractTableModel>
 #include <QColor>
@@ -13,6 +20,7 @@
 #include <QModelIndexList>
 #include <QSet>
 #include <QTableView>
+#include <QVariant>
 #include <QVector>
 #include <algorithm>
 #include <libkawaii-fi/access_point.h>
@@ -114,6 +122,58 @@ namespace {
 		return security_string;
 	}
 } // namespace
+
+AccessPointSortFilterProxyModel::AccessPointSortFilterProxyModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
+{
+}
+
+bool AccessPointSortFilterProxyModel::filterAcceptsRow(int source_row,
+                                                       const QModelIndex &source_parent) const
+{
+	QModelIndex channel_index =
+	        sourceModel()->index(source_row, static_cast<int>(ApColumn::Channel), source_parent);
+	unsigned int channel = sourceModel()->data(channel_index, Qt::UserRole).toUInt();
+	bool is_channel_acceptable = acceptable_channels_.contains(channel);
+
+	QModelIndex channel_width_index = sourceModel()->index(
+	        source_row, static_cast<int>(ApColumn::ChannelWidth), source_parent);
+	unsigned int channel_width = sourceModel()->data(channel_width_index, Qt::UserRole).toUInt();
+	bool is_channel_width_acceptable = acceptable_channel_widths_.contains(channel_width);
+
+	QModelIndex protocols_index =
+	        sourceModel()->index(source_row, static_cast<int>(ApColumn::Protocol), source_parent);
+	QVector<Protocol> protocols =
+	        sourceModel()->data(protocols_index, Qt::UserRole).value<QVector<Protocol>>();
+	bool are_protocols_acceptable = false;
+	for (auto protocol : protocols) {
+		if (acceptable_protocols_.contains(protocol)) {
+			are_protocols_acceptable = true;
+			break;
+		}
+	}
+
+	return is_channel_acceptable && is_channel_width_acceptable && are_protocols_acceptable;
+}
+
+void AccessPointSortFilterProxyModel::set_acceptable_channels(QSet<unsigned int> channels)
+{
+	acceptable_channels_ = channels;
+	invalidateFilter();
+}
+
+void AccessPointSortFilterProxyModel::set_acceptable_channel_widths(
+        QSet<unsigned int> channel_widths)
+{
+	acceptable_channel_widths_ = channel_widths;
+	invalidateFilter();
+}
+
+void AccessPointSortFilterProxyModel::set_acceptable_protocols(QSet<Protocol> protocols)
+{
+	acceptable_protocols_ = protocols;
+	invalidateFilter();
+}
 
 AccessPointTableModel::AccessPointTableModel(const AccessPointScanner &ap_scanner, QObject *parent)
     : QAbstractTableModel(parent), ap_scanner_(ap_scanner)
@@ -261,24 +321,101 @@ void AccessPointTableModel::refresh_model()
 	emit layoutChanged();
 }
 
-AccessPointTableView::AccessPointTableView(const AccessPointScanner &ap_scanner, QWidget *parent)
-    : QTableView(parent)
+AccessPointTableView::AccessPointTableView(QWidget *parent) : QTableView(parent)
 {
 	horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	horizontalHeader()->setHighlightSections(false);
+	horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(horizontalHeader(), &QHeaderView::customContextMenuRequested, this,
+	        &AccessPointTableView::handle_header_context_menu_requested);
+
 	setSelectionBehavior(QAbstractItemView::SelectRows);
-	setSortingEnabled(true);
-	ap_proxy_model_->setSourceModel(new AccessPointTableModel(ap_scanner, this));
-	setModel(ap_proxy_model_);
+	setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+}
+
+void AccessPointTableView::set_ap_scanner(const AccessPointScanner &ap_scanner)
+{
+	ap_sort_filter_proxy_model_->setSourceModel(new AccessPointTableModel(ap_scanner, this));
+	ap_sort_filter_proxy_model_->setSortRole(Qt::UserRole);
+	setModel(ap_sort_filter_proxy_model_);
+
+	sortByColumn(static_cast<int>(ApColumn::SignalStrength), Qt::DescendingOrder);
+
 	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
 	        &AccessPointTableView::handle_item_selected);
+
+	ap_sort_filter_proxy_model_->set_acceptable_channels(channel_filter_menu_->channels());
+	connect(channel_filter_menu_, &AccessPointFilterMenu::filter_changed, [this]() {
+		ap_sort_filter_proxy_model_->set_acceptable_channels(channel_filter_menu_->channels());
+	});
+	ap_sort_filter_proxy_model_->set_acceptable_channel_widths(
+	        channel_width_filter_menu_->channel_widths());
+	connect(channel_width_filter_menu_, &AccessPointFilterMenu::filter_changed, [this]() {
+		ap_sort_filter_proxy_model_->set_acceptable_channel_widths(
+		        channel_width_filter_menu_->channel_widths());
+	});
+	ap_sort_filter_proxy_model_->set_acceptable_protocols(protocol_filter_menu_->protocols());
+	connect(protocol_filter_menu_, &AccessPointFilterMenu::filter_changed, [this]() {
+		ap_sort_filter_proxy_model_->set_acceptable_protocols(protocol_filter_menu_->protocols());
+	});
+}
+
+AccessPointSortFilterProxyModel *AccessPointTableView::ap_sort_filter_proxy_model()
+{
+	return ap_sort_filter_proxy_model_;
+}
+
+SsidFilterMenu *AccessPointTableView::ssid_filter_menu() const { return ssid_filter_menu_; }
+
+BssidFilterMenu *AccessPointTableView::bssid_filter_menu() const { return bssid_filter_menu_; }
+
+ChannelFilterMenu *AccessPointTableView::channel_filter_menu() const
+{
+	return channel_filter_menu_;
+}
+
+ChannelWidthFilterMenu *AccessPointTableView::channel_width_filter_menu() const
+{
+	return channel_width_filter_menu_;
+}
+
+ProtocolFilterMenu *AccessPointTableView::protocol_filter_menu() const
+{
+	return protocol_filter_menu_;
 }
 
 void AccessPointTableView::handle_item_selected(const QItemSelection &selected,
                                                 const QItemSelection &)
 {
-	QModelIndex model_index =
-	        ap_proxy_model_->index(selected.indexes()[0].row(), static_cast<int>(ApColumn::BSSID));
-	QVariant bssid = ap_proxy_model_->data(model_index);
+	if (selected.indexes().size() == 0) {
+		return;
+	}
+
+	QModelIndex model_index = ap_sort_filter_proxy_model_->index(selected.indexes()[0].row(),
+	                                                             static_cast<int>(ApColumn::BSSID));
+	QVariant bssid = ap_sort_filter_proxy_model_->data(model_index);
 	emit access_point_selected(bssid.toString());
+}
+
+void AccessPointTableView::handle_header_context_menu_requested(const QPoint &point)
+{
+	ApColumn column = static_cast<ApColumn>(horizontalHeader()->logicalIndexAt(point));
+	switch (column) {
+	case ApColumn::SSID:
+		ssid_filter_menu_->popup(horizontalHeader()->mapToGlobal(point));
+		break;
+	case ApColumn::BSSID:
+		bssid_filter_menu_->popup(horizontalHeader()->mapToGlobal(point));
+		break;
+	case ApColumn::Channel:
+		channel_filter_menu_->popup(horizontalHeader()->mapToGlobal(point));
+		break;
+	case ApColumn::ChannelWidth:
+		channel_width_filter_menu_->popup(horizontalHeader()->mapToGlobal(point));
+		break;
+	case ApColumn::Protocol:
+		protocol_filter_menu_->popup(horizontalHeader()->mapToGlobal(point));
+		break;
+	default:
+		break;
+	}
 }
