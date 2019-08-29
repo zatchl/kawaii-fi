@@ -3,6 +3,7 @@
 #include "scanning/access_point_scanner.h"
 
 #include <QCategoryAxis>
+#include <QGraphicsLayout>
 #include <QHashNode>
 #include <QLegend>
 #include <QLineSeries>
@@ -46,6 +47,7 @@ AccessPointChart::AccessPointChart(const AccessPointScanner &ap_scanner, WifiBan
 	        &AccessPointChart::refresh_chart);
 	legend()->setVisible(false);
 	setMargins(QMargins(0, 0, 0, 0));
+	layout()->setContentsMargins(0, 0, 0, 0);
 	add_x_axis(band);
 	add_y_axis();
 }
