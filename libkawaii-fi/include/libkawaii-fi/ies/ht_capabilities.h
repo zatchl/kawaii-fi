@@ -3,17 +3,20 @@
 
 #include "information_element.h"
 
-#include <QMetaType>
-#include <QVector>
-#include <cstdint>
+#include <array>
 
 enum class HtSupportedChannelWidth { TwentyMhz, TwentyOrFortyMhz };
 
 enum class SmPowerSave { Static, Dynamic, Disabled };
 
-enum class HtTxStbc { Disabled, Enabled };
-
 enum class HtRxStbc { Disabled, OneSpatialStream, TwoSpatialStreams, ThreeSpatialStreams };
+
+enum class HtModulation { None = 0, BPSK = 1, QPSK = 2, QAM_16 = 4, QAM_64 = 6 };
+
+struct HtMcs {
+	HtModulation modulation = HtModulation::None;
+	double coding = 0;
+};
 
 class HtCapabilities : public InformationElement {
 public:
@@ -26,7 +29,7 @@ public:
 	[[nodiscard]] bool greenfield_ppdu() const;
 	[[nodiscard]] bool short_gi_20_mhz() const;
 	[[nodiscard]] bool short_gi_40_mhz() const;
-	[[nodiscard]] HtTxStbc tx_stbc() const;
+	[[nodiscard]] bool tx_stbc() const;
 	[[nodiscard]] HtRxStbc rx_stbc() const;
 	[[nodiscard]] bool delayed_block_ack() const;
 	[[nodiscard]] unsigned int max_amsdu_length() const;
@@ -36,9 +39,9 @@ public:
 	[[nodiscard]] bool lsig_txop_protection() const;
 
 	[[nodiscard]] unsigned int max_ampdu_length() const;
-	[[nodiscard]] unsigned int mpdu_density_usec() const;
+	[[nodiscard]] double mpdu_density_usec() const;
 
-	[[nodiscard]] QVector<std::uint8_t> rx_mcs() const;
+	[[nodiscard]] std::array<HtMcs, 4> rx_mcs() const;
 	[[nodiscard]] unsigned int highest_supported_data_rate() const;
 	[[nodiscard]] bool tx_mcs_defined() const;
 	[[nodiscard]] bool tx_rx_mcs_equal() const;
