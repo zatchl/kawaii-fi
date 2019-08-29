@@ -17,6 +17,7 @@ enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
 enum class Protocol { B, A, G, N, AC, AX };
 
+Q_DECLARE_METATYPE(Protocol)
 
 class AccessPoint {
 public:
