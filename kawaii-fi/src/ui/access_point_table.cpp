@@ -12,26 +12,22 @@
 #include <QAbstractItemView>
 #include <QAbstractTableModel>
 #include <QColor>
+#include <QFont>
 #include <QHeaderView>
 #include <QItemSelection>
 #include <QItemSelectionModel>
-#include <QList>
 #include <QModelIndex>
 #include <QModelIndexList>
+#include <QRegExp>
 #include <QSet>
+#include <QStringList>
 #include <QTableView>
 #include <QVariant>
 #include <QVector>
-#include <algorithm>
+#include <QWidget>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/channel.h>
-#include <libkawaii-fi/ies/ds_parameter.h>
-#include <libkawaii-fi/ies/ht_operations.h>
-#include <libkawaii-fi/ies/ssid.h>
-#include <libkawaii-fi/ies/supported_rates.h>
-#include <libkawaii-fi/ies/vht_operations.h>
-
-class QWidget;
+#include <libkawaii-fi/security.h>
 
 namespace {
 	enum class ApColumn {
@@ -50,42 +46,65 @@ namespace {
 
 	const int total_columns = static_cast<int>(ApColumn::Vendor) + 1;
 
-	QString supported_rates_string(const QList<double> &supported_rates)
-	{
-		QString rates_string;
-		for (int i = 0; i < supported_rates.size(); ++i) {
-			if (i < supported_rates.size() - 1) {
-				rates_string += QString::number(supported_rates[i]) + ", ";
-			} else {
-				rates_string += QString::number(supported_rates[i]);
-			}
-		}
-		return rates_string + " Mbit/s";
-	}
+	const QHash<Protocol, QString> protocol_map = {{Protocol::A, "a"},   {Protocol::B, "b"},
+	                                               {Protocol::G, "g"},   {Protocol::N, "n"},
+	                                               {Protocol::AC, "ac"}, {Protocol::AX, "ax"}};
 
-	QString protocols_string(const QVector<Protocol> &protocols)
+	const QHash<SecurityProtocol, QString> security_map = {{SecurityProtocol::None, "None"},
+	                                                       {SecurityProtocol::WEP, "WEP"},
+	                                                       {SecurityProtocol::WPA, "WPA"},
+	                                                       {SecurityProtocol::WPA2, "WPA2"},
+	                                                       {SecurityProtocol::WPA3, "WPA3"}};
+
+	QVariant ap_attribute(const AccessPoint &ap, ApColumn attribute_column)
 	{
-		QString protocol_string;
-		for (Protocol p : protocols) {
-			switch (p) {
-			case Protocol::A:
-				protocol_string.append("a/");
-				break;
-			case Protocol::B:
-				protocol_string.append("b/");
-				break;
-			case Protocol::G:
-				protocol_string.append("g/");
-				break;
-			case Protocol::N:
-				protocol_string.append("n/");
-				break;
-			case Protocol::AC:
-				protocol_string.append("ac/");
-				break;
-			case Protocol::AX:
-				protocol_string.append("ax/");
-				break;
+		switch (attribute_column) {
+		case ApColumn::SSID: {
+			const QString ssid = ap.ssid();
+			return !ssid.isEmpty() ? ssid : "Hidden";
+		}
+		case ApColumn::BSSID:
+			return ap.bssid();
+		case ApColumn::Vendor:
+			return "";
+		case ApColumn::Frequency:
+			return ap.frequency();
+		case ApColumn::Channel:
+			return ap.channel().number();
+		case ApColumn::ChannelWidth:
+			switch (ap.channel_width()) {
+			case ChannelWidth::TwentyMhz:
+				return 20;
+			case ChannelWidth::TwentyTwoMhz:
+				return 22;
+			case ChannelWidth::FortyMhz:
+				return 40;
+			case ChannelWidth::EightyMhz:
+				return 80;
+			case ChannelWidth::EightyPlusEightyMhz:
+				return 160;
+			case ChannelWidth::OneSixtyMhz:
+				return 160;
+			case ChannelWidth::Other:
+				return ap.channel().width_mhz();
+			}
+		case ApColumn::SignalStrength:
+			return ap.signal_strength_dbm();
+		case ApColumn::Protocol:
+			return QVariant::fromValue(ap.protocols());
+		case ApColumn::Security: {
+			QStringList security_list;
+			for (SecurityProtocol security : ap.security()) {
+				security_list.append(security_map.value(security));
+			}
+			const auto auth = ap.authentication();
+			switch (auth) {
+			case AkmSuiteType::PSK:
+				return security_list.join("/").append(" (PSK)");
+			case AkmSuiteType::IEEE_8021X:
+				return security_list.join("/").append(" (802.1X)");
+			case AkmSuiteType::None:
+				return security_list.join("/");
 			}
 		}
 		case ApColumn::SupportedRates:
@@ -93,35 +112,43 @@ namespace {
 		case ApColumn::MaxRate:
 			return ap.max_rate();
 		}
-		return protocol_string;
+		return QVariant();
 	}
 
-	QString security_string(const QVector<Security> &security)
+	QVariant ap_attribute_for_display(const AccessPoint &ap, ApColumn attribute_column)
 	{
-		QString security_string;
-		for (Security s : security) {
-			switch (s) {
-			case Security::None:
-				security_string.append("None/");
-				break;
-			case Security::WEP:
-				security_string.append("WEP/");
-				break;
-			case Security::WPA:
-				security_string.append("WPA/");
-				break;
-			case Security::WPA2:
-				security_string.append("WPA2/");
-				break;
-			case Security::WPA3:
-				security_string.append("WPA3/");
-				break;
+		switch (attribute_column) {
+		case ApColumn::Frequency:
+			return QString("%0 MHz").arg(ap_attribute(ap, attribute_column).toUInt());
+		case ApColumn::Channel:
+			if (ap.channel_width() == ChannelWidth::EightyPlusEightyMhz) {
+				const Channel channel = ap.channel();
+				return QString("%0, %1").arg(channel.number()).arg(channel.number_two());
 			}
+			return ap_attribute(ap, attribute_column);
+		case ApColumn::ChannelWidth:
+			if (ap.channel_width() == ChannelWidth::EightyPlusEightyMhz) {
+				return "80+80 MHz";
+			}
+			return QString("%0 MHz").arg(ap_attribute(ap, attribute_column).toUInt());
+		case ApColumn::SignalStrength:
+			return QString("%0 dBm").arg(ap_attribute(ap, attribute_column).toDouble());
+		case ApColumn::Protocol: {
+			QStringList protocol_list;
+			for (Protocol protocol : ap.protocols()) {
+				protocol_list.append(protocol_map.value(protocol));
+			}
+			return protocol_list.join("/");
 		}
-		if (security_string.endsWith("/")) {
-			security_string.chop(1);
+		case ApColumn::SupportedRates:
+			return QString("%0 Mbps").arg(ap_attribute(ap, attribute_column).toString());
+		case ApColumn::MaxRate:
+			return QString("%0 Mbps").arg(
+			        QString::number(ap_attribute(ap, attribute_column).toDouble(), 'f', 1)
+			                .remove(QRegExp("\\.?0+$"))); // Remove trailing zeros and decimal point
+		default:
+			return ap_attribute(ap, attribute_column);
 		}
-		return security_string;
 	}
 } // namespace
 
@@ -201,76 +228,16 @@ QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 
 	switch (role) {
 	case Qt::DisplayRole:
-		switch (static_cast<ApColumn>(index.column())) {
-		case ApColumn::SSID:
-			if (ap.information_elements().contains(WLAN_EID_SSID)) {
-				Ssid ssid = ap.information_elements().value(WLAN_EID_SSID);
-				return ssid.bytes();
+		return ap_attribute_for_display(ap, static_cast<ApColumn>(index.column()));
+	case Qt::UserRole:
+		return ap_attribute(ap, static_cast<ApColumn>(index.column()));
+	case Qt::FontRole:
+		if (index.column() == static_cast<int>(ApColumn::SSID)) {
+			QFont font;
+			if (ap.ssid().isEmpty()) {
+				font.setItalic(true);
 			}
-			return QVariant();
-		case ApColumn::BSSID:
-			return ap.bssid();
-		case ApColumn::Vendor:
-			return "";
-		case ApColumn::Frequency:
-			return QString("%1 MHz").arg(ap.frequency());
-		case ApColumn::Channel:
-			// For VHT channels, use the VHT convention of referencing the channel according to the
-			// center frequency of the entire channel
-			// For HT channels, use the HT convention of referencing the channel using the primary
-			// channel and '+1' or '-1' if there's a secondary channel above or below the primary
-			if (ap.information_elements().contains(WLAN_EID_VHT_OPERATION)) {
-				const Channel channel = ap.channel();
-				auto channel_string = QString::number(channel.number());
-				if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {
-					channel_string.append(QString(", %1").arg(channel.number_two()));
-				}
-				return channel_string;
-			} else if (ap.information_elements().contains(WLAN_EID_HT_OPERATION)) {
-				switch (HtOperations(ap.information_elements().value(WLAN_EID_HT_OPERATION))
-				                .secondary_channel_offset()) {
-				case SecondaryChannelOffset::Above: // 40 MHz
-					return QString("%1+1").arg(
-					        DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS))
-					                .channel());
-				case SecondaryChannelOffset::Below: // 40 MHz
-					return QString("%1-1").arg(
-					        DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS))
-					                .channel());
-				case SecondaryChannelOffset::NoSecondaryChannel: // 20 MHz
-					return DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS))
-					        .channel();
-				}
-			}
-			return DsParameter(ap.information_elements().value(WLAN_EID_DS_PARAMS)).channel();
-		case ApColumn::ChannelWidth:
-			return channel_width_to_string(ap.channel_width());
-		case ApColumn::SignalStrength:
-			return QString("%1 dBm").arg(ap.signal_strength_dbm());
-		case ApColumn::Protocol:
-			return protocols_string(ap.protocols());
-		case ApColumn::Security:
-			return security_string(ap.security());
-		case ApColumn::BasicRates: {
-			auto supp_rates = SupportedRates(ap.information_elements().value(WLAN_EID_SUPP_RATES))
-			                          .basic_rates();
-			supp_rates.unite(
-			        SupportedRates(ap.information_elements().value(WLAN_EID_EXT_SUPP_RATES))
-			                .basic_rates());
-			auto rate_list = supp_rates.toList();
-			std::sort(rate_list.begin(), rate_list.end());
-			return supported_rates_string(rate_list);
-		}
-		case ApColumn::SupportedRates: {
-			auto supp_rates =
-			        SupportedRates(ap.information_elements().value(WLAN_EID_SUPP_RATES)).rates();
-			supp_rates.unite(
-			        SupportedRates(ap.information_elements().value(WLAN_EID_EXT_SUPP_RATES))
-			                .rates());
-			auto rate_list = supp_rates.toList();
-			std::sort(rate_list.begin(), rate_list.end());
-			return supported_rates_string(rate_list);
-		}
+			return font;
 		}
 		break;
 	}
