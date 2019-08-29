@@ -3,7 +3,6 @@
 
 #include "scanning/access_point_scanner.h"
 #include "ui/access_point_table.h"
-#include "ui/main_window_toolbar.h"
 
 #include <QByteArrayData>
 #include <QMainWindow>
@@ -27,7 +26,6 @@ namespace KawaiiFi {
 	private:
 		Ui::MainWindow *ui_;
 		AccessPointScanner *const scanner_ = new AccessPointScanner(this);
-		MainWindowToolbar *const toolbar_ = new MainWindowToolbar(this);
 		AccessPointTableView *const table_view_ = new AccessPointTableView(*scanner_, this);
 		QTimer *const scan_timer_ = new QTimer(this);
 	};
