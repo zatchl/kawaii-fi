@@ -7,10 +7,10 @@
 #include "security.h"
 
 #include <QDBusArgument>
-#include <QHashNode>
 #include <QMetaType>
 #include <QString>
 #include <QVector>
+#include <QtCore>
 #include <array>
 
 enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
@@ -18,6 +18,8 @@ enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 enum class Protocol { B, A, G, N, AC, AX };
 
 Q_DECLARE_METATYPE(Protocol)
+
+inline uint qHash(Protocol key, uint seed) { return qHash(static_cast<int>(key), seed); }
 
 class AccessPoint {
 public:
