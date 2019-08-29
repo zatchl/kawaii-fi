@@ -12,7 +12,9 @@ struct nlattr;
 
 QString KawaiiFi::parse_bssid(nlattr *bssid_attr)
 {
-	return QByteArray::fromRawData(nla_get_string(bssid_attr), nla_len(bssid_attr)).toHex(':');
+	return QByteArray::fromRawData(nla_get_string(bssid_attr), nla_len(bssid_attr))
+	        .toHex(':')
+	        .toUpper();
 }
 
 unsigned int KawaiiFi::parse_frequency(nlattr *frequency_attr)
