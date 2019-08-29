@@ -32,6 +32,7 @@ public:
 	[[nodiscard]] unsigned int age_ms() const;
 	[[nodiscard]] const QVector<Protocol> &protocols() const;
 	[[nodiscard]] QVector<Protocol> &protocols();
+	[[nodiscard]] double max_rate() const;
 	[[nodiscard]] const Capabilities &capabilities() const;
 	[[nodiscard]] Capabilities &capabilites();
 	[[nodiscard]] const QMultiHash<unsigned int, InformationElement> &information_elements() const;

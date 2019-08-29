@@ -2,11 +2,13 @@
 
 #include "libkawaii-fi/capabilities.h"
 #include "libkawaii-fi/channel.h"
+#include "libkawaii-fi/ies/ht_capabilities.h"
 #include "libkawaii-fi/ies/ht_operations.h"
 #include "libkawaii-fi/ies/information_element.h"
 #include "libkawaii-fi/ies/robust_security_network.h"
 #include "libkawaii-fi/ies/ssid.h"
 #include "libkawaii-fi/ies/vendor_specific.h"
+#include "libkawaii-fi/ies/vht_capabilities.h"
 #include "libkawaii-fi/ies/vht_operations.h"
 #include "libkawaii-fi/ies/wpa.h"
 #include "libkawaii-fi/security.h"
@@ -14,6 +16,128 @@
 #include <QList>
 #include <algorithm>
 #include <array>
+
+namespace {
+	const double ht_vht_short_gi_us = 0.4;
+	const double ht_vht_long_gi_us = 0.8;
+
+	const double ofdm_symbol_duration_us = 3.2;
+
+	int ht_vht_data_subcarriers(ChannelWidth channel_width)
+	{
+		switch (channel_width) {
+		case ChannelWidth::TwentyMhz:
+			return 52;
+		case ChannelWidth::FortyMhz:
+			return 108;
+		case ChannelWidth::EightyMhz:
+			return 234;
+		case ChannelWidth::OneSixtyMhz:
+		case ChannelWidth::EightyPlusEightyMhz:
+			return 468;
+		default:
+			return 0;
+		}
+	}
+
+	bool ht_short_gi(const HtCapabilities &ht_cap, ChannelWidth channel_width)
+	{
+		switch (channel_width) {
+		case ChannelWidth::TwentyMhz:
+			return ht_cap.short_gi_20_mhz();
+		case ChannelWidth::FortyMhz:
+			return ht_cap.short_gi_40_mhz();
+		default:
+			return false;
+		}
+	}
+
+	double ht_max_rate(const HtCapabilities &ht_cap, ChannelWidth channel_width)
+	{
+		int max_ss = 0;
+		HtMcs mcs = {HtModulation::None, 0};
+		const std::array<HtMcs, 4> ht_mcs = ht_cap.rx_mcs();
+		for (unsigned int i = 0; i < ht_mcs.size(); ++i) {
+			if (ht_mcs[i].modulation == HtModulation::None) {
+				continue;
+			}
+			max_ss = static_cast<int>(i + 1);
+			mcs = ht_mcs[i];
+		}
+		return (ht_vht_data_subcarriers(channel_width) * static_cast<int>(mcs.modulation) *
+		        mcs.coding * max_ss) /
+		       (ofdm_symbol_duration_us +
+		        (ht_short_gi(ht_cap, channel_width) ? ht_vht_short_gi_us : ht_vht_long_gi_us));
+	}
+
+	int vht_bpscs(VhtMcs mcs)
+	{
+		switch (mcs) {
+		case VhtMcs::OneThroughSeven:
+			return 6;
+		case VhtMcs::OneThroughEight:
+		case VhtMcs::OneThroughNine:
+			return 8;
+		case VhtMcs::NotSupported:
+			return 0;
+		}
+		return 0;
+	}
+
+	double vht_coding(VhtMcs mcs)
+	{
+		switch (mcs) {
+		case VhtMcs::OneThroughSeven:
+			return 5.0 / 6;
+		case VhtMcs::OneThroughEight:
+			return 3.0 / 4;
+		case VhtMcs::OneThroughNine:
+			return 5.0 / 6;
+		case VhtMcs::NotSupported:
+			return 0;
+		}
+		return 0;
+	}
+
+	bool vht_short_gi(const VhtCapabilities &vht_cap, const HtCapabilities &ht_cap,
+	                  ChannelWidth channel_width)
+	{
+		switch (channel_width) {
+		case ChannelWidth::TwentyMhz:
+			return ht_cap.short_gi_20_mhz();
+		case ChannelWidth::FortyMhz:
+			return ht_cap.short_gi_40_mhz();
+		case ChannelWidth::EightyMhz:
+			return vht_cap.short_gi_80_mhz();
+		case ChannelWidth::OneSixtyMhz:
+		case ChannelWidth::EightyPlusEightyMhz:
+			return vht_cap.short_gi_160_mhz();
+		default:
+			return false;
+		}
+	}
+
+	double vht_max_rate(const VhtCapabilities &vht_cap, const HtCapabilities &ht_cap,
+	                    ChannelWidth channel_width)
+	{
+		int max_ss = 0;
+		VhtMcs mcs = VhtMcs::NotSupported;
+		const std::array<VhtMcs, 8> vht_mcs = vht_cap.mcs_rx();
+		for (unsigned int i = 0; i < vht_mcs.size(); ++i) {
+			if (vht_mcs[i] == VhtMcs::NotSupported) {
+				break;
+			}
+			max_ss = static_cast<int>(i + 1);
+			mcs = vht_mcs[i];
+		}
+		return (ht_vht_data_subcarriers(channel_width) * vht_bpscs(mcs) * vht_coding(mcs) *
+		        max_ss) /
+		       (ofdm_symbol_duration_us + (vht_short_gi(vht_cap, ht_cap, channel_width)
+		                                           ? ht_vht_short_gi_us
+		                                           : ht_vht_long_gi_us));
+	}
+
+} // namespace
 
 const QString &AccessPoint::bssid() const { return bssid_; }
 
@@ -39,6 +163,23 @@ unsigned int AccessPoint::age_ms() const { return age_ms_; }
 const QVector<Protocol> &AccessPoint::protocols() const { return protocols_; }
 
 QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
+
+double AccessPoint::max_rate() const
+{
+	if (information_elements_.contains(WLAN_EID_VHT_CAPABILITY)) {
+		return vht_max_rate(information_elements_.value(WLAN_EID_VHT_CAPABILITY),
+		                    information_elements_.value(WLAN_EID_HT_CAPABILITY), channel_width());
+	}
+
+	if (information_elements_.contains(WLAN_EID_HT_CAPABILITY)) {
+		return ht_max_rate(information_elements_.value(WLAN_EID_HT_CAPABILITY), channel_width());
+	}
+
+	const SupportedRates supp_rates = information_elements_.value(WLAN_EID_SUPP_RATES);
+	const QSet<double> rates = supp_rates.rates();
+
+	return *std::max_element(rates.begin(), rates.end());
+}
 
 const Capabilities &AccessPoint::capabilities() const { return capabilities_; }
 
