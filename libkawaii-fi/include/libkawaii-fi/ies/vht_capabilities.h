@@ -3,6 +3,7 @@
 
 #include "information_element.h"
 
+#include <array>
 
 enum class VhtSupportedChannelWidth {
 	NoOneSixtyMhzNoEightyPlusEightyMhz,
@@ -10,10 +11,8 @@ enum class VhtSupportedChannelWidth {
 	OneSixtyMhzEightyPlusEightyMhz
 };
 
-enum class VhtTxStbc { Disabled, Enabled };
-
 enum class VhtRxStbc {
-	Disabled,
+	NotSupported,
 	OneSpatialStream,
 	TwoSpatialStreams,
 	ThreeSpatialStreams,
@@ -30,11 +29,11 @@ public:
 	VhtCapabilities(const InformationElement &ie);
 
 	[[nodiscard]] unsigned int max_mpdu_length() const;
-	[[nodiscard]] VhtSupportedChannelWidth supported_channel_width() const;
+	[[nodiscard]] VhtSupportedChannelWidth supported_channel_width_set() const;
 	[[nodiscard]] bool rx_ldpc() const;
 	[[nodiscard]] bool short_gi_80_mhz() const;
 	[[nodiscard]] bool short_gi_160_mhz() const;
-	[[nodiscard]] VhtTxStbc tx_stbc() const;
+	[[nodiscard]] bool tx_stbc() const;
 	[[nodiscard]] VhtRxStbc rx_stbc() const;
 	[[nodiscard]] bool su_beamformer_capable() const;
 	[[nodiscard]] bool su_beamformee_capable() const;
@@ -56,6 +55,7 @@ public:
 	[[nodiscard]] VhtMcs mcs_rx_six_ss() const;
 	[[nodiscard]] VhtMcs mcs_rx_seven_ss() const;
 	[[nodiscard]] VhtMcs mcs_rx_eight_ss() const;
+	[[nodiscard]] std::array<VhtMcs, 8> mcs_rx() const;
 	[[nodiscard]] unsigned int rx_highest_long_gi_data_rate() const;
 	[[nodiscard]] unsigned int max_nsts_total() const;
 	[[nodiscard]] VhtMcs mcs_tx_one_ss() const;
@@ -66,6 +66,7 @@ public:
 	[[nodiscard]] VhtMcs mcs_tx_six_ss() const;
 	[[nodiscard]] VhtMcs mcs_tx_seven_ss() const;
 	[[nodiscard]] VhtMcs mcs_tx_eight_ss() const;
+	[[nodiscard]] std::array<VhtMcs, 8> mcs_tx() const;
 	[[nodiscard]] unsigned int tx_highest_long_gi_data_rate() const;
 	[[nodiscard]] bool extended_nss_bw_capable() const;
 };
