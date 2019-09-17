@@ -3,6 +3,7 @@
 
 #include <QByteArrayData>
 #include <QLabel>
+#include <QString>
 #include <QWidget>
 
 class QAction;
