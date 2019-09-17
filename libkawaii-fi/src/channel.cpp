@@ -5,17 +5,17 @@
 #include <QString>
 
 namespace {
-	const unsigned int two_point_four_ghz_min = 2400;
-	const unsigned int two_point_four_ghz_max = 2500;
+	constexpr unsigned int two_point_four_ghz_min = 2400;
+	constexpr unsigned int two_point_four_ghz_max = 2500;
 
-	const unsigned int three_point_six_ghz_min = 3650;
-	const unsigned int three_point_six_ghz_max = 3700;
+	constexpr unsigned int three_point_six_ghz_min = 3650;
+	constexpr unsigned int three_point_six_ghz_max = 3700;
 
-	const unsigned int four_point_nine_ghz_min = 4900;
-	const unsigned int four_point_nine_ghz_max = 5000;
+	constexpr unsigned int four_point_nine_ghz_min = 4900;
+	constexpr unsigned int four_point_nine_ghz_max = 5000;
 
-	const unsigned int five_ghz_min = 5000;
-	const unsigned int five_ghz_max = 5900;
+	constexpr unsigned int five_ghz_min = 5000;
+	constexpr unsigned int five_ghz_max = 5900;
 
 	const unsigned int sixty_ghz_min = 57240;
 	const unsigned int sixty_ghz_max = 70200;
