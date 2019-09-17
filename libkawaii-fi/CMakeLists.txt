@@ -11,6 +11,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core DBus REQUIRED)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
+find_package(LibNL REQUIRED)
+include_directories(${LibNL_INCLUDE_DIR})
+
 add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
 	"include/${PROJECT_NAME}/capabilities.h"
@@ -41,6 +45,11 @@ add_library(${PROJECT_NAME} SHARED
 
 	"src/access_point.cpp"
 	"src/capabilities.cpp"
+	"src/netlink/nl_parse_attr.cpp"
+	"src/netlink/nl_parse_attr.h"
+	"src/netlink/nl_wifi_command.h"
+	"src/netlink/nl_wifi_scan.cpp"
+	"src/netlink/nl_wifi_scan.h"
 	"src/ies/information_element.cpp"
 	"src/ies/ssid.cpp"
 	"src/ies/ds_parameter.cpp"
