@@ -7,7 +7,7 @@
 
 class SupportableFieldStandardItem : public QStandardItem {
 public:
-	SupportableFieldStandardItem(bool supportable_field);
+	explicit SupportableFieldStandardItem(bool supportable_field);
 };
 
 QList<QStandardItem *> supportable_field_row(const QString &title, bool supportable_field);

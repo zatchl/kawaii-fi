@@ -7,9 +7,9 @@
 
 class IeLengthStandardItem : public QStandardItem {
 public:
-	IeLengthStandardItem(int ie_length);
-	virtual QVariant data(int role = Qt::UserRole + 1) const override;
-	virtual bool operator<(const QStandardItem &other) const override;
+	explicit IeLengthStandardItem(int ie_length);
+	[[nodiscard]] QVariant data(int role = Qt::UserRole + 1) const override;
+	bool operator<(const QStandardItem &other) const override;
 };
 
 #endif // IE_LENGTH_STANDARD_ITEM_H

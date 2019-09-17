@@ -4,7 +4,7 @@
 #include <QByteArray>
 #include <QMetaType>
 
-class QDBusArgument;
+class QStandardItem;
 
 class InformationElement {
 public:
@@ -21,6 +21,8 @@ public:
 
 	// Marshall the information element data into a D-Bus argument
 	friend QDBusArgument &operator<<(QDBusArgument &argument, const InformationElement &ie);
+	[[nodiscard]] virtual QStandardItem *standard_item() const;
+	[[nodiscard]] virtual QString summary() const;
 
 	// Retrive the information element data from the D-Bus argument
 	friend const QDBusArgument &operator>>(const QDBusArgument &argument, InformationElement &ie);

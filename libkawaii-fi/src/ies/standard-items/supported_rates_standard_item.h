@@ -1,13 +1,13 @@
 #ifndef SUPPORTED_RATES_STANDARD_ITEM_H
 #define SUPPORTED_RATES_STANDARD_ITEM_H
 
-#include "libkawaii-fi/ies/supported_rates.h"
-
 #include <QStandardItem>
+
+class SupportedRates;
 
 class SupportedRatesStandardItem : public QStandardItem {
 public:
-	SupportedRatesStandardItem(const SupportedRates &supported_rates, bool extended_rates = false);
+	explicit SupportedRatesStandardItem(const SupportedRates &supported_rates);
 };
 
 #endif // SUPPORTED_RATES_STANDARD_ITEM_H

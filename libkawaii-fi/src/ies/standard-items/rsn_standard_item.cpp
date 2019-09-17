@@ -13,11 +13,13 @@
 namespace {
 	QList<QStandardItem *> oui_row(const std::array<std::uint8_t, 3> &oui)
 	{
-		QString oui_string = QString("%0:%1:%2")
-		                             .arg(oui[0], 2, 16, QChar('0'))
-		                             .arg(oui[1], 2, 16, QChar('0'))
-		                             .arg(oui[2], 2, 16, QChar('0'))
-		                             .toUpper();
+		constexpr int field_width = 2;
+		constexpr int base = 16;
+		const QString oui_string = QString("%0:%1:%2")
+		                                   .arg(oui[0], field_width, base, QChar('0'))
+		                                   .arg(oui[1], field_width, base, QChar('0'))
+		                                   .arg(oui[2], field_width, base, QChar('0'))
+		                                   .toUpper();
 		return {new QStandardItem("OUI"), new QStandardItem(oui_string)};
 	}
 

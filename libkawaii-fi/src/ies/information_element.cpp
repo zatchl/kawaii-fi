@@ -1,6 +1,7 @@
 #include "libkawaii-fi/ies/information_element.h"
 
-#include <QDBusArgument>
+#include <QStandardItem>
+#include <cstdint>
 
 InformationElement::InformationElement(const QByteArray &bytes) : bytes_(bytes) {}
 
@@ -11,7 +12,13 @@ InformationElement::InformationElement(const char *bytes, int size)
 
 const QByteArray &InformationElement::bytes() const { return bytes_; }
 
-QByteArray &InformationElement::bytes() { return bytes_; }
+QStandardItem *InformationElement::standard_item() const
+{
+	auto standard_item = new QStandardItem("Unknown IE");
+	return standard_item;
+}
+
+QString InformationElement::summary() const { return ""; }
 
 QDBusArgument &operator<<(QDBusArgument &argument, const InformationElement &ie)
 {

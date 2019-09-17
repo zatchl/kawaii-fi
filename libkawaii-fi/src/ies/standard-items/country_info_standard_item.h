@@ -2,12 +2,12 @@
 #define COUNTRY_INFO_STANDARD_ITEM_H
 
 #include <QStandardItem>
-#include <libkawaii-fi/channel.h>
-#include <libkawaii-fi/ies/country_info.h>
+
+class CountryInfo;
 
 class CountryInfoStandardItem : public QStandardItem {
 public:
-	CountryInfoStandardItem(const CountryInfo &country_info, WifiBand wifi_band);
+	explicit CountryInfoStandardItem(const CountryInfo &country_info);
 };
 
 #endif // COUNTRY_INFO_STANDARD_ITEM_H

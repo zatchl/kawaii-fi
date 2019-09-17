@@ -1,4 +1,4 @@
-#include "ie_id_standard_item.h"
+#include "libkawaii-fi/ies/standard-items/ie_id_standard_item.h"
 
 IeIdStandardItem::IeIdStandardItem(unsigned int ie_id) : QStandardItem(1) { setData(ie_id); }
 
