@@ -3,9 +3,12 @@
 #include "libkawaii-fi/ies/information_element.h"
 #include "standard-items/extended_capabilities_standard_item.h"
 
-ExtendedCapabilities::ExtendedCapabilities(const InformationElement &ie)
-    : InformationElement(ie.bytes())
 class QStandardItem;
+
+ExtendedCapabilities::ExtendedCapabilities(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_EXT_CAPABILITY)
+{
+}
 
 QStandardItem *ExtendedCapabilities::standard_item() const
 {

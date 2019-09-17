@@ -3,13 +3,15 @@
 
 #include "information_element.h"
 
+#include <QString>
+#include <string_view>
 
 class QStandardItem;
 
 class Ssid : public InformationElement {
 public:
 	Ssid() = default;
-	Ssid(const InformationElement &ie);
+	explicit Ssid(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 	[[nodiscard]] QString summary() const override;

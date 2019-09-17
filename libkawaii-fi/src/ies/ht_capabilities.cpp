@@ -6,6 +6,7 @@
 #include <QByteArray>
 #include <array>
 #include <cstdint>
+#include <string_view>
 
 class QStandardItem;
 
@@ -16,7 +17,10 @@ namespace {
 	const std::uint8_t mpdu_density_usec_mask = 0x1c; // 0001 1100
 } // namespace
 
-HtCapabilities::HtCapabilities(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+HtCapabilities::HtCapabilities(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_HT_CAPABILITY)
+{
+}
 
 QStandardItem *HtCapabilities::standard_item() const { return new HtCapabilityStandardItem(*this); }
 

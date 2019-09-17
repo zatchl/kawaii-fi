@@ -5,7 +5,10 @@
 #include <QByteArray>
 #include <QStandardItem>
 
-DsParameter::DsParameter(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+DsParameter::DsParameter(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_DS_PARAMS)
+{
+}
 
 QStandardItem *DsParameter::standard_item() const
 {

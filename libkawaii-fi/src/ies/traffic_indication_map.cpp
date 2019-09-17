@@ -3,11 +3,12 @@
 #include "libkawaii-fi/ies/information_element.h"
 #include "standard-items/tim_standard_item.h"
 
-TrafficIndicationMap::TrafficIndicationMap(const InformationElement &ie)
-    : InformationElement(ie.bytes())
+#include <string_view>
 
 class QStandardItem;
 
+TrafficIndicationMap::TrafficIndicationMap(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_TIM)
 {
 }
 

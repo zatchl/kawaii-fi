@@ -4,6 +4,8 @@
 #include "information_element.h"
 #include "vht_capabilities.h"
 
+#include <string_view>
+
 class QStandardItem;
 
 enum class VhtChannelWidth { TwentyOrFortyMhz, EightyMhz, OneSixtyMhz, EightyPlusEightyMhz };
@@ -11,7 +13,7 @@ enum class VhtChannelWidth { TwentyOrFortyMhz, EightyMhz, OneSixtyMhz, EightyPlu
 class VhtOperations : public InformationElement {
 public:
 	VhtOperations() = default;
-	VhtOperations(const InformationElement &ie);
+	explicit VhtOperations(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

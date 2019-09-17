@@ -3,11 +3,12 @@
 #include "libkawaii-fi/ies/information_element.h"
 #include "standard-items/power_constraint_standard_item.h"
 
-#include <QByteArray>
-#include <cstdint>
 class QStandardItem;
 
-PowerConstraint::PowerConstraint(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+PowerConstraint::PowerConstraint(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_PWR_CONSTRAINT)
+{
+}
 
 QStandardItem *PowerConstraint::standard_item() const
 {

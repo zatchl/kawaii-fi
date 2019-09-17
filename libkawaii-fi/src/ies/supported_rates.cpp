@@ -15,7 +15,10 @@ namespace {
 	const std::uint8_t basic_rate_mask = 0x80;     // 1000 0000
 } // namespace
 
-SupportedRates::SupportedRates(const InformationElement &ie) : InformationElement(ie) {}
+SupportedRates::SupportedRates(const std::string_view &bytes, unsigned int ie_id)
+    : InformationElement(bytes, ie_id)
+{
+}
 
 QStandardItem *SupportedRates::standard_item() const
 {

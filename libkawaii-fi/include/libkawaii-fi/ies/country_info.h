@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <QVector>
+#include <string_view>
 
 class QStandardItem;
 
@@ -19,7 +20,7 @@ struct ChannelPowerConstraint {
 class CountryInfo : public InformationElement {
 public:
 	CountryInfo() = default;
-	CountryInfo(const InformationElement &ie);
+	explicit CountryInfo(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 	[[nodiscard]] QString summary() const override;

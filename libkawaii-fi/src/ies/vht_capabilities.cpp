@@ -1,9 +1,12 @@
 #include "libkawaii-fi/ies/vht_capabilities.h"
 
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/vht_capability_standard_item.h"
 
 #include <QByteArray>
 #include <cstdint>
+
+class QStandardItem;
 
 namespace {
 	const std::uint8_t max_ampdu_length_first_mask = 0b10000000;
@@ -19,7 +22,15 @@ namespace {
 
 } // namespace
 
-VhtCapabilities::VhtCapabilities(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+VhtCapabilities::VhtCapabilities(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_VHT_CAPABILITY)
+{
+}
+
+QStandardItem *VhtCapabilities::standard_item() const
+{
+	return new VhtCapabilityStandardItem(*this);
+}
 
 unsigned int VhtCapabilities::max_mpdu_length() const
 {

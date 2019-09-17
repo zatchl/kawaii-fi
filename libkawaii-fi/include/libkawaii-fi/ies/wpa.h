@@ -4,15 +4,17 @@
 #include "libkawaii-fi/security.h"
 #include "vendor_specific.h"
 
+#include <QByteArray>
 #include <QVector>
 #include <array>
+#include <string_view>
 
 class QStandardItem;
 
 class Wpa : public VendorSpecific {
 public:
 	Wpa() = default;
-	Wpa(const VendorSpecific &vs);
+	explicit Wpa(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

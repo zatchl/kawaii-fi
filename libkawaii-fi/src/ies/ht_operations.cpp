@@ -14,9 +14,11 @@ namespace {
 	const std::uint8_t ht_protection_mask = 0x3;            // 0000 0011
 } // namespace
 
-HtOperations::HtOperations(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+HtOperations::HtOperations(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_HT_OPERATION)
+{
+}
 
-HtOperations::HtOperations(const char *bytes, int size) : InformationElement(bytes, size) {}
 QStandardItem *HtOperations::standard_item() const { return new HtOperationStandardItem(*this); }
 
 unsigned int HtOperations::primary_channel() const

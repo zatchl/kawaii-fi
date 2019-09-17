@@ -2,13 +2,14 @@
 #define TRAFFIC_INDICATION_MAP_H
 
 #include "information_element.h"
+#include "string_view"
 
 class QStandardItem;
 
 class TrafficIndicationMap : public InformationElement {
 public:
 	TrafficIndicationMap() = default;
-	TrafficIndicationMap(const InformationElement &ie);
+	explicit TrafficIndicationMap(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 };

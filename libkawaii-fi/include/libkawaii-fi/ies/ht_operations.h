@@ -6,6 +6,7 @@
 
 #include <QVector>
 #include <cstdint>
+#include <string_view>
 
 class QStandardItem;
 
@@ -18,8 +19,7 @@ enum class PcoPhase { TwentyMhz, FortyMhz };
 class HtOperations : public InformationElement {
 public:
 	HtOperations() = default;
-	HtOperations(const InformationElement &ie);
-	HtOperations(const char *bytes, int size);
+	explicit HtOperations(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

@@ -4,14 +4,16 @@
 #include "information_element.h"
 
 #include <QSet>
+#include <QString>
 #include <QStringList>
+#include <string_view>
 
 class QStandardItem;
 
 class SupportedRates : public InformationElement {
 public:
 	SupportedRates() = default;
-	SupportedRates(const InformationElement &ie);
+	SupportedRates(const std::string_view &bytes, unsigned int ie_id_);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 	[[nodiscard]] QString summary() const override;

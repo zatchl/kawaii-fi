@@ -4,6 +4,7 @@
 #include "information_element.h"
 
 #include <array>
+#include <string_view>
 
 class QStandardItem;
 
@@ -23,7 +24,7 @@ struct HtMcs {
 class HtCapabilities : public InformationElement {
 public:
 	HtCapabilities() = default;
-	HtCapabilities(const InformationElement &ie);
+	explicit HtCapabilities(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

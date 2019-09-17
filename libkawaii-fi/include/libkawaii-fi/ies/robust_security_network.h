@@ -5,13 +5,14 @@
 #include "libkawaii-fi/security.h"
 
 #include <QVector>
+#include <string_view>
 
 class QStandardItem;
 
 class RobustSecurityNetwork : public InformationElement {
 public:
 	RobustSecurityNetwork() = default;
-	RobustSecurityNetwork(const InformationElement &ie);
+	explicit RobustSecurityNetwork(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

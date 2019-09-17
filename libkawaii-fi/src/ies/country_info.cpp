@@ -6,8 +6,12 @@
 #include <QByteArray>
 #include <cstdint>
 
-CountryInfo::CountryInfo(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 class QStandardItem;
+
+CountryInfo::CountryInfo(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_COUNTRY)
+{
+}
 
 QStandardItem *CountryInfo::standard_item() const { return new CountryInfoStandardItem(*this); }
 

@@ -3,12 +3,14 @@
 
 #include "information_element.h"
 
+#include <string_view>
+
 class QStandardItem;
 
 class ErpInfo : public InformationElement {
 public:
 	ErpInfo() = default;
-	ErpInfo(const InformationElement &ie);
+	explicit ErpInfo(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

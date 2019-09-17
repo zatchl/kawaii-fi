@@ -4,12 +4,14 @@
 #include "array"
 #include "information_element.h"
 
+#include <string_view>
+
 class QStandardItem;
 
 class VendorSpecific : public InformationElement {
 public:
 	VendorSpecific() = default;
-	VendorSpecific(const InformationElement &ie);
+	explicit VendorSpecific(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

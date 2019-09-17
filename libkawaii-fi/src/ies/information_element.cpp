@@ -3,10 +3,9 @@
 #include <QStandardItem>
 #include <cstdint>
 
-InformationElement::InformationElement(const QByteArray &bytes) : bytes_(bytes) {}
-
-InformationElement::InformationElement(const char *bytes, int size)
-    : bytes_(QByteArray(bytes, size))
+InformationElement::InformationElement(const std::string_view &bytes, unsigned int ie_id)
+    : bytes_(QByteArray(bytes.begin(), static_cast<QByteArray::size_type>(bytes.size()))),
+      ie_id_(ie_id)
 {
 }
 

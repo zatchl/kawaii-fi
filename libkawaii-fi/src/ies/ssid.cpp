@@ -2,8 +2,9 @@
 
 #include "libkawaii-fi/ies/information_element.h"
 
-Ssid::Ssid(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 #include <QStandardItem>
+
+Ssid::Ssid(const std::string_view &bytes) : InformationElement(bytes, WLAN_EID_SSID) {}
 
 QStandardItem *Ssid::standard_item() const { return new QStandardItem("SSID"); }
 

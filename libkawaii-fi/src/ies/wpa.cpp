@@ -6,7 +6,8 @@
 #include <QStandardItem>
 #include <cstdint>
 
-Wpa::Wpa(const VendorSpecific &vs) : VendorSpecific(vs) {}
+
+Wpa::Wpa(const std::string_view &bytes) : VendorSpecific(bytes) {}
 
 QStandardItem *Wpa::standard_item() const
 {

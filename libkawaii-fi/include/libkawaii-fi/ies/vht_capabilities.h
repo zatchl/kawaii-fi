@@ -4,6 +4,7 @@
 #include "information_element.h"
 
 #include <array>
+#include <string_view>
 
 class QStandardItem;
 
@@ -28,7 +29,7 @@ enum class VhtMcs { NotSupported, OneThroughSeven, OneThroughEight, OneThroughNi
 class VhtCapabilities : public InformationElement {
 public:
 	VhtCapabilities() = default;
-	VhtCapabilities(const InformationElement &ie);
+	explicit VhtCapabilities(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 

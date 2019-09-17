@@ -3,14 +3,16 @@
 
 #include <QByteArray>
 #include <QMetaType>
+#include <QString>
+#include <string_view>
 
 class QStandardItem;
 
 class InformationElement {
 public:
+	InformationElement(const std::string_view &bytes, unsigned int ie_id);
+
 	InformationElement() = default;
-	InformationElement(const QByteArray &bytes);
-	InformationElement(const char *bytes, int size);
 	InformationElement(const InformationElement &ie) = default;
 	InformationElement(InformationElement &&ie) = default;
 	virtual ~InformationElement() = default;

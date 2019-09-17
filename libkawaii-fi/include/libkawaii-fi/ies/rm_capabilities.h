@@ -3,12 +3,14 @@
 
 #include "information_element.h"
 
+#include <string_view>
+
 class QStandardItem;
 
 class RmCapabilities : public InformationElement {
 public:
 	RmCapabilities() = default;
-	RmCapabilities(const InformationElement &ie);
+	explicit RmCapabilities(const std::string_view &bytes);
 
 	[[nodiscard]] QStandardItem *standard_item() const override;
 };

@@ -8,10 +8,10 @@
 #include <array>
 #include <cstdint>
 
-RobustSecurityNetwork::RobustSecurityNetwork(const InformationElement &ie)
-    : InformationElement(ie.bytes())
 class QStandardItem;
 
+RobustSecurityNetwork::RobustSecurityNetwork(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_RSN)
 {
 }
 

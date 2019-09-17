@@ -3,9 +3,18 @@
 #include "libkawaii-fi/ies/information_element.h"
 
 #include <QByteArray>
+#include <QStandardItem>
 #include <array>
 
-VendorSpecific::VendorSpecific(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+VendorSpecific::VendorSpecific(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_VENDOR_SPECIFIC)
+{
+}
+
+QStandardItem *VendorSpecific::standard_item() const
+{
+	return new QStandardItem("Vendor Specific");
+}
 
 std::array<unsigned char, 3> VendorSpecific::oui() const
 {

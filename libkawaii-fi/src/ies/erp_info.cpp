@@ -5,8 +5,9 @@
 
 #include <QByteArray>
 
-ErpInfo::ErpInfo(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 class QStandardItem;
+
+ErpInfo::ErpInfo(const std::string_view &bytes) : InformationElement(bytes, WLAN_EID_ERP_INFO) {}
 
 QStandardItem *ErpInfo::standard_item() const { return new ErpInfoStandardItem(*this); }
 

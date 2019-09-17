@@ -8,9 +8,11 @@
 
 class QStandardItem;
 
+VhtOperations::VhtOperations(const std::string_view &bytes)
+    : InformationElement(bytes, WLAN_EID_VHT_OPERATION)
+{
 }
 
-VhtOperations::VhtOperations(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 QStandardItem *VhtOperations::standard_item() const { return new VhtOperationStandardItem(*this); }
 
 VhtChannelWidth VhtOperations::channel_width() const
