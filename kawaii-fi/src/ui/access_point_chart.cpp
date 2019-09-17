@@ -95,12 +95,17 @@ void AccessPointChart::add_y_axis()
 void AccessPointChart::refresh_chart()
 {
 	removeAllSeries();
-	for (const auto &ap : ap_scanner_.access_points()) {
-		add_access_point(ap, ap_scanner_.access_point_colors()[ap.bssid()]);
+
+	const QVector<AccessPoint> *access_points = ap_scanner_.access_points();
+
+	if (access_points) {
+		for (const auto &ap : *access_points) {
+			add_access_point(ap);
+		}
 	}
 }
 
-void AccessPointChart::add_access_point(const AccessPoint &ap, const QColor &color)
+void AccessPointChart::add_access_point(const AccessPoint &ap)
 {
 	const Channel channel = ap.channel();
 
@@ -110,7 +115,7 @@ void AccessPointChart::add_access_point(const AccessPoint &ap, const QColor &col
 
 	auto *series = new QtCharts::QLineSeries(this);
 	series->setName(ap.bssid());
-	series->setPen(QPen(QBrush(color), series_line_width));
+	series->setPen(QPen(QBrush(ap.color()), series_line_width));
 	series->append(channel.start_mhz(), min_signal_dbm);
 	series->append(channel.start_mhz(), ap.signal_strength_dbm());
 	series->append(channel.end_mhz(), ap.signal_strength_dbm());

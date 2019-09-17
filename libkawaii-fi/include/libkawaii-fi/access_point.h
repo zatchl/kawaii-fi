@@ -8,6 +8,7 @@
 #include "security.h"
 
 #include <QDBusArgument>
+#include <QColor>
 #include <QMetaType>
 #include <QString>
 #include <QStringList>
@@ -26,6 +27,7 @@ class AccessPoint {
 public:
 	[[nodiscard]] const QString &bssid() const;
 	[[nodiscard]] QString ssid() const;
+	[[nodiscard]] const QColor &color() const;
 	[[nodiscard]] ConnectionStatus connection_status() const;
 	[[nodiscard]] int signal_strength_mbm() const;
 	[[nodiscard]] double signal_strength_dbm() const;
@@ -54,6 +56,7 @@ public:
 
 private:
 	QString bssid_;
+	const QColor color_;
 	ConnectionStatus connection_status_ = ConnectionStatus::Unknown;
 	int signal_strength_mbm_ = 0;
 	unsigned int frequency_ = 0;

@@ -3,7 +3,6 @@
 
 #include <QByteArrayData>
 #include <QChart>
-#include <QColor>
 #include <QString>
 #include <Qt>
 #include <libkawaii-fi/channel.h>
@@ -27,7 +26,7 @@ private:
 
 private slots:
 	void refresh_chart();
-	void add_access_point(const AccessPoint &ap, const QColor &color);
+	void add_access_point(const AccessPoint &ap);
 };
 
 #endif // ACCESS_POINT_CHART_H
