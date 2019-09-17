@@ -174,15 +174,10 @@ QString AccessPoint::ssid() const
 ConnectionStatus AccessPoint::connection_status() const { return connection_status_; }
 const QColor &AccessPoint::color() const { return color_; }
 
-int AccessPoint::signal_strength_mbm() const { return signal_strength_mbm_; }
 
-double AccessPoint::signal_strength_dbm() const
-{
-	const int mbm_per_dbm = 100;
-	return static_cast<double>(signal_strength_mbm_) / mbm_per_dbm;
-}
 
 unsigned int AccessPoint::frequency() const { return frequency_; }
+double AccessPoint::signal_dbm() const { return signal_dbm_; }
 
 unsigned int AccessPoint::age_ms() const { return age_ms_; }
 

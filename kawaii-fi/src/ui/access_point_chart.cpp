@@ -117,13 +117,13 @@ void AccessPointChart::add_access_point(const AccessPoint &ap)
 	series->setName(ap.bssid());
 	series->setPen(QPen(QBrush(ap.color()), series_line_width));
 	series->append(channel.start_mhz(), min_signal_dbm);
-	series->append(channel.start_mhz(), ap.signal_strength_dbm());
-	series->append(channel.end_mhz(), ap.signal_strength_dbm());
+	series->append(channel.start_mhz(), ap.signal_dbm());
+	series->append(channel.end_mhz(), ap.signal_dbm());
 	series->append(channel.end_mhz(), min_signal_dbm);
 	if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {
 		series->append(channel.start_mhz_two(), min_signal_dbm);
-		series->append(channel.start_mhz_two(), ap.signal_strength_dbm());
-		series->append(channel.end_mhz_two(), ap.signal_strength_dbm());
+		series->append(channel.start_mhz_two(), ap.signal_dbm());
+		series->append(channel.end_mhz_two(), ap.signal_dbm());
 		series->append(channel.end_mhz_two(), min_signal_dbm);
 	}
 	addSeries(series);

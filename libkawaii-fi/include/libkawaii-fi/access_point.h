@@ -29,8 +29,7 @@ public:
 	[[nodiscard]] QString ssid() const;
 	[[nodiscard]] const QColor &color() const;
 	[[nodiscard]] ConnectionStatus connection_status() const;
-	[[nodiscard]] int signal_strength_mbm() const;
-	[[nodiscard]] double signal_strength_dbm() const;
+	[[nodiscard]] double signal_dbm() const;
 	[[nodiscard]] unsigned int frequency() const;
 	[[nodiscard]] unsigned int age_ms() const;
 	[[nodiscard]] const QVector<Protocol> &protocols() const;
