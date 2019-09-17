@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVector>
+#include <libkawaii-fi/ies/ie_variant.h>
 
 enum class WifiBand {
 	TwoPointFourGhz,
@@ -29,6 +30,7 @@ public:
 	Channel(unsigned int start_freq, unsigned int end_freq);
 	Channel(unsigned int start_freq_one, unsigned int end_freq_one, unsigned int start_freq_two,
 	        unsigned int end_freq_two);
+	Channel(unsigned int primary_center, const QVector<IeVariant> &ies);
 	[[nodiscard]] unsigned int start_mhz() const;
 	[[nodiscard]] unsigned int end_mhz() const;
 	[[nodiscard]] unsigned int center_mhz() const;
@@ -42,6 +44,7 @@ public:
 	[[nodiscard]] bool contains(unsigned int freq) const;
 	[[nodiscard]] WifiBand band() const;
 	[[nodiscard]] ChannelWidth width() const;
+	[[nodiscard]] static ChannelWidth width_from_ies(const QVector<IeVariant> &ies);
 
 private:
 	unsigned int start_freq_ = 0;
