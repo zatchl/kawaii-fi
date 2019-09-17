@@ -1,11 +1,17 @@
 #include "libkawaii-fi/ies/country_info.h"
 
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/country_info_standard_item.h"
 
 #include <QByteArray>
 #include <cstdint>
 
 CountryInfo::CountryInfo(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+class QStandardItem;
+
+QStandardItem *CountryInfo::standard_item() const { return new CountryInfoStandardItem(*this); }
+
+QString CountryInfo::summary() const { return country_code(); }
 
 QString CountryInfo::country_code() const
 {

@@ -3,9 +3,16 @@
 #include "libkawaii-fi/ies/vendor_specific.h"
 
 #include <QByteArray>
+#include <QStandardItem>
 #include <cstdint>
 
 Wpa::Wpa(const VendorSpecific &vs) : VendorSpecific(vs) {}
+
+QStandardItem *Wpa::standard_item() const
+{
+	auto standard_item = new QStandardItem("WPA");
+	return standard_item;
+}
 
 unsigned int Wpa::version() const
 {

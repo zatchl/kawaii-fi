@@ -1,10 +1,14 @@
 #include "libkawaii-fi/ies/erp_info.h"
 
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/erp_info_standard_item.h"
 
 #include <QByteArray>
 
 ErpInfo::ErpInfo(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+class QStandardItem;
+
+QStandardItem *ErpInfo::standard_item() const { return new ErpInfoStandardItem(*this); }
 
 bool ErpInfo::non_erp_present() const
 {

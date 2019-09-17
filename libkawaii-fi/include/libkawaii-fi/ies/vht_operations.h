@@ -4,12 +4,16 @@
 #include "information_element.h"
 #include "vht_capabilities.h"
 
+class QStandardItem;
+
 enum class VhtChannelWidth { TwentyOrFortyMhz, EightyMhz, OneSixtyMhz, EightyPlusEightyMhz };
 
 class VhtOperations : public InformationElement {
 public:
 	VhtOperations() = default;
 	VhtOperations(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] VhtChannelWidth channel_width() const;
 	[[nodiscard]] unsigned int channel_center_segment_zero() const;

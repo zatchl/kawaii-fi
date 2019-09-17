@@ -1,11 +1,14 @@
 #include "libkawaii-fi/ies/supported_rates.h"
 
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/supported_rates_standard_item.h"
 
 #include <QByteArray>
 #include <QString>
 #include <QStringList>
 #include <cstdint>
+
+class QStandardItem;
 
 namespace {
 	const std::uint8_t supported_rate_mask = 0x7f; // 0111 1111
@@ -13,6 +16,13 @@ namespace {
 } // namespace
 
 SupportedRates::SupportedRates(const InformationElement &ie) : InformationElement(ie) {}
+
+QStandardItem *SupportedRates::standard_item() const
+{
+	return new SupportedRatesStandardItem(*this);
+}
+
+QString SupportedRates::summary() const { return text_rates().join(", "); }
 
 QSet<double> SupportedRates::basic_rates() const
 {

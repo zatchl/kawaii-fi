@@ -2,14 +2,16 @@
 
 #include "libkawaii-fi/ies/information_element.h"
 #include "libkawaii-fi/ies/vht_capabilities.h"
+#include "standard-items/vht_operation_standard_item.h"
 
 #include <QByteArray>
 
-namespace {
-	const unsigned int vht_operation_ie_length = 5;
+class QStandardItem;
+
 }
 
 VhtOperations::VhtOperations(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+QStandardItem *VhtOperations::standard_item() const { return new VhtOperationStandardItem(*this); }
 
 VhtChannelWidth VhtOperations::channel_width() const
 {

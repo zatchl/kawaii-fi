@@ -1,10 +1,15 @@
 #include "libkawaii-fi/ies/extended_capabilities.h"
 
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/extended_capabilities_standard_item.h"
 
 ExtendedCapabilities::ExtendedCapabilities(const InformationElement &ie)
     : InformationElement(ie.bytes())
+class QStandardItem;
+
+QStandardItem *ExtendedCapabilities::standard_item() const
 {
+	return new ExtendedCapabilitiesStandardItem(*this);
 }
 
 bool ExtendedCapabilities::twenty_forty_bss_coexistence_management() const { return false; }

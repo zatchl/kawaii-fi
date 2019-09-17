@@ -3,10 +3,15 @@
 
 #include "information_element.h"
 
+class QStandardItem;
+
 class PowerConstraint : public InformationElement {
 public:
 	PowerConstraint() = default;
 	PowerConstraint(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
+	[[nodiscard]] QString summary() const override;
 
 	[[nodiscard]] unsigned int local_power_constraint() const;
 };

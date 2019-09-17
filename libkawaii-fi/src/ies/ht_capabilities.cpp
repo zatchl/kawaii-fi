@@ -1,10 +1,13 @@
 #include "libkawaii-fi/ies/ht_capabilities.h"
 
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/ht_capability_standard_item.h"
 
 #include <QByteArray>
 #include <array>
 #include <cstdint>
+
+class QStandardItem;
 
 namespace {
 	const std::uint8_t sm_power_save_mask = 0xc;      // 0000 1100
@@ -14,6 +17,8 @@ namespace {
 } // namespace
 
 HtCapabilities::HtCapabilities(const InformationElement &ie) : InformationElement(ie.bytes()) {}
+
+QStandardItem *HtCapabilities::standard_item() const { return new HtCapabilityStandardItem(*this); }
 
 bool HtCapabilities::ldpc_coding_capability() const
 {

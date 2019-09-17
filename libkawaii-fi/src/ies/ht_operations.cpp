@@ -2,8 +2,11 @@
 
 #include "libkawaii-fi/ies/ht_capabilities.h"
 #include "libkawaii-fi/ies/information_element.h"
+#include "standard-items/ht_operation_standard_item.h"
 
 #include <QByteArray>
+
+class QStandardItem;
 
 namespace {
 	const unsigned int ht_operation_ie_length = 22;
@@ -14,6 +17,7 @@ namespace {
 HtOperations::HtOperations(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 
 HtOperations::HtOperations(const char *bytes, int size) : InformationElement(bytes, size) {}
+QStandardItem *HtOperations::standard_item() const { return new HtOperationStandardItem(*this); }
 
 unsigned int HtOperations::primary_channel() const
 {

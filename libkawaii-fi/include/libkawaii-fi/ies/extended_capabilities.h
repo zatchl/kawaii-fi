@@ -3,10 +3,14 @@
 
 #include "information_element.h"
 
+class QStandardItem;
+
 class ExtendedCapabilities : public InformationElement {
 public:
 	ExtendedCapabilities() = default;
 	ExtendedCapabilities(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] bool twenty_forty_bss_coexistence_management() const;
 	[[nodiscard]] bool extended_channel_switching() const;

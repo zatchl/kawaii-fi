@@ -2,6 +2,7 @@
 
 #include "libkawaii-fi/ies/information_element.h"
 #include "libkawaii-fi/security.h"
+#include "standard-items/rsn_standard_item.h"
 
 #include <QByteArray>
 #include <array>
@@ -9,8 +10,12 @@
 
 RobustSecurityNetwork::RobustSecurityNetwork(const InformationElement &ie)
     : InformationElement(ie.bytes())
+class QStandardItem;
+
 {
 }
+
+QStandardItem *RobustSecurityNetwork::standard_item() const { return new RsnStandardItem(*this); }
 
 unsigned int RobustSecurityNetwork::version() const
 {

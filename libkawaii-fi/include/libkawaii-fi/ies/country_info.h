@@ -6,6 +6,8 @@
 #include <QString>
 #include <QVector>
 
+class QStandardItem;
+
 enum class Environment { Indoor, Outdoor, Any };
 
 struct ChannelPowerConstraint {
@@ -18,6 +20,9 @@ class CountryInfo : public InformationElement {
 public:
 	CountryInfo() = default;
 	CountryInfo(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
+	[[nodiscard]] QString summary() const override;
 
 	[[nodiscard]] QString country_code() const;
 	[[nodiscard]] Environment environment() const;

@@ -6,10 +6,14 @@
 
 #include <QVector>
 
+class QStandardItem;
+
 class RobustSecurityNetwork : public InformationElement {
 public:
 	RobustSecurityNetwork() = default;
 	RobustSecurityNetwork(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] unsigned int version() const;
 	[[nodiscard]] CipherSuite group_cipher_suite() const;

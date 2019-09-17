@@ -6,10 +6,15 @@
 #include <QSet>
 #include <QStringList>
 
+class QStandardItem;
+
 class SupportedRates : public InformationElement {
 public:
 	SupportedRates() = default;
 	SupportedRates(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
+	[[nodiscard]] QString summary() const override;
 
 	[[nodiscard]] QSet<double> basic_rates() const;
 	[[nodiscard]] QSet<double> rates() const;

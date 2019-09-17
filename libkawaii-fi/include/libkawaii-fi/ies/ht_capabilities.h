@@ -5,6 +5,8 @@
 
 #include <array>
 
+class QStandardItem;
+
 enum class HtSupportedChannelWidth { TwentyMhz, TwentyOrFortyMhz };
 
 enum class SmPowerSave { Static, Dynamic, Disabled };
@@ -22,6 +24,8 @@ class HtCapabilities : public InformationElement {
 public:
 	HtCapabilities() = default;
 	HtCapabilities(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] bool ldpc_coding_capability() const;
 	[[nodiscard]] HtSupportedChannelWidth supported_channel_width_set() const;

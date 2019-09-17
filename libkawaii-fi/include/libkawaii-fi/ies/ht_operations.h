@@ -7,6 +7,8 @@
 #include <QVector>
 #include <cstdint>
 
+class QStandardItem;
+
 enum class SecondaryChannelOffset { NoSecondaryChannel, Above, Below };
 
 enum class HtProtection { None, Nonmember, TwentyMhz, NonHtMixed };
@@ -18,6 +20,8 @@ public:
 	HtOperations() = default;
 	HtOperations(const InformationElement &ie);
 	HtOperations(const char *bytes, int size);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] unsigned int primary_channel() const;
 	[[nodiscard]] SecondaryChannelOffset secondary_channel_offset() const;

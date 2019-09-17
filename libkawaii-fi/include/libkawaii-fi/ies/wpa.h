@@ -7,10 +7,14 @@
 #include <QVector>
 #include <array>
 
+class QStandardItem;
+
 class Wpa : public VendorSpecific {
 public:
 	Wpa() = default;
 	Wpa(const VendorSpecific &vs);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] unsigned int version() const;
 	[[nodiscard]] CipherSuite group_cipher_suite() const;

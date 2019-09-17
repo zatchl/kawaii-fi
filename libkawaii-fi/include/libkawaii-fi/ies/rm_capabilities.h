@@ -3,10 +3,14 @@
 
 #include "information_element.h"
 
+class QStandardItem;
+
 class RmCapabilities : public InformationElement {
 public:
 	RmCapabilities() = default;
 	RmCapabilities(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 };
 
 inline const unsigned int WLAN_EID_RRM_ENABLED_CAPABILITIES = 70;

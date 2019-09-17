@@ -3,10 +3,14 @@
 
 #include "information_element.h"
 
+class QStandardItem;
+
 class ErpInfo : public InformationElement {
 public:
 	ErpInfo() = default;
 	ErpInfo(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] bool non_erp_present() const;
 	[[nodiscard]] bool use_protection() const;

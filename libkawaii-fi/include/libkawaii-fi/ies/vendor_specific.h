@@ -4,10 +4,14 @@
 #include "array"
 #include "information_element.h"
 
+class QStandardItem;
+
 class VendorSpecific : public InformationElement {
 public:
 	VendorSpecific() = default;
 	VendorSpecific(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] std::array<unsigned char, 3> oui() const;
 	[[nodiscard]] unsigned int type() const;

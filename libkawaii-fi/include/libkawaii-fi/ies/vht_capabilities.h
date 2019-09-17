@@ -5,6 +5,8 @@
 
 #include <array>
 
+class QStandardItem;
+
 enum class VhtSupportedChannelWidth {
 	NoOneSixtyMhzNoEightyPlusEightyMhz,
 	OneSixtyMhz,
@@ -27,6 +29,8 @@ class VhtCapabilities : public InformationElement {
 public:
 	VhtCapabilities() = default;
 	VhtCapabilities(const InformationElement &ie);
+
+	[[nodiscard]] QStandardItem *standard_item() const override;
 
 	[[nodiscard]] unsigned int max_mpdu_length() const;
 	[[nodiscard]] VhtSupportedChannelWidth supported_channel_width_set() const;
