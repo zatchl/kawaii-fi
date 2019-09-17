@@ -16,8 +16,10 @@ class AccessPointDetailTreeView : public QTreeView {
 public:
 	AccessPointDetailTreeView(QWidget *parent = nullptr);
 
-	void show_ies(const QString &bssid);
 	void set_ap_scanner(const AccessPointScanner *ap_scanner);
+
+public slots:
+	void show_ies(const QString &bssid);
 
 private:
 	void show_ies_for_ap(const AccessPoint &ap);
