@@ -41,7 +41,7 @@ private:
 class AccessPointTableModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	AccessPointTableModel(const AccessPointScanner &ap_scanner, QObject *parent = nullptr);
+	explicit AccessPointTableModel(const AccessPointScanner &ap_scanner, QObject *parent = nullptr);
 
 	[[nodiscard]] int rowCount(const QModelIndex &parent) const override;
 	[[nodiscard]] int columnCount(const QModelIndex &parent) const override;
@@ -57,7 +57,7 @@ class AccessPointTableView : public QTableView {
 	Q_OBJECT
 public:
 	AccessPointTableView(QWidget *parent = nullptr);
-	AccessPointTableView(const AccessPointScanner &ap_scanner, QWidget *parent = nullptr);
+	explicit AccessPointTableView(const AccessPointScanner &ap_scanner, QWidget *parent = nullptr);
 
 	void set_ap_scanner(const AccessPointScanner &ap_scanner);
 	[[nodiscard]] AccessPointSortFilterProxyModel *ap_sort_filter_proxy_model();
