@@ -8,5 +8,6 @@ DsParameter::DsParameter(const InformationElement &ie) : InformationElement(ie.b
 
 unsigned int DsParameter::channel() const
 {
-	return (bytes().size() >= 1) ? static_cast<unsigned char>(bytes()[0]) : 0;
+	constexpr QByteArray::size_type byte_index = 0;
+	return byte_to_unsigned_int(byte_index);
 }

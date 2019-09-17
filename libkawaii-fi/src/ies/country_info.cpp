@@ -9,18 +9,21 @@ CountryInfo::CountryInfo(const InformationElement &ie) : InformationElement(ie.b
 
 QString CountryInfo::country_code() const
 {
-	if (bytes().size() < 2) {
+	constexpr QByteArray::size_type first_char_byte_index = 0;
+	constexpr QByteArray::size_type second_char_byte_index = 1;
+
+	if (bytes().size() <= second_char_byte_index) {
 		return "";
 	}
-	return QString("%0%1").arg(bytes()[0]).arg(bytes()[1]);
+
+	return QString("%0%1").arg(bytes()[first_char_byte_index]).arg(bytes()[second_char_byte_index]);
 }
 
 Environment CountryInfo::environment() const
 {
-	if (bytes().size() < 3) {
-		return Environment::Any;
-	}
-	switch (bytes()[2]) {
+	constexpr QByteArray::size_type environment_byte_index = 2;
+
+	switch (byte_to_unsigned_int(environment_byte_index)) {
 	case ' ':
 		return Environment::Any;
 	case 'I':

@@ -9,8 +9,6 @@ PowerConstraint::PowerConstraint(const InformationElement &ie) : InformationElem
 
 unsigned int PowerConstraint::local_power_constraint() const
 {
-	if (bytes().size() > 1) {
-		return 0;
-	}
-	return static_cast<std::uint8_t>(bytes()[0]);
+	constexpr unsigned int byte_index = 0;
+	return byte_to_unsigned_int(byte_index);
 }

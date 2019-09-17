@@ -7,53 +7,27 @@
 #include <cstdint>
 
 namespace {
-	const std::uint8_t ldpc_coding_capability_mask = 0x1;      // 0000 0001
-	const std::uint8_t supported_channel_width_set_mask = 0x2; // 0000 0010
-	const std::uint8_t sm_power_save_mask = 0xc;               // 0000 1100
-	const std::uint8_t greenfield_ppdu_mask = 0x10;            // 0001 0000
-	const std::uint8_t short_gi_20_mhz_mask = 0x20;            // 0010 0000
-	const std::uint8_t short_gi_40_mhz_mask = 0x40;            // 0100 0000
-	const std::uint8_t tx_stbc_mask = 0x80;                    // 1000 0000
-	const std::uint8_t rx_stbc_mask = 0x3;                     // 0000 0011
-	const std::uint8_t delayed_block_ack_mask = 0x4;           // 0000 0100
-	const std::uint8_t max_amsdu_length_mask = 0x8;            // 0000 1000
-	const std::uint8_t dsss_cck_40_mhz_mask = 0x10;            // 0001 0000
-	const std::uint8_t psmp_support_mask = 0x20;               // 0010 0000
-	const std::uint8_t forty_mhz_intolerant_mask = 0x40;       // 0100 0000
-	const std::uint8_t lsig_txop_protection_mask = 0x80;       // 1000 0000
-	const std::uint8_t max_ampdu_length_mask = 0x3;            // 0000 0011
-	const std::uint8_t mpdu_density_usec_mask = 0x1c;          // 0001 1100
-	//	const std::uint8_t
-	const std::uint8_t highest_supported_data_rate_mask = 0;
-	const std::uint8_t tx_mcs_defined_mask = 0;
-	const std::uint8_t tx_rx_mcs_equal_mask = 0;
-	const std::uint8_t max_tx_spatial_streams_mask = 0;
-	const std::uint8_t tx_unequal_modulation_mask = 0;
-	const std::uint8_t pco_support_mask = 0;
-	const std::uint8_t pco_transition_time_mask = 0;
-	const std::uint8_t mcs_feedback_mask = 0;
-	const std::uint8_t htc_support_mask = 0;
-	const std::uint8_t rd_responder_mask = 0;
+	const std::uint8_t sm_power_save_mask = 0xc;      // 0000 1100
+	const std::uint8_t rx_stbc_mask = 0x3;            // 0000 0011
+	const std::uint8_t max_ampdu_length_mask = 0x3;   // 0000 0011
+	const std::uint8_t mpdu_density_usec_mask = 0x1c; // 0001 1100
 } // namespace
 
 HtCapabilities::HtCapabilities(const InformationElement &ie) : InformationElement(ie.bytes()) {}
 
 bool HtCapabilities::ldpc_coding_capability() const
 {
-	if (bytes().size() < 1) {
-		return false;
-	}
-	return bytes()[0] & ldpc_coding_capability_mask;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 0;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 HtSupportedChannelWidth HtCapabilities::supported_channel_width_set() const
 {
-	if (bytes().size() < 1) {
-		return HtSupportedChannelWidth::TwentyMhz;
-	}
-	return (bytes()[0] & supported_channel_width_set_mask)
-	               ? HtSupportedChannelWidth::TwentyOrFortyMhz
-	               : HtSupportedChannelWidth::TwentyMhz;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 1;
+	return bits_to_bool(byte_index, bit_index) ? HtSupportedChannelWidth::TwentyOrFortyMhz
+	                                           : HtSupportedChannelWidth::TwentyMhz;
 }
 
 SmPowerSave HtCapabilities::sm_power_save() const
@@ -73,34 +47,30 @@ SmPowerSave HtCapabilities::sm_power_save() const
 
 bool HtCapabilities::greenfield_ppdu() const
 {
-	if (bytes().size() < 1) {
-		return false;
-	}
-	return bytes()[0] & greenfield_ppdu_mask;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 4;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool HtCapabilities::short_gi_20_mhz() const
 {
-	if (bytes().size() < 1) {
-		return false;
-	}
-	return bytes()[0] & short_gi_20_mhz_mask;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 5;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool HtCapabilities::short_gi_40_mhz() const
 {
-	if (bytes().size() < 1) {
-		return false;
-	}
-	return bytes()[0] & short_gi_40_mhz_mask;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 6;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool HtCapabilities::tx_stbc() const
 {
-	if (bytes().size() < 1) {
-		return false;
-	}
-	return bytes()[0] & tx_stbc_mask;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 7;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 HtRxStbc HtCapabilities::rx_stbc() const
@@ -124,58 +94,57 @@ HtRxStbc HtCapabilities::rx_stbc() const
 
 bool HtCapabilities::delayed_block_ack() const
 {
-	if (bytes().size() < 2) {
-		return false;
-	}
-	return bytes()[1] & delayed_block_ack_mask;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 2;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 unsigned int HtCapabilities::max_amsdu_length() const
 {
-	if (bytes().size() < 2) {
-		return 3839;
-	}
-	return (bytes()[1] & max_amsdu_length_mask) ? 7935 : 3839;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 3;
+	return bits_to_bool(byte_index, bit_index) ? 7935 : 3839;
 }
 
 bool HtCapabilities::dsss_cck_40_mhz() const
 {
-	if (bytes().size() < 2) {
-		return false;
-	}
-	return bytes()[1] & dsss_cck_40_mhz_mask;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 4;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool HtCapabilities::psmp_support() const
 {
-	if (bytes().size() < 2) {
-		return false;
-	}
-	return bytes()[1] & psmp_support_mask;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 5;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool HtCapabilities::forty_mhz_intolerant() const
 {
-	if (bytes().size() < 2) {
-		return false;
-	}
-	return bytes()[1] & forty_mhz_intolerant_mask;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 6;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool HtCapabilities::lsig_txop_protection() const
 {
-	if (bytes().size() < 2) {
-		return false;
-	}
-	return bytes()[1] & lsig_txop_protection_mask;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 7;
+
+	return bits_to_bool(byte_index, bit_index);
 }
 
 unsigned int HtCapabilities::max_ampdu_length() const
 {
-	if (bytes().size() < 3) {
-		return 8191;
+	constexpr QByteArray::size_type byte_index = 2;
+	constexpr unsigned int default_max_ampdu_length = 8191;
+
+	if (bytes().size() <= byte_index) {
+		return default_max_ampdu_length;
 	}
-	unsigned int exp = 13 + (bytes()[2] & max_ampdu_length_mask);
+
+	const unsigned int exp = 13 + (bytes()[byte_index] & max_ampdu_length_mask);
 	return (1 << exp) - 1;
 }
 

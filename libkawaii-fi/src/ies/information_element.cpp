@@ -20,18 +20,34 @@ QStandardItem *InformationElement::standard_item() const
 
 QString InformationElement::summary() const { return ""; }
 
-QDBusArgument &operator<<(QDBusArgument &argument, const InformationElement &ie)
+bool InformationElement::bits_to_bool(QByteArray::size_type byte_index,
+                                      unsigned int bit_index) const
 {
-	argument.beginStructure();
-	argument << ie.bytes_;
-	argument.endStructure();
-	return argument;
+	if (bytes_.size() <= byte_index) {
+		return false;
+	}
+
+	const auto byte_mask = static_cast<std::uint8_t>(1 << bit_index);
+	return bytes_[byte_index] & byte_mask;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, InformationElement &ie)
+unsigned int InformationElement::byte_to_unsigned_int(QByteArray::size_type byte_index,
+                                                      unsigned int default_value) const
 {
-	argument.beginStructure();
-	argument >> ie.bytes_;
-	argument.endStructure();
-	return argument;
+	constexpr unsigned int bit_start_index = 0;
+	constexpr unsigned int number_of_bits = 8;
+	return bits_to_unsigned_int(byte_index, bit_start_index, number_of_bits, default_value);
+}
+
+unsigned int InformationElement::bits_to_unsigned_int(QByteArray::size_type byte_index,
+                                                      unsigned int bit_start_index,
+                                                      unsigned int number_of_bits,
+                                                      unsigned int default_value) const
+{
+	if ((bytes_.size() <= byte_index) || (bit_start_index + number_of_bits > 8)) {
+		return default_value;
+	}
+
+	const unsigned int byte_mask = (1 << number_of_bits) - 1;
+	return static_cast<unsigned int>(bytes_[byte_index]) & byte_mask;
 }

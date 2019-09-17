@@ -13,10 +13,9 @@ VhtOperations::VhtOperations(const InformationElement &ie) : InformationElement(
 
 VhtChannelWidth VhtOperations::channel_width() const
 {
-	if (bytes().size() < 1) {
-		return VhtChannelWidth::TwentyOrFortyMhz;
-	}
-	switch (bytes()[0]) {
+	constexpr QByteArray::size_type byte_index = 0;
+
+	switch (byte_to_unsigned_int(byte_index)) {
 	case 0:
 		return VhtChannelWidth::TwentyOrFortyMhz;
 	case 1:
@@ -32,18 +31,14 @@ VhtChannelWidth VhtOperations::channel_width() const
 
 unsigned int VhtOperations::channel_center_segment_zero() const
 {
-	if (bytes().size() < 2) {
-		return 0;
-	}
-	return static_cast<unsigned char>(bytes()[1]);
+	constexpr QByteArray::size_type byte_index = 1;
+	return byte_to_unsigned_int(byte_index);
 }
 
 unsigned int VhtOperations::channel_center_segment_one() const
 {
-	if (bytes().size() < 3) {
-		return 0;
-	}
-	return static_cast<unsigned char>(bytes()[2]);
+	constexpr QByteArray::size_type byte_index = 2;
+	return byte_to_unsigned_int(byte_index);
 }
 
 VhtMcs VhtOperations::mcs_basic_one_ss() const { return VhtMcs::NotSupported; }

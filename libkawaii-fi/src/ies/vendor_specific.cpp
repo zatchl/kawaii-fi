@@ -18,8 +18,6 @@ std::array<unsigned char, 3> VendorSpecific::oui() const
 
 unsigned int VendorSpecific::type() const
 {
-	if (bytes().size() < 4) {
-		return 0;
-	}
-	return static_cast<unsigned char>(bytes()[3]);
+	constexpr QByteArray::size_type byte_index = 3;
+	return byte_to_unsigned_int(byte_index, 0);
 }

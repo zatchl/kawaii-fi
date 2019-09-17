@@ -8,24 +8,21 @@ ErpInfo::ErpInfo(const InformationElement &ie) : InformationElement(ie.bytes()) 
 
 bool ErpInfo::non_erp_present() const
 {
-	if (bytes().size() > 1) {
-		return false;
-	}
-	return bytes()[0] & 0b00000001;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 0;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool ErpInfo::use_protection() const
 {
-	if (bytes().size() > 1) {
-		return false;
-	}
-	return bytes()[0] & 0b00000010;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 1;
+	return bits_to_bool(byte_index, bit_index);
 }
 
 bool ErpInfo::barker_preamble_mode() const
 {
-	if (bytes().size() > 1) {
-		return false;
-	}
-	return bytes()[0] & 0b00000100;
+	constexpr QByteArray::size_type byte_index = 0;
+	constexpr unsigned int bit_index = 2;
+	return bits_to_bool(byte_index, bit_index);
 }

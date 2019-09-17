@@ -26,6 +26,14 @@ public:
 
 	// Retrive the information element data from the D-Bus argument
 	friend const QDBusArgument &operator>>(const QDBusArgument &argument, InformationElement &ie);
+protected:
+	[[nodiscard]] bool bits_to_bool(QByteArray::size_type byte_index, unsigned int bit_index) const;
+	[[nodiscard]] unsigned int bits_to_unsigned_int(QByteArray::size_type byte_index,
+	                                                unsigned int bit_start_index,
+	                                                unsigned int number_of_bits,
+	                                                unsigned int default_value = 0) const;
+	[[nodiscard]] unsigned int byte_to_unsigned_int(QByteArray::size_type byte_index,
+	                                                unsigned int default_value = 0) const;
 
 private:
 	QByteArray bytes_;

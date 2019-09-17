@@ -7,18 +7,8 @@
 
 namespace {
 	const unsigned int ht_operation_ie_length = 22;
-	const std::uint8_t secondary_channel_offset_mask = 0x3;          // 0000 0011
-	const std::uint8_t supported_channel_width_mask = 0x4;           // 0000 0100
-	const std::uint8_t rifs_mask = 0x8;                              // 0000 1000
-	const std::uint8_t ht_protection_mask = 0x3;                     // 0000 0011
-	const std::uint8_t non_greenfield_stas_present_mask = 0x4;       // 0000 0100
-	const std::uint8_t obss_non_ht_stas_present_mask = 0x10;         // 0001 0000
-	const std::uint8_t dual_beacon_mask = 0x40;                      // 0100 0000
-	const std::uint8_t dual_cts_protection_mask = 0x80;              // 1000 0000
-	const std::uint8_t stbc_beacon_mask = 0x1;                       // 0000 0001
-	const std::uint8_t lsig_txop_protection_full_support_mask = 0x2; // 0000 0010
-	const std::uint8_t pco_active_mask = 0x4;                        // 0000 0100
-	const std::uint8_t pco_phase_mask = 0x8;                         // 0000 1000
+	const std::uint8_t secondary_channel_offset_mask = 0x3; // 0000 0011
+	const std::uint8_t ht_protection_mask = 0x3;            // 0000 0011
 } // namespace
 
 HtOperations::HtOperations(const InformationElement &ie) : InformationElement(ie.bytes()) {}
@@ -27,18 +17,17 @@ HtOperations::HtOperations(const char *bytes, int size) : InformationElement(byt
 
 unsigned int HtOperations::primary_channel() const
 {
-	if (bytes().size() < 1) {
-		return 0;
-	}
-	return static_cast<unsigned char>(bytes()[0]);
+	constexpr QByteArray::size_type byte_index = 0;
+	return byte_to_unsigned_int(byte_index);
 }
 
 SecondaryChannelOffset HtOperations::secondary_channel_offset() const
 {
-	if (bytes().size() < 2) {
-		return SecondaryChannelOffset::NoSecondaryChannel;
-	}
-	switch (bytes()[1] & secondary_channel_offset_mask) {
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_start_index = 0;
+	constexpr unsigned int number_of_bits = 2;
+
+	switch (bits_to_unsigned_int(byte_index, bit_start_index, number_of_bits)) {
 	case 0:
 		return SecondaryChannelOffset::NoSecondaryChannel;
 	case 1:
@@ -52,27 +41,26 @@ SecondaryChannelOffset HtOperations::secondary_channel_offset() const
 
 HtSupportedChannelWidth HtOperations::supported_channel_width() const
 {
-	if (bytes().size() < 2) {
-		return HtSupportedChannelWidth::TwentyMhz;
-	}
-	return (bytes()[1] & supported_channel_width_mask) ? HtSupportedChannelWidth::TwentyOrFortyMhz
-	                                                   : HtSupportedChannelWidth::TwentyMhz;
+	constexpr QByteArray::size_type byte_index = 1;
+	constexpr unsigned int bit_index = 2;
+	return bits_to_bool(byte_index, bit_index) ? HtSupportedChannelWidth::TwentyOrFortyMhz
+	                                           : HtSupportedChannelWidth::TwentyMhz;
 }
 
 bool HtOperations::rifs() const
 {
-	if (bytes().size() < 2) {
-		return false;
-	}
-	return bytes()[1] & rifs_mask;
+	constexpr unsigned int byte_mask = 1;
+	constexpr unsigned int bit_mask = 3;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 HtProtection HtOperations::ht_protection() const
 {
-	if (bytes().size() < 3) {
-		return HtProtection::None;
-	}
-	switch (bytes()[2] & ht_protection_mask) {
+	constexpr QByteArray::size_type byte_index = 2;
+	constexpr unsigned int bit_start_index = 0;
+	constexpr unsigned int number_of_bits = 2;
+
+	switch (bits_to_unsigned_int(byte_index, bit_start_index, number_of_bits)) {
 	case 0:
 		return HtProtection::None;
 	case 1:
@@ -88,68 +76,60 @@ HtProtection HtOperations::ht_protection() const
 
 bool HtOperations::non_greenfield_stas_present() const
 {
-	if (bytes().size() < 3) {
-		return false;
-	}
-	return bytes()[2] & non_greenfield_stas_present_mask;
+	constexpr unsigned int byte_mask = 2;
+	constexpr unsigned int bit_mask = 2;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 bool HtOperations::obss_non_ht_stas_present() const
 {
-	if (bytes().size() < 3) {
-		return false;
-	}
-	return bytes()[2] & obss_non_ht_stas_present_mask;
+	constexpr unsigned int byte_mask = 2;
+	constexpr unsigned int bit_mask = 4;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 unsigned int HtOperations::center_freq_segment_two() const { return 0; }
 
 bool HtOperations::dual_beacon() const
 {
-	if (bytes().size() < 5) {
-		return false;
-	}
-	return bytes()[4] & dual_beacon_mask;
+	constexpr unsigned int byte_mask = 4;
+	constexpr unsigned int bit_mask = 6;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 bool HtOperations::dual_cts_protection() const
 {
-	if (bytes().size() < 5) {
-		return false;
-	}
-	return bytes()[4] & dual_cts_protection_mask;
+	constexpr unsigned int byte_mask = 4;
+	constexpr unsigned int bit_mask = 7;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 bool HtOperations::stbc_beacon() const
 {
-	if (bytes().size() < 6) {
-		return false;
-	}
-	return bytes()[5] & stbc_beacon_mask;
+	constexpr unsigned int byte_mask = 5;
+	constexpr unsigned int bit_mask = 0;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 bool HtOperations::lsig_txop_protection_full_support() const
 {
-	if (bytes().size() < 6) {
-		return false;
-	}
-	return bytes()[5] & lsig_txop_protection_full_support_mask;
+	constexpr unsigned int byte_mask = 5;
+	constexpr unsigned int bit_mask = 1;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 bool HtOperations::pco_active() const
 {
-	if (bytes().size() < 6) {
-		return false;
-	}
-	return bytes()[5] & pco_active_mask;
+	constexpr unsigned int byte_mask = 5;
+	constexpr unsigned int bit_mask = 2;
+	return bits_to_bool(byte_mask, bit_mask);
 }
 
 PcoPhase HtOperations::pco_phase() const
 {
-	if (bytes().size() < 6) {
-		return PcoPhase::TwentyMhz;
-	}
-	return (bytes()[5] & pco_phase_mask) ? PcoPhase::FortyMhz : PcoPhase::TwentyMhz;
+	constexpr unsigned int byte_mask = 5;
+	constexpr unsigned int bit_mask = 3;
+	return bits_to_bool(byte_mask, bit_mask) ? PcoPhase::FortyMhz : PcoPhase::TwentyMhz;
 }
 
 QVector<std::uint8_t> HtOperations::rx_mcs() const { return QVector<std::uint8_t>(); }
