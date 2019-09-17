@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
 	"include/${PROJECT_NAME}/capabilities.h"
 	"include/${PROJECT_NAME}/ies/information_element.h"
+	"include/${PROJECT_NAME}/ies/ie_variant.h"
 	"include/${PROJECT_NAME}/ies/ssid.h"
 	"include/${PROJECT_NAME}/ies/ds_parameter.h"
 	"include/${PROJECT_NAME}/ies/supported_rates.h"

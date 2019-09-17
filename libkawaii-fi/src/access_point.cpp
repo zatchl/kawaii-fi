@@ -4,7 +4,7 @@
 #include "libkawaii-fi/channel.h"
 #include "libkawaii-fi/ies/ht_capabilities.h"
 #include "libkawaii-fi/ies/ht_operations.h"
-#include "libkawaii-fi/ies/information_element.h"
+#include "libkawaii-fi/ies/ie_variant.h"
 #include "libkawaii-fi/ies/robust_security_network.h"
 #include "libkawaii-fi/ies/ssid.h"
 #include "libkawaii-fi/ies/supported_rates.h"
@@ -18,6 +18,7 @@
 #include <QSet>
 #include <algorithm>
 #include <array>
+#include <variant>
 
 namespace {
 	const double ht_vht_short_gi_us = 0.4;
@@ -168,16 +169,14 @@ QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
 
 QStringList AccessPoint::supported_rates() const
 {
-	const SupportedRates supp_rates =
-	        information_elements_.value(WLAN_EID_SUPP_RATES, InformationElement());
-	QSet<double> rates = supp_rates.rates();
-	QSet<double> basic_rates = supp_rates.basic_rates();
+	QSet<double> rates;
+	QSet<double> basic_rates;
 
-	// If the extended supported rates IE exists, include its rates
-	if (information_elements_.contains(WLAN_EID_EXT_SUPP_RATES)) {
-		const SupportedRates ext_supp_rates = information_elements_.value(WLAN_EID_EXT_SUPP_RATES);
-		rates.unite(ext_supp_rates.rates());
-		basic_rates.unite(ext_supp_rates.basic_rates());
+	for (const auto &ie : ies_) {
+		if (auto supp_rates = std::get_if<SupportedRates>(&ie)) {
+			rates.unite(supp_rates->rates());
+			basic_rates.unite(supp_rates->basic_rates());
+		}
 	}
 
 	// We want the result to be sorted
@@ -196,17 +195,35 @@ QStringList AccessPoint::supported_rates() const
 
 double AccessPoint::max_rate() const
 {
-	if (information_elements_.contains(WLAN_EID_VHT_CAPABILITY)) {
-		return vht_max_rate(information_elements_.value(WLAN_EID_VHT_CAPABILITY),
-		                    information_elements_.value(WLAN_EID_HT_CAPABILITY), channel_width());
+	const HtCapabilities *ht_cap = nullptr;
+	const VhtCapabilities *vht_cap = nullptr;
+
+	for (const auto &ie : ies_) {
+		if (std::holds_alternative<HtCapabilities>(ie)) {
+			ht_cap = &std::get<HtCapabilities>(ie);
+			continue;
+		}
+
+		if (std::holds_alternative<VhtCapabilities>(ie)) {
+			vht_cap = &std::get<VhtCapabilities>(ie);
+			continue;
+		}
 	}
 
-	if (information_elements_.contains(WLAN_EID_HT_CAPABILITY)) {
-		return ht_max_rate(information_elements_.value(WLAN_EID_HT_CAPABILITY), channel_width());
+	if (vht_cap && ht_cap) {
+		return vht_max_rate(*vht_cap, *ht_cap, channel_width());
 	}
 
-	const SupportedRates supp_rates = information_elements_.value(WLAN_EID_SUPP_RATES);
-	const QSet<double> rates = supp_rates.rates();
+	if (ht_cap) {
+		return ht_max_rate(*ht_cap, channel_width());
+	}
+
+	QSet<double> rates;
+	for (const auto &ie : ies_) {
+		if (auto supp_rates = std::get_if<SupportedRates>(&ie)) {
+			rates.unite(supp_rates->rates());
+		}
+	}
 
 	return *std::max_element(rates.begin(), rates.end());
 }
@@ -214,30 +231,10 @@ double AccessPoint::max_rate() const
 const Capabilities &AccessPoint::capabilities() const { return capabilities_; }
 
 Capabilities &AccessPoint::capabilites() { return capabilities_; }
+const QVector<IeVariant> &AccessPoint::information_elements() const { return ies_; }
 
-const QMultiHash<unsigned int, InformationElement> &AccessPoint::information_elements() const
-{
-	return information_elements_;
-}
 
-QMultiHash<unsigned int, InformationElement> &AccessPoint::information_elements()
-{
-	return information_elements_;
-}
 
-bool AccessPoint::contains_vendor_element(const std::array<unsigned char, 3> &oui,
-                                          unsigned int type) const
-{
-	auto it = information_elements_.find(WLAN_EID_VENDOR_SPECIFIC);
-	while (it != information_elements_.end() && it.key() == WLAN_EID_VENDOR_SPECIFIC) {
-		const VendorSpecific v_ie = VendorSpecific(it.value());
-		if (v_ie.oui() == oui && v_ie.type() == type) {
-			return true;
-		}
-		++it;
-	}
-	return false;
-}
 
 ChannelWidth AccessPoint::channel_width() const
 {
@@ -264,60 +261,34 @@ ChannelWidth AccessPoint::channel_width() const
 	return ChannelWidth::TwentyMhz;
 }
 
-Channel AccessPoint::channel() const
-{
-	switch (channel_width()) {
-	case ChannelWidth::TwentyMhz:
-		return Channel(frequency_ - 10, frequency_ + 10);
-	case ChannelWidth::TwentyTwoMhz:
-		return Channel(frequency_ - 11, frequency_ + 11);
-	case ChannelWidth::FortyMhz:
-		for (const auto &channel : forty_mhz_channels) {
-			if (channel.contains(frequency_)) {
-				return channel;
+namespace {
+	QString calculate_ssid(const QVector<IeVariant> &ies)
+	{
+		for (const auto &ie : ies) {
+			if (auto ssid_ie = std::get_if<Ssid>(&ie)) {
+				return ssid_ie->bytes();
 			}
 		}
-		break;
-	case ChannelWidth::EightyMhz:
-		for (const auto &channel : eighty_mhz_channels) {
-			if (channel.contains(frequency_)) {
-				return channel;
-			}
-		}
-		break;
-	case ChannelWidth::OneSixtyMhz:
-		for (const auto &channel : one_sixty_mhz_channels) {
-			if (channel.contains(frequency_)) {
-				return channel;
-			}
-		}
-		break;
-	case ChannelWidth::EightyPlusEightyMhz: {
-		Channel first_eighty_mhz_channel;
-		Channel second_eighty_mhz_channel;
-		if (!information_elements_.contains(WLAN_EID_VHT_OPERATION)) {
-			break;
-		}
-		const VhtOperations &vht_operations = information_elements_.value(WLAN_EID_VHT_OPERATION);
-		for (const auto &channel : eighty_mhz_channels) {
-			if (channel.contains(vht_operations.channel_center_segment_zero()) ||
-			    channel.contains(vht_operations.channel_center_segment_one())) {
-				if (first_eighty_mhz_channel.center_mhz() == 0) {
-					first_eighty_mhz_channel = channel;
-				} else {
-					second_eighty_mhz_channel = channel;
-				}
-			}
-		}
-		return Channel(first_eighty_mhz_channel.start_mhz(), first_eighty_mhz_channel.end_mhz(),
-		               second_eighty_mhz_channel.start_mhz(), second_eighty_mhz_channel.end_mhz());
+		return QString();
 	}
-	case ChannelWidth::Other:
-		break;
-	}
-	return Channel();
-}
 
+	QVector<SecurityProtocol> calculate_security(const Capabilities &capabilities,
+	                                             const QVector<IeVariant> &ies)
+	{
+		if (!capabilities.privacy()) {
+			return {SecurityProtocol::None};
+		}
+
+		QVector<SecurityProtocol> security;
+
+		for (const auto &ie : ies) {
+			if (std::holds_alternative<Wpa>(ie)) {
+				security.append(SecurityProtocol::WPA);
+			}
+			if (std::holds_alternative<RobustSecurityNetwork>(ie)) {
+				security.append(SecurityProtocol::WPA2);
+			}
+		}
 QVector<SecurityProtocol> AccessPoint::security() const
 {
 	if (!capabilities_.privacy()) {
@@ -330,15 +301,23 @@ QVector<SecurityProtocol> AccessPoint::security() const
 		return {SecurityProtocol::WEP};
 	}
 
-	QVector<SecurityProtocol> security;
+	AkmSuiteType calculate_authentication(const QVector<IeVariant> &ies)
+	{
+		for (const auto &ie : ies) {
+			if (auto rsn = std::get_if<RobustSecurityNetwork>(&ie)) {
+				return !rsn->akm_suites().empty() ? rsn->akm_suites()[0].type : AkmSuiteType::None;
+			}
+		}
 
-	if (contains_wpa_ie) {
-		security.append(SecurityProtocol::WPA);
-	}
+		for (const auto &ie : ies) {
+			if (auto wpa = std::get_if<Wpa>(&ie)) {
+				return !wpa->akm_suites().empty() ? wpa->akm_suites()[0].type : AkmSuiteType::None;
+			}
+		}
 
-	if (information_elements_.contains(WLAN_EID_RSN)) {
-		security.append(SecurityProtocol::WPA2);
+		return AkmSuiteType::None;
 	}
+} // namespace
 
 	return security;
 }

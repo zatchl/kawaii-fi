@@ -3,7 +3,7 @@
 
 #include "capabilities.h"
 #include "channel.h"
-#include "ies/information_element.h"
+#include "ies/ie_variant.h"
 #include "security.h"
 
 #include <QDBusArgument>
@@ -37,10 +37,8 @@ public:
 	[[nodiscard]] double max_rate() const;
 	[[nodiscard]] const Capabilities &capabilities() const;
 	[[nodiscard]] Capabilities &capabilites();
-	[[nodiscard]] const QMultiHash<unsigned int, InformationElement> &information_elements() const;
-	[[nodiscard]] QMultiHash<unsigned int, InformationElement> &information_elements();
-	[[nodiscard]] bool contains_vendor_element(const std::array<unsigned char, 3> &oui,
-	                                           unsigned int type) const;
+	[[nodiscard]] const QVector<IeVariant> &information_elements() const;
+
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
 	[[nodiscard]] QVector<SecurityProtocol> security() const;
@@ -62,12 +60,12 @@ private:
 	unsigned int age_ms_ = 0;
 	QVector<Protocol> protocols_;
 	Capabilities capabilities_;
-	QMultiHash<unsigned int, InformationElement> information_elements_;
 };
 Q_DECLARE_METATYPE(AccessPoint)
 
 // Marshall the AccessPoint data into a D-Bus argument
 QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap);
+	QVector<IeVariant> ies_;
 
 // Retrieve the AccessPoint data from the D-Bus argument
 const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap);
