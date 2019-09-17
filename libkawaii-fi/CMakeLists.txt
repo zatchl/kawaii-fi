@@ -9,7 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS Core DBus REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui DBus Network REQUIRED)
+find_package(KF5NetworkManagerQt REQUIRED)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(LibNL REQUIRED)
@@ -17,6 +18,7 @@ include_directories(${LibNL_INCLUDE_DIR})
 
 add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
+	"include/${PROJECT_NAME}/wifi_device.h"
 	"include/${PROJECT_NAME}/capabilities.h"
 	"include/${PROJECT_NAME}/ies/information_element.h"
 	"include/${PROJECT_NAME}/ies/ie_variant.h"
@@ -44,6 +46,7 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/security.h"
 
 	"src/access_point.cpp"
+	"src/wifi_device.cpp"
 	"src/capabilities.cpp"
 	"src/netlink/nl_parse_attr.cpp"
 	"src/netlink/nl_parse_attr.h"
@@ -101,4 +104,4 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core Qt5::DBus)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Gui Qt5::DBus KF5::NetworkManagerQt ${LibNL_LIBRARIES})
