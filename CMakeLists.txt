@@ -3,5 +3,4 @@ cmake_minimum_required(VERSION 3.5)
 project(Kawaii-Fi)
 
 add_subdirectory(libkawaii-fi)
-add_subdirectory(kawaii-fi-server)
 add_subdirectory(kawaii-fi)
