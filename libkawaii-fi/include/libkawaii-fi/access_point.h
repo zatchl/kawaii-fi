@@ -3,6 +3,7 @@
 
 #include "capabilities.h"
 #include "channel.h"
+#include "connection_status.h"
 #include "ies/ie_variant.h"
 #include "security.h"
 
@@ -14,7 +15,6 @@
 #include <QtCore>
 #include <array>
 
-enum class ConnectionStatus { Authenticated, Associated, Joined, Unknown };
 
 enum class Protocol { B, A, G, N, AC, AX };
 

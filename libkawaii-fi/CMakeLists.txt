@@ -20,6 +20,7 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
 	"include/${PROJECT_NAME}/wifi_device.h"
 	"include/${PROJECT_NAME}/capabilities.h"
+	"include/${PROJECT_NAME}/connection_status.h"
 	"include/${PROJECT_NAME}/ies/information_element.h"
 	"include/${PROJECT_NAME}/ies/ie_variant.h"
 	"include/${PROJECT_NAME}/ies/ssid.h"
