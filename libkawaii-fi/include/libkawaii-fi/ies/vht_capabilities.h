@@ -74,6 +74,9 @@ public:
 	[[nodiscard]] std::array<VhtMcs, 8> mcs_tx() const;
 	[[nodiscard]] unsigned int tx_highest_long_gi_data_rate() const;
 	[[nodiscard]] bool extended_nss_bw_capable() const;
+
+private:
+	[[nodiscard]] VhtMcs bits_to_vht_mcs(int byte_index, unsigned int bit_index) const;
 };
 
 inline const unsigned int WLAN_EID_VHT_CAPABILITY = 191;
