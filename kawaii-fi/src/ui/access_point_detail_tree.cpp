@@ -18,7 +18,7 @@ AccessPointDetailTreeView::AccessPointDetailTreeView(QWidget *parent) : QTreeVie
 {
 	header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	setModel(model_);
-	model_->setHorizontalHeaderLabels({"Information Element", "Value", "ID", "Length", "Raw Data"});
+	model_->setHorizontalHeaderLabels({"Information Element", "Value", "ID", "Length", "Bytes"});
 }
 
 void AccessPointDetailTreeView::show_ies(const QString &bssid)
