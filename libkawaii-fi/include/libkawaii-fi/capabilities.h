@@ -2,9 +2,6 @@
 #define CAPABILITIES_H
 
 #include <QByteArray>
-#include <QMetaType>
-
-class QDBusArgument;
 
 class Capabilities {
 public:
@@ -28,18 +25,9 @@ public:
 	[[nodiscard]] bool immediate_block_ack() const;
 
 	[[nodiscard]] const QByteArray &bytes() const;
-	[[nodiscard]] QByteArray &bytes();
-
-	// Marshall the Capability data into a D-Bus argument
-	friend QDBusArgument &operator<<(QDBusArgument &argument, const Capabilities &capabilities);
-
-	// Retrieve the Capabilitiy data from the D-Bus argument
-	friend const QDBusArgument &operator>>(const QDBusArgument &argument,
-	                                       Capabilities &capabilities);
 
 private:
 	QByteArray bytes_;
 };
-Q_DECLARE_METATYPE(Capabilities)
 
 #endif // CAPABILITIES_H

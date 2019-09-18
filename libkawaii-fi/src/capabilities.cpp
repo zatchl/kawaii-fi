@@ -1,6 +1,5 @@
 #include "libkawaii-fi/capabilities.h"
 
-#include <QDBusArgument>
 #include <cstdint>
 
 namespace {
@@ -144,21 +143,3 @@ bool Capabilities::immediate_block_ack() const
 }
 
 const QByteArray &Capabilities::bytes() const { return bytes_; }
-
-QByteArray &Capabilities::bytes() { return bytes_; }
-
-QDBusArgument &operator<<(QDBusArgument &argument, const Capabilities &capabilities)
-{
-	argument.beginStructure();
-	argument << capabilities.bytes_;
-	argument.endStructure();
-	return argument;
-}
-
-const QDBusArgument &operator>>(const QDBusArgument &argument, Capabilities &capabilities)
-{
-	argument.beginStructure();
-	argument >> capabilities.bytes_;
-	argument.endStructure();
-	return argument;
-}
