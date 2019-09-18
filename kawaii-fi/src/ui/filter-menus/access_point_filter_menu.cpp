@@ -31,7 +31,7 @@ AccessPointFilterMenu::AccessPointFilterMenu(const QString &title, QWidget *pare
 		}
 		emit filter_changed();
 	});
-	QWidgetAction *select_all_action = new QWidgetAction(this);
+	auto select_all_action = new QWidgetAction(this);
 	select_all_action->setDefaultWidget(select_all_button_);
 	addAction(select_all_action);
 }
