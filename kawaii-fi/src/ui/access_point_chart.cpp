@@ -43,7 +43,7 @@ AccessPointChart::AccessPointChart(const AccessPointScanner &ap_scanner, WifiBan
                                    QGraphicsItem *parent, Qt::WindowFlags flags)
     : QtCharts::QChart(parent, flags), ap_scanner_(ap_scanner), wifi_band_(band)
 {
-	connect(&ap_scanner, &AccessPointScanner::access_points_updated, this,
+	connect(&ap_scanner, &AccessPointScanner::access_points_changed, this,
 	        &AccessPointChart::refresh_chart);
 	legend()->setVisible(false);
 	setMargins(QMargins(0, 0, 0, 0));

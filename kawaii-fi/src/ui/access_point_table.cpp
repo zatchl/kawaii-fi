@@ -207,7 +207,7 @@ void AccessPointSortFilterProxyModel::set_acceptable_protocols(QSet<Protocol> pr
 AccessPointTableModel::AccessPointTableModel(const AccessPointScanner &ap_scanner, QObject *parent)
     : QAbstractTableModel(parent), ap_scanner_(ap_scanner)
 {
-	connect(&ap_scanner_, &AccessPointScanner::access_points_updated, this,
+	connect(&ap_scanner_, &AccessPointScanner::access_points_changed, this,
 	        &AccessPointTableModel::refresh_model);
 }
 
