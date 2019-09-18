@@ -9,6 +9,8 @@ InformationElement::InformationElement(const std::string_view &bytes, unsigned i
 {
 }
 
+unsigned int InformationElement::id() const { return ie_id_; }
+
 const QByteArray &InformationElement::bytes() const { return bytes_; }
 
 QStandardItem *InformationElement::standard_item() const

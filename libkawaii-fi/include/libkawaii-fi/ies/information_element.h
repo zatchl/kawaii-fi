@@ -19,6 +19,7 @@ public:
 	InformationElement &operator=(InformationElement &&ie) = default;
 	[[nodiscard]] const QByteArray &bytes() const;
 	[[nodiscard]] QByteArray &bytes();
+	[[nodiscard]] unsigned int id() const;
 
 	[[nodiscard]] virtual QStandardItem *standard_item() const;
 	[[nodiscard]] virtual QString summary() const;
@@ -34,6 +35,7 @@ protected:
 
 private:
 	QByteArray bytes_;
+	const unsigned int ie_id_ = 0;
 };
 
 #endif // INFORMATION_ELEMENT_H
