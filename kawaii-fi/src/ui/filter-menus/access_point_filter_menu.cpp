@@ -13,7 +13,6 @@ FilterMenuCheckBox::FilterMenuCheckBox(const QString &text, QVariant data, QWidg
 {
 	setCheckState(Qt::CheckState::Checked);
 	setStyleSheet("padding: 2px 20px 2px 5px");
-	setMaximumHeight(200);
 }
 
 bool FilterMenuCheckBox::hitButton(const QPoint &) const { return true; }
