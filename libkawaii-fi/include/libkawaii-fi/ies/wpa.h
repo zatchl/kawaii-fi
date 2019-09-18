@@ -26,9 +26,8 @@ public:
 	[[nodiscard]] QVector<AkmSuite> akm_suites() const;
 
 private:
-	[[nodiscard]] unsigned int pairwise_cipher_suites_start() const;
-	[[nodiscard]] unsigned int akm_suites_start() const;
-	[[nodiscard]] unsigned int wpa_capabilities_start() const;
+	[[nodiscard]] QByteArray::size_type akm_suites_start() const;
+	[[nodiscard]] QByteArray::size_type wpa_capabilities_start() const;
 };
 
 inline const std::array<unsigned char, 3> WPA_OUI = {0x00, 0x50, 0xf2};

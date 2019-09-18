@@ -6,6 +6,9 @@
 #include <QStandardItem>
 #include <cstdint>
 
+namespace {
+	constexpr QByteArray::size_type pairwise_cipher_suites_start = 12;
+}
 
 Wpa::Wpa(const std::string_view &bytes) : VendorSpecific(bytes) {}
 
@@ -25,13 +28,19 @@ unsigned int Wpa::version() const
 
 CipherSuite Wpa::group_cipher_suite() const
 {
-	if (bytes().size() < 10) {
+	constexpr int oui_first_byte_index = 6;
+	constexpr int oui_second_byte_index = 7;
+	constexpr int oui_third_byte_index = 8;
+	constexpr int suite_type_byte_index = 9;
+
+	if (bytes().size() <= suite_type_byte_index) {
 		return CipherSuite();
 	}
-	std::array<std::uint8_t, 3> oui = {static_cast<std::uint8_t>(bytes()[6]),
-	                                   static_cast<std::uint8_t>(bytes()[7]),
-	                                   static_cast<std::uint8_t>(bytes()[8])};
-	switch (bytes()[9]) {
+
+	std::array<std::uint8_t, 3> oui = {static_cast<std::uint8_t>(bytes()[oui_first_byte_index]),
+	                                   static_cast<std::uint8_t>(bytes()[oui_second_byte_index]),
+	                                   static_cast<std::uint8_t>(bytes()[oui_third_byte_index])};
+	switch (bytes()[suite_type_byte_index]) {
 	case 1:
 		return {oui, CipherSuiteType::WEP40};
 	case 2:
@@ -45,7 +54,7 @@ CipherSuite Wpa::group_cipher_suite() const
 
 unsigned int Wpa::pairwise_cipher_suite_count() const
 {
-	if (static_cast<unsigned int>(bytes().size()) < pairwise_cipher_suites_start()) {
+	if (bytes().size() < pairwise_cipher_suites_start) {
 		return 0;
 	}
 	return static_cast<unsigned int>(bytes()[10] + (bytes()[11] << 8));
@@ -55,10 +64,10 @@ QVector<CipherSuite> Wpa::pairwise_cipher_suites() const
 {
 	QVector<CipherSuite> cipher_suites;
 	if (static_cast<unsigned int>(bytes().size()) <
-	    (pairwise_cipher_suites_start() + pairwise_cipher_suite_count() * 4)) {
+	    (pairwise_cipher_suites_start + pairwise_cipher_suite_count() * 4)) {
 		return cipher_suites;
 	}
-	auto it = bytes().begin() + pairwise_cipher_suites_start();
+	auto it = bytes().begin() + pairwise_cipher_suites_start;
 	const auto end_it = it + pairwise_cipher_suite_count() * 4;
 	while (it < end_it) {
 		std::array<std::uint8_t, 3> oui = {static_cast<std::uint8_t>(*it),
@@ -85,7 +94,7 @@ QVector<CipherSuite> Wpa::pairwise_cipher_suites() const
 
 unsigned int Wpa::akm_suite_count() const
 {
-	if (static_cast<unsigned int>(bytes().size()) < akm_suites_start()) {
+	if (bytes().size() < akm_suites_start()) {
 		return 0;
 	}
 	return static_cast<unsigned int>(bytes()[8 + (pairwise_cipher_suite_count() * 4)] +
@@ -95,7 +104,7 @@ unsigned int Wpa::akm_suite_count() const
 QVector<AkmSuite> Wpa::akm_suites() const
 {
 	QVector<AkmSuite> akm_suites;
-	if (static_cast<unsigned int>(bytes().size()) < wpa_capabilities_start()) {
+	if (bytes().size() < wpa_capabilities_start()) {
 		return akm_suites;
 	}
 	auto it = bytes().begin() + akm_suites_start();
@@ -116,14 +125,13 @@ QVector<AkmSuite> Wpa::akm_suites() const
 	return akm_suites;
 }
 
-unsigned int Wpa::pairwise_cipher_suites_start() const { return 12; }
-
-unsigned int Wpa::akm_suites_start() const
+QByteArray::size_type Wpa::akm_suites_start() const
 {
-	return pairwise_cipher_suites_start() + (pairwise_cipher_suite_count() * 4) + 2;
+	return pairwise_cipher_suites_start +
+	       static_cast<QByteArray::size_type>(pairwise_cipher_suite_count() * 4) + 2;
 }
 
-unsigned int Wpa::wpa_capabilities_start() const
+QByteArray::size_type Wpa::wpa_capabilities_start() const
 {
-	return akm_suites_start() + (akm_suite_count() * 4);
+	return akm_suites_start() + static_cast<QByteArray::size_type>(akm_suite_count() * 4);
 }
