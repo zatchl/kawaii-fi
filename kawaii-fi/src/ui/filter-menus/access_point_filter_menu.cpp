@@ -51,3 +51,14 @@ void AccessPointFilterMenu::add_filter_check_box(const QString &text, QVariant d
 {
 	add_filter_check_box(this, text, data);
 }
+
+QVector<FilterMenuCheckBox *> AccessPointFilterMenu::checked_filter_check_boxes() const
+{
+	QVector<FilterMenuCheckBox *> checked_filter_check_boxes;
+	for (const auto filter_check_box : filter_check_boxes_) {
+		if (filter_check_box->isChecked()) {
+			checked_filter_check_boxes.append(filter_check_box);
+		}
+	}
+	return checked_filter_check_boxes;
+}

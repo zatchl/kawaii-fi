@@ -22,10 +22,8 @@ ProtocolFilterMenu::ProtocolFilterMenu(QWidget *parent) : AccessPointFilterMenu(
 QSet<Protocol> ProtocolFilterMenu::protocols() const
 {
 	QSet<Protocol> protocols;
-	for (const auto check_box : filter_check_boxes_) {
-		if (check_box->isChecked()) {
-			protocols.insert(check_box->data().value<Protocol>());
-		}
+	for (const auto check_box : checked_filter_check_boxes()) {
+		protocols.insert(check_box->data().value<Protocol>());
 	}
 	return protocols;
 }

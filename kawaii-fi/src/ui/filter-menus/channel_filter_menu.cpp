@@ -49,10 +49,8 @@ ChannelFilterMenu::ChannelFilterMenu(QWidget *parent) : AccessPointFilterMenu("C
 QSet<unsigned int> ChannelFilterMenu::channels() const
 {
 	QSet<unsigned int> channels;
-	for (const auto check_box : filter_check_boxes_) {
-		if (check_box->isChecked()) {
-			channels.insert(check_box->data().toUInt());
-		}
+	for (const auto check_box : checked_filter_check_boxes()) {
+		channels.insert(check_box->data().toUInt());
 	}
 	return channels;
 }

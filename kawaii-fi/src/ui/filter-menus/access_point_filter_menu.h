@@ -35,6 +35,9 @@ signals:
 	void filter_changed();
 
 protected:
+	[[nodiscard]] QVector<FilterMenuCheckBox *> checked_filter_check_boxes() const;
+
+private:
 	QPushButton *select_all_button_ = new QPushButton("Select All", this);
 	QVector<FilterMenuCheckBox *> filter_check_boxes_;
 };
