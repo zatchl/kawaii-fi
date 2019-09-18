@@ -27,7 +27,7 @@ private:
 class AccessPointFilterMenu : public QMenu {
 	Q_OBJECT
 public:
-	AccessPointFilterMenu(const QString &title, QWidget *parent = nullptr);
+	explicit AccessPointFilterMenu(const QString &title, QWidget *parent = nullptr);
 	void add_filter_check_box(QMenu *menu, const QString &text, const QVariant &data);
 	void add_filter_check_box(const QString &text, const QVariant &data);
 
