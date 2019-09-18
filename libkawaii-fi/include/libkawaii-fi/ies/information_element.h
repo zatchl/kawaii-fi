@@ -14,11 +14,12 @@ public:
 	InformationElement() = default;
 	InformationElement(const InformationElement &ie) = default;
 	InformationElement(InformationElement &&ie) = default;
+	InformationElement &operator=(const InformationElement &ie) = delete;
+	InformationElement &operator=(InformationElement &&ie) = delete;
+
 	virtual ~InformationElement() = default;
-	InformationElement &operator=(const InformationElement &ie) = default;
-	InformationElement &operator=(InformationElement &&ie) = default;
+
 	[[nodiscard]] const QByteArray &bytes() const;
-	[[nodiscard]] QByteArray &bytes();
 	[[nodiscard]] unsigned int id() const;
 
 	[[nodiscard]] virtual QStandardItem *standard_item() const;
@@ -34,7 +35,7 @@ protected:
 	                                                unsigned int default_value = 0) const;
 
 private:
-	QByteArray bytes_;
+	const QByteArray bytes_;
 	const unsigned int ie_id_ = 0;
 };
 
