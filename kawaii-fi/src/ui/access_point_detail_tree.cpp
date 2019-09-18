@@ -23,7 +23,7 @@ AccessPointDetailTreeView::AccessPointDetailTreeView(QWidget *parent) : QTreeVie
 
 void AccessPointDetailTreeView::show_ies(const QString &bssid)
 {
-	if (!ap_scanner_) {
+	if (!ap_scanner_ || !ap_scanner_->access_points()) {
 		return;
 	}
 
