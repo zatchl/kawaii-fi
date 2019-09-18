@@ -190,10 +190,11 @@ std::array<HtMcs, 4> HtCapabilities::rx_mcs() const
 		return {};
 	}
 
+	QByteArray::size_type rx_mcs_byte_index = 3;
 	std::array<HtMcs, 4> rx_mcs;
-	for (unsigned int i = 0; i < 4; ++i) {
-		std::uint8_t mcs_ss = static_cast<std::uint8_t>(bytes()[3 + i]);
-		if (!mcs_ss) {
+	for (std::array<HtMcs, 4>::size_type i = 0; i < rx_mcs.size(); ++i) {
+		auto mcs_ss = static_cast<std::uint8_t>(bytes()[rx_mcs_byte_index++]);
+		if (mcs_ss == 0) {
 			rx_mcs[i] = {HtModulation::None, 0};
 			continue;
 		}
