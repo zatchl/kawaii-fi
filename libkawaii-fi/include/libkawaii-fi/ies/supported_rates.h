@@ -21,6 +21,8 @@ public:
 	[[nodiscard]] QSet<double> basic_rates() const;
 	[[nodiscard]] QSet<double> rates() const;
 	[[nodiscard]] QStringList text_rates() const;
+
+	[[nodiscard]] bool is_extended_supported_rates() const;
 };
 
 inline const unsigned int WLAN_EID_SUPP_RATES = 1;

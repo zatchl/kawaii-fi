@@ -65,3 +65,5 @@ QStringList SupportedRates::text_rates() const
 	}
 	return rates;
 }
+
+bool SupportedRates::is_extended_supported_rates() const { return id() == WLAN_EID_EXT_SUPP_RATES; }
