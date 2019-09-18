@@ -7,70 +7,74 @@
 #include "ies/ie_variant.h"
 #include "security.h"
 
-#include <QDBusArgument>
 #include <QColor>
+#include <QFlags>
 #include <QMetaType>
 #include <QString>
 #include <QStringList>
 #include <QVector>
 #include <QtCore>
 #include <array>
+#include <linux/nl80211.h>
 
+struct nlattr;
 
-enum class Protocol { B, A, G, N, AC, AX };
+enum class Protocol { B = 1 << 0, A = 1 << 1, G = 1 << 2, N = 1 << 3, AC = 1 << 4, AX = 1 << 5 };
 
 Q_DECLARE_METATYPE(Protocol)
+Q_DECLARE_FLAGS(Protocols, Protocol)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Protocols)
 
 inline uint qHash(Protocol key, uint seed) { return qHash(static_cast<int>(key), seed); }
 
 class AccessPoint {
 public:
+	AccessPoint() = default;
+	AccessPoint(QString bssid, const std::array<nlattr *, NL80211_BSS_MAX + 1> &bss);
+
 	[[nodiscard]] const QString &bssid() const;
-	[[nodiscard]] QString ssid() const;
+	[[nodiscard]] const QString &ssid() const;
 	[[nodiscard]] const QColor &color() const;
 	[[nodiscard]] ConnectionStatus connection_status() const;
 	[[nodiscard]] double signal_dbm() const;
 	[[nodiscard]] unsigned int frequency() const;
 	[[nodiscard]] unsigned int age_ms() const;
-	[[nodiscard]] const QVector<Protocol> &protocols() const;
-	[[nodiscard]] QVector<Protocol> &protocols();
+	[[nodiscard]] Protocols protocols() const;
 	[[nodiscard]] QStringList supported_rates() const;
 	[[nodiscard]] double max_rate() const;
 	[[nodiscard]] const Capabilities &capabilities() const;
-	[[nodiscard]] Capabilities &capabilites();
 	[[nodiscard]] const QVector<IeVariant> &information_elements() const;
 
 	[[nodiscard]] ChannelWidth channel_width() const;
 	[[nodiscard]] Channel channel() const;
-	[[nodiscard]] QVector<SecurityProtocol> security() const;
+	[[nodiscard]] const QVector<SecurityProtocol> &security() const;
 	[[nodiscard]] AkmSuiteType authentication() const;
 
-	void set_bssid(const QString &bssid);
-	void set_connection_status(ConnectionStatus connection_status);
-	void set_signal_strength_mbm(int signal_strength_mbm);
-	void set_frequency(unsigned int frequency);
-	void set_age_ms(unsigned int age_ms);
-	void set_capabilities(const char *bytes, int size);
-	void set_protocols(const QVector<Protocol> &protocols);
+	void update_data(const std::array<nlattr *, NL80211_BSS_MAX + 1> &bss);
 
 private:
-	QString bssid_;
+	const QString bssid_;
+	QString ssid_;
 	const QColor color_;
 	ConnectionStatus connection_status_ = ConnectionStatus::Unknown;
-	int signal_strength_mbm_ = 0;
+	double signal_dbm_ = 0;
 	unsigned int frequency_ = 0;
 	unsigned int age_ms_ = 0;
-	QVector<Protocol> protocols_;
+
+	QStringList supported_rates_;
+	double max_rate_ = 0;
 	Capabilities capabilities_;
-};
-Q_DECLARE_METATYPE(AccessPoint)
-
-// Marshall the AccessPoint data into a D-Bus argument
-QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap);
 	QVector<IeVariant> ies_;
+	ChannelWidth channel_width_ = ChannelWidth::TwentyMhz;
+	Channel channel_ = Channel();
+	QVector<SecurityProtocol> security_;
+	AkmSuiteType authentication_ = AkmSuiteType::None;
 
-// Retrieve the AccessPoint data from the D-Bus argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap);
+	unsigned int seen_ms_ago_ = 0;
+	unsigned int tsf_ = 0;
+	unsigned int beacon_interval_ = 0;
+	Protocols protocols_;
+};
 
 bool operator==(const AccessPoint &lhs, const AccessPoint &rhs);
 

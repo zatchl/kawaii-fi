@@ -2,23 +2,26 @@
 
 #include "libkawaii-fi/capabilities.h"
 #include "libkawaii-fi/channel.h"
+#include "libkawaii-fi/connection_status.h"
 #include "libkawaii-fi/ies/ht_capabilities.h"
-#include "libkawaii-fi/ies/ht_operations.h"
 #include "libkawaii-fi/ies/ie_variant.h"
 #include "libkawaii-fi/ies/robust_security_network.h"
 #include "libkawaii-fi/ies/ssid.h"
 #include "libkawaii-fi/ies/supported_rates.h"
-#include "libkawaii-fi/ies/vendor_specific.h"
 #include "libkawaii-fi/ies/vht_capabilities.h"
-#include "libkawaii-fi/ies/vht_operations.h"
 #include "libkawaii-fi/ies/wpa.h"
 #include "libkawaii-fi/security.h"
+#include "netlink/nl_parse_attr.h"
 
 #include <QList>
 #include <QSet>
 #include <algorithm>
 #include <array>
+#include <random>
+#include <utility>
 #include <variant>
+
+struct nlattr;
 
 namespace {
 	const double ht_vht_short_gi_us = 0.4;
@@ -57,14 +60,14 @@ namespace {
 
 	double ht_max_rate(const HtCapabilities &ht_cap, ChannelWidth channel_width)
 	{
-		int max_ss = 0;
+		unsigned int max_ss = 0;
 		HtMcs mcs = {HtModulation::None, 0};
 		const std::array<HtMcs, 4> ht_mcs = ht_cap.rx_mcs();
-		for (unsigned int i = 0; i < ht_mcs.size(); ++i) {
+		for (unsigned long i = 0; i < ht_mcs.size(); ++i) {
 			if (ht_mcs[i].modulation == HtModulation::None) {
 				continue;
 			}
-			max_ss = static_cast<int>(i + 1);
+			max_ss = static_cast<unsigned int>(i + 1);
 			mcs = ht_mcs[i];
 		}
 		return (ht_vht_data_subcarriers(channel_width) * static_cast<int>(mcs.modulation) *
@@ -123,14 +126,14 @@ namespace {
 	double vht_max_rate(const VhtCapabilities &vht_cap, const HtCapabilities &ht_cap,
 	                    ChannelWidth channel_width)
 	{
-		int max_ss = 0;
+		unsigned int max_ss = 0;
 		VhtMcs mcs = VhtMcs::NotSupported;
 		const std::array<VhtMcs, 8> vht_mcs = vht_cap.mcs_rx();
-		for (unsigned int i = 0; i < vht_mcs.size(); ++i) {
+		for (unsigned long i = 0; i < vht_mcs.size(); ++i) {
 			if (vht_mcs[i] == VhtMcs::NotSupported) {
 				break;
 			}
-			max_ss = static_cast<int>(i + 1);
+			max_ss = static_cast<unsigned int>(i + 1);
 			mcs = vht_mcs[i];
 		}
 		return (ht_vht_data_subcarriers(channel_width) * vht_bpscs(mcs) * vht_coding(mcs) *
@@ -164,26 +167,27 @@ namespace {
 	}
 } // namespace
 
-const QString &AccessPoint::bssid() const { return bssid_; }
-
-QString AccessPoint::ssid() const
+AccessPoint::AccessPoint(QString bssid, const std::array<nlattr *, NL80211_BSS_MAX + 1> &bss)
+    : bssid_(std::move(bssid)), color_(random_color())
 {
-	return information_elements_.value(WLAN_EID_SSID, InformationElement()).bytes();
+	update_data(bss);
 }
 
-ConnectionStatus AccessPoint::connection_status() const { return connection_status_; }
 const QColor &AccessPoint::color() const { return color_; }
 
+const QString &AccessPoint::bssid() const { return bssid_; }
 
+const QString &AccessPoint::ssid() const { return ssid_; }
 
-unsigned int AccessPoint::frequency() const { return frequency_; }
+ConnectionStatus AccessPoint::connection_status() const { return connection_status_; }
+
 double AccessPoint::signal_dbm() const { return signal_dbm_; }
 
-unsigned int AccessPoint::age_ms() const { return age_ms_; }
+unsigned int AccessPoint::frequency() const { return frequency_; }
 
-const QVector<Protocol> &AccessPoint::protocols() const { return protocols_; }
+unsigned int AccessPoint::age_ms() const { return seen_ms_ago_; }
 
-QVector<Protocol> &AccessPoint::protocols() { return protocols_; }
+Protocols AccessPoint::protocols() const { return protocols_; }
 
 QStringList AccessPoint::supported_rates() const
 {
@@ -243,41 +247,20 @@ double AccessPoint::max_rate() const
 		}
 	}
 
-	return *std::max_element(rates.begin(), rates.end());
+	return !rates.empty() ? *std::max_element(rates.begin(), rates.end()) : 0;
 }
 
 const Capabilities &AccessPoint::capabilities() const { return capabilities_; }
 
-Capabilities &AccessPoint::capabilites() { return capabilities_; }
 const QVector<IeVariant> &AccessPoint::information_elements() const { return ies_; }
 
+ChannelWidth AccessPoint::channel_width() const { return channel_.width(); }
 
+Channel AccessPoint::channel() const { return channel_; }
 
+const QVector<SecurityProtocol> &AccessPoint::security() const { return security_; }
 
-ChannelWidth AccessPoint::channel_width() const
-{
-	if (information_elements_.contains(WLAN_EID_VHT_OPERATION)) {
-		const VhtOperations &vht_operations = information_elements_.value(WLAN_EID_VHT_OPERATION);
-		switch (vht_operations.channel_width()) {
-		case VhtChannelWidth::TwentyOrFortyMhz:
-			break;
-		case VhtChannelWidth::EightyMhz:
-			return ChannelWidth::EightyMhz;
-		case VhtChannelWidth::OneSixtyMhz:
-			return ChannelWidth::OneSixtyMhz;
-		case VhtChannelWidth::EightyPlusEightyMhz:
-			return ChannelWidth::EightyPlusEightyMhz;
-		}
-	}
-	if (information_elements_.contains(WLAN_EID_HT_OPERATION)) {
-		const HtOperations &ht_operations = information_elements_.value(WLAN_EID_HT_OPERATION);
-		if (ht_operations.secondary_channel_offset() !=
-		    SecondaryChannelOffset::NoSecondaryChannel) {
-			return ChannelWidth::FortyMhz;
-		}
-	}
-	return ChannelWidth::TwentyMhz;
-}
+AkmSuiteType AccessPoint::authentication() const { return authentication_; }
 
 namespace {
 	QString calculate_ssid(const QVector<IeVariant> &ies)
@@ -307,16 +290,12 @@ namespace {
 				security.append(SecurityProtocol::WPA2);
 			}
 		}
-QVector<SecurityProtocol> AccessPoint::security() const
-{
-	if (!capabilities_.privacy()) {
-		return {SecurityProtocol::None};
-	}
 
-	const bool contains_wpa_ie = contains_vendor_element(WPA_OUI, WPA_VENDOR_TYPE);
+		if (security.empty()) {
+			security.append(SecurityProtocol::WEP);
+		}
 
-	if (!information_elements_.contains(WLAN_EID_RSN) && !contains_wpa_ie) {
-		return {SecurityProtocol::WEP};
+		return security;
 	}
 
 	AkmSuiteType calculate_authentication(const QVector<IeVariant> &ies)
@@ -337,90 +316,33 @@ QVector<SecurityProtocol> AccessPoint::security() const
 	}
 } // namespace
 
-	return security;
-}
-
-AkmSuiteType AccessPoint::authentication() const
+void AccessPoint::update_data(const std::array<nlattr *, NL80211_BSS_MAX + 1> &bss)
 {
-	// Check the RSN IE
-	if (information_elements_.contains(WLAN_EID_RSN)) {
-		const auto akm_suites =
-		        RobustSecurityNetwork(information_elements_.value(WLAN_EID_RSN)).akm_suites();
-		if (akm_suites.size() > 0) {
-			return akm_suites[0].type;
-		}
-	}
+	signal_dbm_ = static_cast<double>(parse_signal_strength_mbm(bss[NL80211_BSS_SIGNAL_MBM])) / 100;
 
-	// Check the WPA IE
-	auto it = information_elements_.find(WLAN_EID_VENDOR_SPECIFIC);
-	while (it != information_elements_.end() && it.key() == WLAN_EID_VENDOR_SPECIFIC) {
-		const VendorSpecific v_ie = VendorSpecific(it.value());
-		if (v_ie.oui() == WPA_OUI && v_ie.type() == WPA_VENDOR_TYPE) {
-			const Wpa wpa_ie = Wpa(v_ie);
-			const auto akm_suites = Wpa(v_ie).akm_suites();
-			if (akm_suites.size() > 0) {
-				return akm_suites[0].type;
-			}
-			break;
-		}
-		++it;
-	}
+	seen_ms_ago_ = parse_age_ms(bss[NL80211_BSS_SEEN_MS_AGO]);
 
-	return AkmSuiteType::None;
-}
+	connection_status_ = parse_connection_status(bss[NL80211_BSS_STATUS]);
 
-void AccessPoint::set_bssid(const QString &bssid) { bssid_ = bssid; }
+	frequency_ = parse_frequency(bss[NL80211_BSS_FREQUENCY]);
 
-void AccessPoint::set_connection_status(ConnectionStatus connection_status)
-{
-	connection_status_ = connection_status;
-}
+	capabilities_ = parse_capabilities(bss[NL80211_BSS_CAPABILITY]);
 
-void AccessPoint::set_signal_strength_mbm(int signal_strength_mbm)
-{
-	signal_strength_mbm_ = signal_strength_mbm;
-}
+	tsf_ = parse_tsf(bss[NL80211_BSS_TSF]);
 
-void AccessPoint::set_frequency(unsigned int frequency) { frequency_ = frequency; }
+	beacon_interval_ = parse_beacon_interval(bss[NL80211_BSS_BEACON_INTERVAL]);
 
-void AccessPoint::set_age_ms(unsigned int age_ms) { age_ms_ = age_ms; }
+	ies_ = parse_ies(bss[NL80211_BSS_INFORMATION_ELEMENTS]);
 
-void AccessPoint::set_capabilities(const char *bytes, int size)
-{
-	capabilities_ = Capabilities(bytes, size);
-}
+	ssid_ = calculate_ssid(ies_);
 
-void AccessPoint::set_protocols(const QVector<Protocol> &protocols) { protocols_ = protocols; }
+	channel_ = Channel(frequency_, ies_);
 
-QDBusArgument &operator<<(QDBusArgument &argument, const AccessPoint &ap)
-{
-	QVector<int> protocols;
-	for (Protocol p : ap.protocols()) {
-		protocols.append(static_cast<int>(p));
-	}
-	argument.beginStructure();
-	argument << ap.bssid() << static_cast<int>(ap.connection_status()) << ap.signal_strength_mbm()
-	         << ap.frequency() << ap.age_ms() << protocols << ap.capabilities()
-	         << ap.information_elements();
-	argument.endStructure();
-	return argument;
-}
+	security_ = calculate_security(capabilities_, ies_);
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, AccessPoint &ap)
-{
-	argument.beginStructure();
-	ap.set_bssid(qdbus_cast<QString>(argument));
-	ap.set_connection_status(static_cast<ConnectionStatus>(qdbus_cast<int>(argument)));
-	ap.set_signal_strength_mbm(qdbus_cast<int>(argument));
-	ap.set_frequency(qdbus_cast<unsigned int>(argument));
-	ap.set_age_ms(qdbus_cast<unsigned int>(argument));
-	for (int i : qdbus_cast<QVector<int>>(argument)) {
-		ap.protocols().append(static_cast<Protocol>(i));
-	}
-	argument >> ap.capabilites();
-	argument >> ap.information_elements();
-	argument.endStructure();
-	return argument;
+	authentication_ = calculate_authentication(ies_);
+
+	// supported rates, max rate
 }
 
 bool operator==(const AccessPoint &lhs, const AccessPoint &rhs)
