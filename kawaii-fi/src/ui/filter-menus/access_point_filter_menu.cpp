@@ -4,11 +4,12 @@
 #include <QCheckBox>
 #include <QWidgetAction>
 #include <QtCore>
+#include <utility>
 
 class QWidget;
 
 FilterMenuCheckBox::FilterMenuCheckBox(const QString &text, QVariant data, QWidget *parent)
-    : QCheckBox(text, parent), data_(data)
+    : QCheckBox(text, parent), data_(std::move(data))
 {
 	setCheckState(Qt::CheckState::Checked);
 	setStyleSheet("padding: 2px 20px 2px 5px");
