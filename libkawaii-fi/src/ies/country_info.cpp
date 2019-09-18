@@ -50,12 +50,18 @@ Environment CountryInfo::environment() const
 QVector<ChannelPowerConstraint> CountryInfo::channel_constraints() const
 {
 	QVector<ChannelPowerConstraint> channel_constraints;
-	auto it = bytes().begin() + 3;
-	while (it + 3 < bytes().end()) {
-		channel_constraints.append({static_cast<std::uint8_t>(*it),
-		                            static_cast<std::uint8_t>(*(it + 1)),
-		                            static_cast<std::uint8_t>(*(it + 2))});
-		it += 3;
+	QByteArray::size_type i = 3;
+	while (i + 2 < bytes().size()) {
+		const unsigned int first_channel_number = static_cast<std::uint8_t>(bytes()[i++]);
+		const unsigned int number_of_channels = static_cast<std::uint8_t>(bytes()[i++]);
+		const int max_transmit_power_dbm = static_cast<std::uint8_t>(bytes()[i++]);
+
+		const unsigned int channel_number_delta = (first_channel_number > 14) ? 4 : 1;
+		const unsigned int last_channel_number =
+		        first_channel_number + (number_of_channels - 1) * channel_number_delta;
+
+		channel_constraints.append({first_channel_number, last_channel_number, number_of_channels,
+		                            max_transmit_power_dbm});
 	}
 	return channel_constraints;
 }

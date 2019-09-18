@@ -13,6 +13,7 @@ enum class Environment { Indoor, Outdoor, Any };
 
 struct ChannelPowerConstraint {
 	const unsigned int first_channel_number = 0;
+	const unsigned int last_channel_number = 0;
 	const unsigned int number_of_channels = 0;
 	const int max_transmit_power_dbm = 0;
 };
