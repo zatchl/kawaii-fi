@@ -17,7 +17,7 @@ class FilterMenuCheckBox : public QCheckBox {
 	Q_OBJECT
 public:
 	FilterMenuCheckBox(const QString &text, QVariant data, QWidget *parent = nullptr);
-	bool hitButton(const QPoint &pos) const override;
+	[[nodiscard]] bool hitButton(const QPoint &pos) const override;
 	[[nodiscard]] QVariant data() const;
 
 private:
