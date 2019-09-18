@@ -184,7 +184,7 @@ unsigned int VhtCapabilities::max_ampdu_length() const
 	if (bytes().size() < 4) {
 		return 0;
 	}
-	unsigned int exp =
+	const unsigned int exp =
 	        13 + ((bytes()[2] & max_ampdu_length_first_mask) >> 7) +
 	        static_cast<unsigned int>(((bytes()[3] & max_ampdu_length_second_mask) << 1));
 	return (1 << exp) - 1;
