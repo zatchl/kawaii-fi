@@ -31,11 +31,11 @@ void AccessPointDetailTreeView::show_ies(const QString &bssid)
 	model_->removeRows(0, model_->rowCount());
 
 	// Find the access point with the given BSSID and display its IEs
-	for (const auto &ap : ap_scanner_->access_points()) {
-		if (ap.bssid() == bssid) {
-			show_ies_for_ap(ap);
-			break;
-		}
+	const auto aps = *ap_scanner_->access_points();
+	const auto it = std::find_if(aps.begin(), aps.end(),
+	                             [bssid](const AccessPoint &ap) { return ap.bssid() == bssid; });
+	if (it != aps.end()) {
+		show_ies_for_ap(*it);
 	}
 }
 
