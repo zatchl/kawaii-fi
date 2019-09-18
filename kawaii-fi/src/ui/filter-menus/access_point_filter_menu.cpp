@@ -36,7 +36,8 @@ AccessPointFilterMenu::AccessPointFilterMenu(const QString &title, QWidget *pare
 	addAction(select_all_action);
 }
 
-void AccessPointFilterMenu::add_filter_check_box(QMenu *menu, const QString &text, QVariant data)
+void AccessPointFilterMenu::add_filter_check_box(QMenu *menu, const QString &text,
+                                                 const QVariant &data)
 {
 	auto filter_check_box = new FilterMenuCheckBox(text, data, this);
 	connect(filter_check_box, &QCheckBox::stateChanged, [this]() { emit filter_changed(); });
@@ -47,7 +48,7 @@ void AccessPointFilterMenu::add_filter_check_box(QMenu *menu, const QString &tex
 	menu->addAction(filter_action);
 }
 
-void AccessPointFilterMenu::add_filter_check_box(const QString &text, QVariant data)
+void AccessPointFilterMenu::add_filter_check_box(const QString &text, const QVariant &data)
 {
 	add_filter_check_box(this, text, data);
 }
