@@ -87,7 +87,7 @@ void MainWindow::populate_menu_bar()
 
 	// Select the first wireless interface
 	if (!ui_->interface_menu->actions().isEmpty()) {
-		ui_->interface_menu->actions()[0]->setChecked(true);
+		ui_->interface_menu->actions().constFirst()->setChecked(true);
 	}
 }
 

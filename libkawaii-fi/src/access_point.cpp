@@ -302,13 +302,13 @@ namespace {
 	{
 		for (const auto &ie : ies) {
 			if (auto rsn = std::get_if<RobustSecurityNetwork>(&ie)) {
-				return !rsn->akm_suites().empty() ? rsn->akm_suites()[0].type : AkmSuiteType::None;
+				return !rsn->akm_suites().empty() ? rsn->akm_suites().constFirst().type : AkmSuiteType::None;
 			}
 		}
 
 		for (const auto &ie : ies) {
 			if (auto wpa = std::get_if<Wpa>(&ie)) {
-				return !wpa->akm_suites().empty() ? wpa->akm_suites()[0].type : AkmSuiteType::None;
+				return !wpa->akm_suites().empty() ? wpa->akm_suites().constFirst().type : AkmSuiteType::None;
 			}
 		}
 
