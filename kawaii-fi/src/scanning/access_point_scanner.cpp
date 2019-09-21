@@ -7,12 +7,14 @@
 #include <QVector>
 #include <algorithm>
 #include <libkawaii-fi/wifi_device.h>
+#include <utility>
 
 class AccessPoint;
 
 AccessPointScanner::AccessPointScanner(QObject *parent) : QObject(parent)
 {
-	for (const NetworkManager::Device::Ptr &device : NetworkManager::networkInterfaces()) {
+	const auto network_interfaces = NetworkManager::networkInterfaces();
+	for (const NetworkManager::Device::Ptr &device : network_interfaces) {
 		if (device->type() == NetworkManager::Device::Wifi) {
 			WifiDevice *wifi_device =
 			        new WifiDevice(device.objectCast<NetworkManager::WirelessDevice>(), this);
@@ -64,7 +66,8 @@ const QVector<AccessPoint> *AccessPointScanner::access_points() const
 QStringList AccessPointScanner::wifi_device_names() const
 {
 	QStringList wireless_interfaces;
-	for (const NetworkManager::Device::Ptr &device : NetworkManager::networkInterfaces()) {
+    const auto network_interfaces = NetworkManager::networkInterfaces();
+	for (const NetworkManager::Device::Ptr &device : network_interfaces) {
 		if (device->type() == NetworkManager::Device::Wifi) {
 			wireless_interfaces.append(device->interfaceName());
 		}

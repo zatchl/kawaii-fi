@@ -68,7 +68,8 @@ RsnStandardItem::RsnStandardItem(const RobustSecurityNetwork &rsn)
 	appendRow({new QStandardItem("Pairwise Suite Count"),
 	           new QStandardItem(QString::number(rsn.pairwise_cipher_suite_count()))});
 
-	for (const auto &pairwise_cipher_suite : rsn.pairwise_cipher_suites()) {
+	const QVector<CipherSuite> pairwise_cipher_suites = rsn.pairwise_cipher_suites();
+	for (const auto &pairwise_cipher_suite : pairwise_cipher_suites) {
 		QStandardItem *pairwise_cipher_suite_item = new QStandardItem("Pairwise Cipher Suite");
 		pairwise_cipher_suite_item->appendRow(oui_row(pairwise_cipher_suite.oui));
 		pairwise_cipher_suite_item->appendRow(cipher_type_row(pairwise_cipher_suite.type));
@@ -78,7 +79,8 @@ RsnStandardItem::RsnStandardItem(const RobustSecurityNetwork &rsn)
 	appendRow({new QStandardItem("Auth Key Management (AKM) Suite Count"),
 	           new QStandardItem(QString::number(rsn.akm_suite_count()))});
 
-	for (const auto &akm_suite : rsn.akm_suites()) {
+	const QVector<AkmSuite> akm_suites = rsn.akm_suites();
+	for (const auto &akm_suite : akm_suites) {
 		QStandardItem *akm_suite_item = new QStandardItem("AKM Suite");
 		akm_suite_item->appendRow(oui_row(akm_suite.oui));
 		akm_suite_item->appendRow(akm_suite_row(akm_suite.type));

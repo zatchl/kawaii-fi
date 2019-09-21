@@ -24,7 +24,7 @@ AccessPointFilterMenu::AccessPointFilterMenu(const QString &title, QWidget *pare
 {
 	select_all_button_->setFlat(true);
 	connect(select_all_button_, &QPushButton::clicked, [this]() {
-		for (const auto check_box : filter_check_boxes_) {
+		for (const auto check_box : std::as_const(filter_check_boxes_)) {
 			check_box->blockSignals(true);
 			check_box->setChecked(true);
 			check_box->blockSignals(false);

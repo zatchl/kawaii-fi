@@ -9,7 +9,8 @@ SupportedRatesStandardItem::SupportedRatesStandardItem(const SupportedRates &sup
     : QStandardItem(supported_rates.is_extended_supported_rates() ? "Extended Supported Rates"
                                                                   : "Supported Rates")
 {
-	for (const auto &rate : supported_rates.text_rates()) {
+	const QStringList text_rates = supported_rates.text_rates();
+	for (const auto &rate : text_rates) {
 		appendRow({new QStandardItem("Supported Rate"),
 		           new QStandardItem(QString("%0 Mbit/sec").arg(rate))});
 	}

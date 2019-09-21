@@ -20,7 +20,8 @@ ChannelWidthFilterMenu::ChannelWidthFilterMenu(QWidget *parent)
 QSet<unsigned int> ChannelWidthFilterMenu::channel_widths() const
 {
 	QSet<unsigned int> channel_widths;
-	for (const auto check_box : checked_filter_check_boxes()) {
+	const auto check_boxes = checked_filter_check_boxes();
+	for (const auto check_box : check_boxes) {
 		channel_widths.insert(check_box->data().toUInt());
 	}
 	return channel_widths;

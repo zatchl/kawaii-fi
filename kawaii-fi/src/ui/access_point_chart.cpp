@@ -127,7 +127,8 @@ void AccessPointChart::add_access_point(const AccessPoint &ap)
 		series->append(channel.end_mhz_two(), min_signal_dbm);
 	}
 	addSeries(series);
-	for (const auto axis : axes()) {
+	const auto xy_axes = axes();
+	for (const auto axis : xy_axes) {
 		series->attachAxis(axis);
 	}
 }
