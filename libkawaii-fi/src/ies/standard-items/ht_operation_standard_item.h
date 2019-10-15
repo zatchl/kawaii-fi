@@ -3,11 +3,12 @@
 
 #include <QStandardItem>
 
-class HtOperations;
-
-class HtOperationStandardItem : public QStandardItem {
-public:
-	explicit HtOperationStandardItem(const HtOperations &ht_op);
-};
+namespace KawaiiFi::Ies {
+	class HtOperations;
+	class HtOperationStandardItem : public QStandardItem {
+	public:
+		explicit HtOperationStandardItem(const HtOperations &ht_op);
+	};
+} // namespace KawaiiFi::Ies
 
 #endif // HT_OPERATION_STANDARD_ITEM_H

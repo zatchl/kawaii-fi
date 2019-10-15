@@ -10,22 +10,24 @@
 
 class QStandardItem;
 
-class SupportedRates : public InformationElement {
-public:
-	SupportedRates() = default;
-	SupportedRates(const std::string_view &bytes, unsigned int ie_id_);
+namespace KawaiiFi::Ies {
+	class SupportedRates : public InformationElement {
+	public:
+		SupportedRates() = default;
+		SupportedRates(const std::string_view &bytes, unsigned int ie_id_);
 
-	[[nodiscard]] QStandardItem *standard_item() const override;
-	[[nodiscard]] QString summary() const override;
+		[[nodiscard]] QStandardItem *standard_item() const override;
+		[[nodiscard]] QString summary() const override;
 
-	[[nodiscard]] QSet<double> basic_rates() const;
-	[[nodiscard]] QSet<double> rates() const;
-	[[nodiscard]] QStringList text_rates() const;
+		[[nodiscard]] QSet<double> basic_rates() const;
+		[[nodiscard]] QSet<double> rates() const;
+		[[nodiscard]] QStringList text_rates() const;
 
-	[[nodiscard]] bool is_extended_supported_rates() const;
-};
+		[[nodiscard]] bool is_extended_supported_rates() const;
+	};
 
-inline const unsigned int WLAN_EID_SUPP_RATES = 1;
-inline const unsigned int WLAN_EID_EXT_SUPP_RATES = 50;
+	inline const unsigned int WLAN_EID_SUPP_RATES = 1;
+	inline const unsigned int WLAN_EID_EXT_SUPP_RATES = 50;
+} // namespace KawaiiFi::Ies
 
 #endif // SUPPORTED_RATES_H

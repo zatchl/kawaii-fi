@@ -21,10 +21,12 @@
 
 #include <variant>
 
-using IeVariant =
-        std::variant<CountryInfo, DsParameter, ErpInfo, ExtendedCapabilities, HtCapabilities,
-                     HtOperations, InformationElement, PowerConstraint, RmCapabilities,
-                     RobustSecurityNetwork, Ssid, SupportedRates, TrafficIndicationMap,
-                     VendorSpecific, VhtCapabilities, VhtOperations, Wpa>;
+namespace KawaiiFi::Ies {
+	using Variant =
+	        std::variant<CountryInfo, DsParameter, ErpInfo, ExtendedCapabilities, HtCapabilities,
+	                     HtOperations, InformationElement, PowerConstraint, RmCapabilities,
+	                     RobustSecurityNetwork, Ssid, SupportedRates, TrafficIndicationMap,
+	                     VendorSpecific, VhtCapabilities, VhtOperations, Wpa>;
+}
 
 #endif // IE_VARIANT_H

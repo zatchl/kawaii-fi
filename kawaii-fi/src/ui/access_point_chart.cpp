@@ -1,7 +1,5 @@
 #include "access_point_chart.h"
 
-#include "scanning/access_point_scanner.h"
-
 #include <QCategoryAxis>
 #include <QGraphicsLayout>
 #include <QHashNode>
@@ -16,6 +14,7 @@
 #include <QtGui>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/channel.h>
+#include <libkawaii-fi/scanning/access_point_scanner.h>
 #include <libkawaii-fi/util.h>
 
 class QGraphicsItem;
@@ -39,11 +38,12 @@ namespace {
 	const int series_line_width = 3;
 } // namespace
 
-AccessPointChart::AccessPointChart(const AccessPointScanner &ap_scanner, WifiBand band,
-                                   QGraphicsItem *parent, Qt::WindowFlags flags)
+AccessPointChart::AccessPointChart(const KawaiiFi::Scanning::AccessPointScanner &ap_scanner,
+                                   KawaiiFi::Channel::Band band, QGraphicsItem *parent,
+                                   Qt::WindowFlags flags)
     : QtCharts::QChart(parent, flags), ap_scanner_(ap_scanner), wifi_band_(band)
 {
-	connect(&ap_scanner, &AccessPointScanner::access_points_changed, this,
+	connect(&ap_scanner, &KawaiiFi::Scanning::AccessPointScanner::access_points_changed, this,
 	        &AccessPointChart::refresh_chart);
 	legend()->setVisible(false);
 	setMargins(QMargins(0, 0, 0, 0));
@@ -52,9 +52,10 @@ AccessPointChart::AccessPointChart(const AccessPointScanner &ap_scanner, WifiBan
 	add_y_axis();
 }
 
-void AccessPointChart::add_x_axis(WifiBand band)
+void AccessPointChart::add_x_axis(KawaiiFi::Channel::Band band)
 {
-	if ((band != WifiBand::TwoPointFourGhz) && (band != WifiBand::FiveGhz)) {
+	if ((band != KawaiiFi::Channel::Band::TwoPointFourGhz) &&
+	    (band != KawaiiFi::Channel::Band::FiveGhz)) {
 		return;
 	}
 
@@ -64,12 +65,15 @@ void AccessPointChart::add_x_axis(WifiBand band)
 	x_axis->setLabelsPosition(QtCharts::QCategoryAxis::AxisLabelsPositionOnValue);
 
 	// Use different values for the x-axis depending on the band of the access points to be charted
-	const int x_axis_min =
-	        (band == WifiBand::TwoPointFourGhz) ? two_point_four_ghz_x_min : five_ghz_x_min;
-	const int x_axis_max =
-	        (band == WifiBand::TwoPointFourGhz) ? two_point_four_ghz_x_max : five_ghz_x_max;
-	const QVector<unsigned int> &x_freqs =
-	        (band == WifiBand::TwoPointFourGhz) ? two_point_four_ghz_x_freqs : five_ghz_x_freqs;
+	const unsigned int x_axis_min = (band == KawaiiFi::Channel::Band::TwoPointFourGhz)
+	                                        ? two_point_four_ghz_x_min
+	                                        : five_ghz_x_min;
+	const unsigned int x_axis_max = (band == KawaiiFi::Channel::Band::TwoPointFourGhz)
+	                                        ? two_point_four_ghz_x_max
+	                                        : five_ghz_x_max;
+	const QVector<unsigned int> &x_freqs = (band == KawaiiFi::Channel::Band::TwoPointFourGhz)
+	                                               ? two_point_four_ghz_x_freqs
+	                                               : five_ghz_x_freqs;
 
 	x_axis->setMin(x_axis_min);
 	x_axis->setMax(x_axis_max);
@@ -96,18 +100,18 @@ void AccessPointChart::refresh_chart()
 {
 	removeAllSeries();
 
-	const QVector<AccessPoint> *access_points = ap_scanner_.access_points();
+	const QVector<KawaiiFi::AccessPoint> *access_points = ap_scanner_.access_points();
 
-	if (access_points) {
+	if (access_points != nullptr) {
 		for (const auto &ap : *access_points) {
 			add_access_point(ap);
 		}
 	}
 }
 
-void AccessPointChart::add_access_point(const AccessPoint &ap)
+void AccessPointChart::add_access_point(const KawaiiFi::AccessPoint &ap)
 {
-	const Channel channel = ap.channel();
+	const KawaiiFi::Channel channel = ap.channel();
 
 	if (channel.band() != wifi_band_) {
 		return;
@@ -120,7 +124,7 @@ void AccessPointChart::add_access_point(const AccessPoint &ap)
 	series->append(channel.start_mhz(), ap.signal_dbm());
 	series->append(channel.end_mhz(), ap.signal_dbm());
 	series->append(channel.end_mhz(), min_signal_dbm);
-	if (channel.width() == ChannelWidth::EightyPlusEightyMhz) {
+	if (channel.width() == KawaiiFi::Channel::Width::EightyPlusEightyMhz) {
 		series->append(channel.start_mhz_two(), min_signal_dbm);
 		series->append(channel.start_mhz_two(), ap.signal_dbm());
 		series->append(channel.end_mhz_two(), ap.signal_dbm());

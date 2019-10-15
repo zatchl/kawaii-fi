@@ -2,7 +2,9 @@
 
 class RmCapabilities;
 
-RmCapabilitiesStandardItem::RmCapabilitiesStandardItem(const RmCapabilities &rm_capabilities)
-    : QStandardItem("RM Enabled Capabilities")
-{
-}
+namespace KawaiiFi::Ies {
+	RmCapabilitiesStandardItem::RmCapabilitiesStandardItem(const RmCapabilities &rm_capabilities)
+	    : QStandardItem("RM Enabled Capabilities")
+	{
+	}
+} // namespace KawaiiFi::Ies

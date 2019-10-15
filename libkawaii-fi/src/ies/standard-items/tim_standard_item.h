@@ -3,11 +3,12 @@
 
 #include <QStandardItem>
 
-class TrafficIndicationMap;
-
-class TimStandardItem : public QStandardItem {
-public:
-	explicit TimStandardItem(const TrafficIndicationMap &tim);
-};
+namespace KawaiiFi::Ies {
+	class TrafficIndicationMap;
+	class TimStandardItem : public QStandardItem {
+	public:
+		explicit TimStandardItem(const TrafficIndicationMap &tim);
+	};
+} // namespace KawaiiFi::Ies
 
 #endif // TIM_STANDARD_ITEM_H

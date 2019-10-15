@@ -21,9 +21,6 @@
 #include <QTabWidget>
 #include <climits>
 #include <libkawaii-fi/channel.h>
-#include <libkawaii-fi/kawaiifi.h>
-
-using namespace KawaiiFi;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui_(new Ui::MainWindow)
 {
@@ -38,23 +35,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui_(new Ui::MainW
 
 	// Create an AccessPointChart for 2.4 GHz and 5 GHz access points
 	ui_->two_four_ghz_chart_view->setChart(
-	        new AccessPointChart(*scanner_, WifiBand::TwoPointFourGhz));
-	ui_->five_ghz_chart_view->setChart(new AccessPointChart(*scanner_, WifiBand::FiveGhz));
+	        new AccessPointChart(*scanner_, KawaiiFi::Channel::Band::TwoPointFourGhz));
+	ui_->five_ghz_chart_view->setChart(
+	        new AccessPointChart(*scanner_, KawaiiFi::Channel::Band::FiveGhz));
 
 	// Pass the AccessPointScanner object to the access point table view and IE tree view
 	ui_->ap_table_view->set_ap_scanner(*scanner_);
 	ui_->ie_tree_view->set_ap_scanner(scanner_);
 
 	// Show the information elements of the access point selected in the table
-	connect(ui_->ap_table_view, &AccessPointTableView::access_point_selected,
-	        [this](const QString &bssid) { ui_->ie_tree_view->show_ies(bssid); });
+	connect(ui_->ap_table_view, &AccessPointTableView::access_point_selected, ui_->ie_tree_view,
+	        &AccessPointDetailTreeView::show_ies);
 
 	// Pause or resume scanning when the pause or resume actions are triggered
 	connect(ui_->pause_action, &QAction::triggered, this, &MainWindow::pause_scanning);
 	connect(ui_->resume_action, &QAction::triggered, this, &MainWindow::resume_scanning);
 
 	// Trigger the next scan after receiving the results of the last one
-	connect(scanner_, &AccessPointScanner::access_points_updated, this,
+	connect(scanner_, &KawaiiFi::Scanning::AccessPointScanner::access_points_changed, this,
 	        &MainWindow::resume_scanning);
 
 	setWindowTitle("Kawaii-Fi");
@@ -78,7 +76,8 @@ void MainWindow::populate_menu_bar()
 
 	// Place all the interface actions in a group so only one can be selected at a time
 	auto interface_group = new QActionGroup(this);
-	for (const auto &nic_name : scanner_->wireless_nic_names()) {
+	const auto wifi_device_names = scanner_->wifi_device_names();
+	for (const auto &nic_name : wifi_device_names) {
 		auto nic_action = ui_->interface_menu->addAction(nic_name);
 		nic_action->setActionGroup(interface_group);
 		nic_action->setCheckable(true);

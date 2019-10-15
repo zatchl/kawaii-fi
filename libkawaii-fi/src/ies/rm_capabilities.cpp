@@ -5,12 +5,14 @@
 
 class QStandardItem;
 
-RmCapabilities::RmCapabilities(const std::string_view &bytes)
-    : InformationElement(bytes, WLAN_EID_RRM_ENABLED_CAPABILITIES)
-{
-}
+namespace KawaiiFi::Ies {
+	RmCapabilities::RmCapabilities(const std::string_view &bytes)
+	    : InformationElement(bytes, WLAN_EID_RRM_ENABLED_CAPABILITIES)
+	{
+	}
 
-QStandardItem *RmCapabilities::standard_item() const
-{
-	return new RmCapabilitiesStandardItem(*this);
-}
+	QStandardItem *RmCapabilities::standard_item() const
+	{
+		return new RmCapabilitiesStandardItem(*this);
+	}
+} // namespace KawaiiFi::Ies

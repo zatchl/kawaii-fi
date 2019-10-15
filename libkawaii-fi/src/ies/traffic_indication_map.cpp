@@ -7,9 +7,14 @@
 
 class QStandardItem;
 
-TrafficIndicationMap::TrafficIndicationMap(const std::string_view &bytes)
-    : InformationElement(bytes, WLAN_EID_TIM)
-{
-}
+namespace KawaiiFi::Ies {
+	TrafficIndicationMap::TrafficIndicationMap(const std::string_view &bytes)
+	    : InformationElement(bytes, WLAN_EID_TIM)
+	{
+	}
 
-QStandardItem *TrafficIndicationMap::standard_item() const { return new TimStandardItem(*this); }
+	QStandardItem *TrafficIndicationMap::standard_item() const
+	{
+		return new TimStandardItem(*this);
+	}
+} // namespace KawaiiFi::Ies

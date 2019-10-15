@@ -7,14 +7,16 @@
 
 class QStandardItem;
 
-class RmCapabilities : public InformationElement {
-public:
-	RmCapabilities() = default;
-	explicit RmCapabilities(const std::string_view &bytes);
+namespace KawaiiFi::Ies {
+	class RmCapabilities : public InformationElement {
+	public:
+		RmCapabilities() = default;
+		explicit RmCapabilities(const std::string_view &bytes);
 
-	[[nodiscard]] QStandardItem *standard_item() const override;
-};
+		[[nodiscard]] QStandardItem *standard_item() const override;
+	};
 
-inline const unsigned int WLAN_EID_RRM_ENABLED_CAPABILITIES = 70;
+	inline const unsigned int WLAN_EID_RRM_ENABLED_CAPABILITIES = 70;
+} // namespace KawaiiFi::Ies
 
 #endif // RM_CAPABILITIES_H

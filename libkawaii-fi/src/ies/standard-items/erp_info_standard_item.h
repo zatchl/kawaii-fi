@@ -3,11 +3,12 @@
 
 #include <QStandardItem>
 
-class ErpInfo;
-
-class ErpInfoStandardItem : public QStandardItem {
-public:
-	explicit ErpInfoStandardItem(const ErpInfo &erp_info);
-};
+namespace KawaiiFi::Ies {
+	class ErpInfo;
+	class ErpInfoStandardItem : public QStandardItem {
+	public:
+		explicit ErpInfoStandardItem(const ErpInfo &erp_info);
+	};
+} // namespace KawaiiFi::Ies
 
 #endif // ERP_INFO_STANDARD_ITEM_H

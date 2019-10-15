@@ -5,21 +5,23 @@
 #include <QByteArray>
 #include <QStandardItem>
 
-DsParameter::DsParameter(const std::string_view &bytes)
-    : InformationElement(bytes, WLAN_EID_DS_PARAMS)
-{
-}
+namespace KawaiiFi::Ies {
+	DsParameter::DsParameter(const std::string_view &bytes)
+	    : InformationElement(bytes, WLAN_EID_DS_PARAMS)
+	{
+	}
 
-QStandardItem *DsParameter::standard_item() const
-{
-	auto standard_item = new QStandardItem("DS Parameters");
-	return standard_item;
-}
+	QStandardItem *DsParameter::standard_item() const
+	{
+		auto standard_item = new QStandardItem("DS Parameters");
+		return standard_item;
+	}
 
-QString DsParameter::summary() const { return QString("Channel %0").arg(channel()); }
+	QString DsParameter::summary() const { return QString("Channel %0").arg(channel()); }
 
-unsigned int DsParameter::channel() const
-{
-	constexpr QByteArray::size_type byte_index = 0;
-	return byte_to_unsigned_int(byte_index);
-}
+	unsigned int DsParameter::channel() const
+	{
+		constexpr QByteArray::size_type byte_index = 0;
+		return byte_to_unsigned_int(byte_index);
+	}
+} // namespace KawaiiFi::Ies

@@ -3,11 +3,12 @@
 
 #include <QStandardItem>
 
-class CountryInfo;
-
-class CountryInfoStandardItem : public QStandardItem {
-public:
-	explicit CountryInfoStandardItem(const CountryInfo &country_info);
-};
+namespace KawaiiFi::Ies {
+	class CountryInfo;
+	class CountryInfoStandardItem : public QStandardItem {
+	public:
+		explicit CountryInfoStandardItem(const CountryInfo &country_info);
+	};
+} // namespace KawaiiFi::Ies
 
 #endif // COUNTRY_INFO_STANDARD_ITEM_H

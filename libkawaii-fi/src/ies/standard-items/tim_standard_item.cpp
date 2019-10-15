@@ -2,4 +2,6 @@
 
 class TrafficIndicationMap;
 
-TimStandardItem::TimStandardItem(const TrafficIndicationMap &tim) : QStandardItem("TIM") {}
+namespace KawaiiFi::Ies {
+	TimStandardItem::TimStandardItem(const TrafficIndicationMap &tim) : QStandardItem("TIM") {}
+} // namespace KawaiiFi::Ies

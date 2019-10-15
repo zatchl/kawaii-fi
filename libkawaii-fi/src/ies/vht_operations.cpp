@@ -8,55 +8,60 @@
 
 class QStandardItem;
 
-VhtOperations::VhtOperations(const std::string_view &bytes)
-    : InformationElement(bytes, WLAN_EID_VHT_OPERATION)
-{
-}
-
-QStandardItem *VhtOperations::standard_item() const { return new VhtOperationStandardItem(*this); }
-
-VhtChannelWidth VhtOperations::channel_width() const
-{
-	constexpr QByteArray::size_type byte_index = 0;
-
-	switch (byte_to_unsigned_int(byte_index)) {
-	case 0:
-		return VhtChannelWidth::TwentyOrFortyMhz;
-	case 1:
-		return VhtChannelWidth::EightyMhz;
-	case 2:
-		return VhtChannelWidth::OneSixtyMhz;
-	case 3:
-		return VhtChannelWidth::EightyPlusEightyMhz;
-	default:
-		return VhtChannelWidth::TwentyOrFortyMhz;
+namespace KawaiiFi::Ies {
+	VhtOperations::VhtOperations(const std::string_view &bytes)
+	    : InformationElement(bytes, WLAN_EID_VHT_OPERATION)
+	{
 	}
-}
 
-unsigned int VhtOperations::channel_center_segment_zero() const
-{
-	constexpr QByteArray::size_type byte_index = 1;
-	return byte_to_unsigned_int(byte_index);
-}
+	QStandardItem *VhtOperations::standard_item() const
+	{
+		return new VhtOperationStandardItem(*this);
+	}
 
-unsigned int VhtOperations::channel_center_segment_one() const
-{
-	constexpr QByteArray::size_type byte_index = 2;
-	return byte_to_unsigned_int(byte_index);
-}
+	VhtChannelWidth VhtOperations::channel_width() const
+	{
+		constexpr QByteArray::size_type byte_index = 0;
 
-VhtMcs VhtOperations::mcs_basic_one_ss() const { return VhtMcs::NotSupported; }
+		switch (byte_to_unsigned_int(byte_index)) {
+		case 0:
+			return VhtChannelWidth::TwentyOrFortyMhz;
+		case 1:
+			return VhtChannelWidth::EightyMhz;
+		case 2:
+			return VhtChannelWidth::OneSixtyMhz;
+		case 3:
+			return VhtChannelWidth::EightyPlusEightyMhz;
+		default:
+			return VhtChannelWidth::TwentyOrFortyMhz;
+		}
+	}
 
-VhtMcs VhtOperations::mcs_basic_two_ss() const { return VhtMcs::NotSupported; }
+	unsigned int VhtOperations::channel_center_segment_zero() const
+	{
+		constexpr QByteArray::size_type byte_index = 1;
+		return byte_to_unsigned_int(byte_index);
+	}
 
-VhtMcs VhtOperations::mcs_basic_three_ss() const { return VhtMcs::NotSupported; }
+	unsigned int VhtOperations::channel_center_segment_one() const
+	{
+		constexpr QByteArray::size_type byte_index = 2;
+		return byte_to_unsigned_int(byte_index);
+	}
 
-VhtMcs VhtOperations::mcs_basic_four_ss() const { return VhtMcs::NotSupported; }
+	VhtMcs VhtOperations::mcs_basic_one_ss() const { return VhtMcs::NotSupported; }
 
-VhtMcs VhtOperations::mcs_basic_five_ss() const { return VhtMcs::NotSupported; }
+	VhtMcs VhtOperations::mcs_basic_two_ss() const { return VhtMcs::NotSupported; }
 
-VhtMcs VhtOperations::mcs_basic_six_ss() const { return VhtMcs::NotSupported; }
+	VhtMcs VhtOperations::mcs_basic_three_ss() const { return VhtMcs::NotSupported; }
 
-VhtMcs VhtOperations::mcs_basic_seven_ss() const { return VhtMcs::NotSupported; }
+	VhtMcs VhtOperations::mcs_basic_four_ss() const { return VhtMcs::NotSupported; }
 
-VhtMcs VhtOperations::mcs_basic_eight_ss() const { return VhtMcs::NotSupported; }
+	VhtMcs VhtOperations::mcs_basic_five_ss() const { return VhtMcs::NotSupported; }
+
+	VhtMcs VhtOperations::mcs_basic_six_ss() const { return VhtMcs::NotSupported; }
+
+	VhtMcs VhtOperations::mcs_basic_seven_ss() const { return VhtMcs::NotSupported; }
+
+	VhtMcs VhtOperations::mcs_basic_eight_ss() const { return VhtMcs::NotSupported; }
+} // namespace KawaiiFi::Ies

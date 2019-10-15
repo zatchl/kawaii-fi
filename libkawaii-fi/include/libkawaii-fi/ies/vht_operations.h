@@ -8,28 +8,30 @@
 
 class QStandardItem;
 
-enum class VhtChannelWidth { TwentyOrFortyMhz, EightyMhz, OneSixtyMhz, EightyPlusEightyMhz };
+namespace KawaiiFi::Ies {
+	enum class VhtChannelWidth { TwentyOrFortyMhz, EightyMhz, OneSixtyMhz, EightyPlusEightyMhz };
 
-class VhtOperations : public InformationElement {
-public:
-	VhtOperations() = default;
-	explicit VhtOperations(const std::string_view &bytes);
+	class VhtOperations : public InformationElement {
+	public:
+		VhtOperations() = default;
+		explicit VhtOperations(const std::string_view &bytes);
 
-	[[nodiscard]] QStandardItem *standard_item() const override;
+		[[nodiscard]] QStandardItem *standard_item() const override;
 
-	[[nodiscard]] VhtChannelWidth channel_width() const;
-	[[nodiscard]] unsigned int channel_center_segment_zero() const;
-	[[nodiscard]] unsigned int channel_center_segment_one() const;
-	[[nodiscard]] VhtMcs mcs_basic_one_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_two_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_three_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_four_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_five_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_six_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_seven_ss() const;
-	[[nodiscard]] VhtMcs mcs_basic_eight_ss() const;
-};
+		[[nodiscard]] VhtChannelWidth channel_width() const;
+		[[nodiscard]] unsigned int channel_center_segment_zero() const;
+		[[nodiscard]] unsigned int channel_center_segment_one() const;
+		[[nodiscard]] VhtMcs mcs_basic_one_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_two_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_three_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_four_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_five_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_six_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_seven_ss() const;
+		[[nodiscard]] VhtMcs mcs_basic_eight_ss() const;
+	};
 
-inline const unsigned int WLAN_EID_VHT_OPERATION = 192;
+	inline const unsigned int WLAN_EID_VHT_OPERATION = 192;
+} // namespace KawaiiFi::Ies
 
 #endif // VHT_OPERATIONS_H

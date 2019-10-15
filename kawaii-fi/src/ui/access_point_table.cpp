@@ -1,6 +1,5 @@
 #include "access_point_table.h"
 
-#include "scanning/access_point_scanner.h"
 #include "ui/filter-menus/access_point_filter_menu.h"
 #include "ui/filter-menus/bssid_filter_menu.h"
 #include "ui/filter-menus/channel_filter_menu.h"
@@ -27,7 +26,9 @@
 #include <QWidget>
 #include <libkawaii-fi/access_point.h>
 #include <libkawaii-fi/channel.h>
+#include <libkawaii-fi/scanning/access_point_scanner.h>
 #include <libkawaii-fi/security.h>
+#include <libkawaii-fi/standard.h>
 
 namespace {
 	enum class ApColumn {
@@ -46,21 +47,11 @@ namespace {
 
 	const int total_columns = static_cast<int>(ApColumn::Vendor) + 1;
 
-	const QHash<Protocol, QString> protocol_map = {{Protocol::A, "a"},   {Protocol::B, "b"},
-	                                               {Protocol::G, "g"},   {Protocol::N, "n"},
-	                                               {Protocol::AC, "ac"}, {Protocol::AX, "ax"}};
-
-	const QHash<SecurityProtocol, QString> security_map = {{SecurityProtocol::None, "None"},
-	                                                       {SecurityProtocol::WEP, "WEP"},
-	                                                       {SecurityProtocol::WPA, "WPA"},
-	                                                       {SecurityProtocol::WPA2, "WPA2"},
-	                                                       {SecurityProtocol::WPA3, "WPA3"}};
-
-	QVariant ap_attribute(const AccessPoint &ap, ApColumn attribute_column)
+	QVariant ap_attribute(const KawaiiFi::AccessPoint &ap, ApColumn attribute_column)
 	{
 		switch (attribute_column) {
 		case ApColumn::SSID: {
-			const QString ssid = ap.ssid();
+			const QString &ssid = ap.ssid();
 			return !ssid.isEmpty() ? ssid : "Hidden";
 		}
 		case ApColumn::BSSID:
@@ -72,38 +63,37 @@ namespace {
 		case ApColumn::Channel:
 			return ap.channel().number();
 		case ApColumn::ChannelWidth:
-			switch (ap.channel_width()) {
-			case ChannelWidth::TwentyMhz:
+			switch (ap.channel().width()) {
+			case KawaiiFi::Channel::Width::TwentyMhz:
 				return 20;
-			case ChannelWidth::TwentyTwoMhz:
+			case KawaiiFi::Channel::Width::TwentyTwoMhz:
 				return 22;
-			case ChannelWidth::FortyMhz:
+			case KawaiiFi::Channel::Width::FortyMhz:
 				return 40;
-			case ChannelWidth::EightyMhz:
+			case KawaiiFi::Channel::Width::EightyMhz:
 				return 80;
-			case ChannelWidth::EightyPlusEightyMhz:
+			case KawaiiFi::Channel::Width::EightyPlusEightyMhz:
+			case KawaiiFi::Channel::Width::OneSixtyMhz:
 				return 160;
-			case ChannelWidth::OneSixtyMhz:
-				return 160;
-			case ChannelWidth::Other:
+			case KawaiiFi::Channel::Width::Other:
 				return ap.channel().width_mhz();
 			}
 		case ApColumn::SignalStrength:
-			return ap.signal_strength_dbm();
+			return ap.signal_dbm();
 		case ApColumn::Protocol:
-			return QVariant::fromValue(ap.protocols());
+			return static_cast<int>(ap.standards());
 		case ApColumn::Security: {
 			QStringList security_list;
-			for (SecurityProtocol security : ap.security()) {
-				security_list.append(security_map.value(security));
+			for (KawaiiFi::Security::Protocol security : ap.security()) {
+				security_list.append(KawaiiFi::Security::security_protocol_to_string(security));
 			}
 			const auto auth = ap.authentication();
 			switch (auth) {
-			case AkmSuiteType::PSK:
+			case KawaiiFi::Security::AkmSuiteType::PSK:
 				return security_list.join("/").append(" (PSK)");
-			case AkmSuiteType::IEEE_8021X:
+			case KawaiiFi::Security::AkmSuiteType::IEEE_8021X:
 				return security_list.join("/").append(" (802.1X)");
-			case AkmSuiteType::None:
+			case KawaiiFi::Security::AkmSuiteType::None:
 				return security_list.join("/");
 			}
 		}
@@ -115,30 +105,26 @@ namespace {
 		return QVariant();
 	}
 
-	QVariant ap_attribute_for_display(const AccessPoint &ap, ApColumn attribute_column)
+	QVariant ap_attribute_for_display(const KawaiiFi::AccessPoint &ap, ApColumn attribute_column)
 	{
 		switch (attribute_column) {
 		case ApColumn::Frequency:
 			return QString("%0 MHz").arg(ap_attribute(ap, attribute_column).toUInt());
 		case ApColumn::Channel:
-			if (ap.channel_width() == ChannelWidth::EightyPlusEightyMhz) {
-				const Channel channel = ap.channel();
+			if (ap.channel().width() == KawaiiFi::Channel::Width::EightyPlusEightyMhz) {
+				const KawaiiFi::Channel channel = ap.channel();
 				return QString("%0, %1").arg(channel.number()).arg(channel.number_two());
 			}
 			return ap_attribute(ap, attribute_column);
 		case ApColumn::ChannelWidth:
-			if (ap.channel_width() == ChannelWidth::EightyPlusEightyMhz) {
+			if (ap.channel().width() == KawaiiFi::Channel::Width::EightyPlusEightyMhz) {
 				return "80+80 MHz";
 			}
 			return QString("%0 MHz").arg(ap_attribute(ap, attribute_column).toUInt());
 		case ApColumn::SignalStrength:
 			return QString("%0 dBm").arg(ap_attribute(ap, attribute_column).toDouble());
 		case ApColumn::Protocol: {
-			QStringList protocol_list;
-			for (Protocol protocol : ap.protocols()) {
-				protocol_list.append(protocol_map.value(protocol));
-			}
-			return protocol_list.join("/");
+			return KawaiiFi::standards_to_string(ap.standards(), "/");
 		}
 		case ApColumn::SupportedRates:
 			return QString("%0 Mbps").arg(ap_attribute(ap, attribute_column).toString());
@@ -172,8 +158,8 @@ bool AccessPointSortFilterProxyModel::filterAcceptsRow(int source_row,
 
 	QModelIndex protocols_index =
 	        sourceModel()->index(source_row, static_cast<int>(ApColumn::Protocol), source_parent);
-	QVector<Protocol> protocols =
-	        sourceModel()->data(protocols_index, Qt::UserRole).value<QVector<Protocol>>();
+	auto protocols =
+	        sourceModel()->data(protocols_index, Qt::UserRole).value<QVector<KawaiiFi::Standard>>();
 	bool are_protocols_acceptable = false;
 	for (auto protocol : protocols) {
 		if (acceptable_protocols_.contains(protocol)) {
@@ -198,33 +184,37 @@ void AccessPointSortFilterProxyModel::set_acceptable_channel_widths(
 	invalidateFilter();
 }
 
-void AccessPointSortFilterProxyModel::set_acceptable_protocols(QSet<Protocol> protocols)
+void AccessPointSortFilterProxyModel::set_acceptable_protocols(KawaiiFi::Standards protocols)
 {
 	acceptable_protocols_ = protocols;
 	invalidateFilter();
 }
 
-AccessPointTableModel::AccessPointTableModel(const AccessPointScanner &ap_scanner, QObject *parent)
+AccessPointTableModel::AccessPointTableModel(
+        const KawaiiFi::Scanning::AccessPointScanner &ap_scanner, QObject *parent)
     : QAbstractTableModel(parent), ap_scanner_(ap_scanner)
 {
-	connect(&ap_scanner_, &AccessPointScanner::access_points_changed, this,
+	connect(&ap_scanner_, &KawaiiFi::Scanning::AccessPointScanner::access_points_changed, this,
 	        &AccessPointTableModel::refresh_model);
 }
 
 int AccessPointTableModel::rowCount(const QModelIndex &) const
 {
-	return ap_scanner_.access_points().size();
+	return ap_scanner_.access_points() != nullptr ? ap_scanner_.access_points()->size() : 0;
 }
 
 int AccessPointTableModel::columnCount(const QModelIndex &) const { return total_columns; }
 
 QVariant AccessPointTableModel::data(const QModelIndex &index, int role) const
 {
-	if (!index.isValid()) {
+	Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid |
+	                                   QAbstractItemModel::CheckIndexOption::ParentIsInvalid));
+
+	if (ap_scanner_.access_points() == nullptr) {
 		return QVariant();
 	}
 
-	const AccessPoint &ap = ap_scanner_.access_points()[index.row()];
+	const KawaiiFi::AccessPoint &ap = ap_scanner_.access_points()->at(index.row());
 
 	switch (role) {
 	case Qt::DisplayRole:
@@ -277,8 +267,8 @@ QVariant AccessPointTableModel::headerData(int section, Qt::Orientation orientat
 
 	// The vertical header contains the color associated with each access point
 	if (orientation == Qt::Orientation::Vertical && role == Qt::BackgroundRole &&
-	    section < ap_scanner_.access_points().size()) {
-		return ap_scanner_.access_point_colors()[ap_scanner_.access_points()[section].bssid()];
+	    (ap_scanner_.access_points() != nullptr) && section < ap_scanner_.access_points()->size()) {
+		return ap_scanner_.access_points()->at(section).color();
 	}
 
 	return QVariant();
@@ -301,7 +291,7 @@ AccessPointTableView::AccessPointTableView(QWidget *parent) : QTableView(parent)
 	setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 }
 
-void AccessPointTableView::set_ap_scanner(const AccessPointScanner &ap_scanner)
+void AccessPointTableView::set_ap_scanner(const KawaiiFi::Scanning::AccessPointScanner &ap_scanner)
 {
 	ap_sort_filter_proxy_model_->setSourceModel(new AccessPointTableModel(ap_scanner, this));
 	ap_sort_filter_proxy_model_->setSortRole(Qt::UserRole);
@@ -322,9 +312,9 @@ void AccessPointTableView::set_ap_scanner(const AccessPointScanner &ap_scanner)
 		ap_sort_filter_proxy_model_->set_acceptable_channel_widths(
 		        channel_width_filter_menu_->channel_widths());
 	});
-	ap_sort_filter_proxy_model_->set_acceptable_protocols(protocol_filter_menu_->protocols());
+	ap_sort_filter_proxy_model_->set_acceptable_protocols(protocol_filter_menu_->standards());
 	connect(protocol_filter_menu_, &AccessPointFilterMenu::filter_changed, [this]() {
-		ap_sort_filter_proxy_model_->set_acceptable_protocols(protocol_filter_menu_->protocols());
+		ap_sort_filter_proxy_model_->set_acceptable_protocols(protocol_filter_menu_->standards());
 	});
 }
 

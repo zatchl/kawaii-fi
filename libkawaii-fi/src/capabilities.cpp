@@ -20,126 +20,128 @@ namespace {
 	const std::uint8_t immediate_block_ack_mask = 0x80;      // 1000 0000
 } // namespace
 
-Capabilities::Capabilities(const char *bytes, int size) : bytes_(QByteArray(bytes, size)) {}
+namespace KawaiiFi {
+	Capabilities::Capabilities(const char *bytes, int size) : bytes_(QByteArray(bytes, size)) {}
 
-bool Capabilities::ess() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::ess() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & ess_mask;
 	}
-	return bytes()[0] & ess_mask;
-}
 
-bool Capabilities::ibss() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::ibss() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & ibss_mask;
 	}
-	return bytes()[0] & ibss_mask;
-}
 
-bool Capabilities::cf_pollable() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::cf_pollable() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & cf_pollable_mask;
 	}
-	return bytes()[0] & cf_pollable_mask;
-}
 
-bool Capabilities::cf_poll_request() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::cf_poll_request() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & cf_poll_request_mask;
 	}
-	return bytes()[0] & cf_poll_request_mask;
-}
 
-bool Capabilities::privacy() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::privacy() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & privacy_mask;
 	}
-	return bytes()[0] & privacy_mask;
-}
 
-bool Capabilities::short_preamble() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::short_preamble() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & short_preamble_mask;
 	}
-	return bytes()[0] & short_preamble_mask;
-}
 
-bool Capabilities::pbcc() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::pbcc() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & pbcc_mask;
 	}
-	return bytes()[0] & pbcc_mask;
-}
 
-bool Capabilities::channel_agility() const
-{
-	if (bytes().size() < 1) {
-		return false;
+	bool Capabilities::channel_agility() const
+	{
+		if (bytes().size() < 1) {
+			return false;
+		}
+		return bytes()[0] & channel_agility_mask;
 	}
-	return bytes()[0] & channel_agility_mask;
-}
 
-bool Capabilities::spectrum_management() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::spectrum_management() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & spectrum_management_mask;
 	}
-	return bytes()[1] & spectrum_management_mask;
-}
 
-bool Capabilities::short_slot_time() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::short_slot_time() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & short_slot_time_mask;
 	}
-	return bytes()[1] & short_slot_time_mask;
-}
 
-bool Capabilities::auto_power_save_delivery() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::auto_power_save_delivery() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & auto_power_save_delivery_mask;
 	}
-	return bytes()[1] & auto_power_save_delivery_mask;
-}
 
-bool Capabilities::radio_measurement() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::radio_measurement() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & radio_measurement_mask;
 	}
-	return bytes()[1] & radio_measurement_mask;
-}
 
-bool Capabilities::dsss_ofdm() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::dsss_ofdm() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & dsss_ofdm_mask;
 	}
-	return bytes()[1] & dsss_ofdm_mask;
-}
 
-bool Capabilities::delayed_block_ack() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::delayed_block_ack() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & delayed_block_ack_mask;
 	}
-	return bytes()[1] & delayed_block_ack_mask;
-}
 
-bool Capabilities::immediate_block_ack() const
-{
-	if (bytes().size() < 2) {
-		return false;
+	bool Capabilities::immediate_block_ack() const
+	{
+		if (bytes().size() < 2) {
+			return false;
+		}
+		return bytes()[1] & immediate_block_ack_mask;
 	}
-	return bytes()[1] & immediate_block_ack_mask;
-}
 
-const QByteArray &Capabilities::bytes() const { return bytes_; }
+	const QByteArray &Capabilities::bytes() const { return bytes_; }
+} // namespace KawaiiFi

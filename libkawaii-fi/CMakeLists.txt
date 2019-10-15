@@ -18,11 +18,15 @@ include_directories(${LibNL_INCLUDE_DIR})
 
 add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/access_point.h"
-	"include/${PROJECT_NAME}/wifi_device.h"
 	"include/${PROJECT_NAME}/capabilities.h"
+	"include/${PROJECT_NAME}/channel.h"
 	"include/${PROJECT_NAME}/connection_status.h"
+	"include/${PROJECT_NAME}/security.h"
+	"include/${PROJECT_NAME}/standard.h"
+	"include/${PROJECT_NAME}/util.h"
+	"include/${PROJECT_NAME}/wifi_device.h"
 	"include/${PROJECT_NAME}/ies/information_element.h"
-	"include/${PROJECT_NAME}/ies/ie_variant.h"
+	"include/${PROJECT_NAME}/ies/variant.h"
 	"include/${PROJECT_NAME}/ies/ssid.h"
 	"include/${PROJECT_NAME}/ies/ds_parameter.h"
 	"include/${PROJECT_NAME}/ies/supported_rates.h"
@@ -41,14 +45,14 @@ add_library(${PROJECT_NAME} SHARED
 	"include/${PROJECT_NAME}/ies/extended_capabilities.h"
 	"include/${PROJECT_NAME}/ies/standard-items/ie_id_standard_item.h"
 	"include/${PROJECT_NAME}/ies/standard-items/ie_length_standard_item.h"
-	"include/${PROJECT_NAME}/channel.h"
-	"include/${PROJECT_NAME}/kawaiifi.h"
-	"include/${PROJECT_NAME}/util.h"
-	"include/${PROJECT_NAME}/security.h"
+	"include/${PROJECT_NAME}/scanning/access_point_scanner.h"
 
 	"src/access_point.cpp"
-	"src/wifi_device.cpp"
 	"src/capabilities.cpp"
+	"src/channel.cpp"
+	"src/security.cpp"
+	"src/standard.cpp"
+	"src/wifi_device.cpp"
 	"src/netlink/nl_parse_attr.cpp"
 	"src/netlink/nl_parse_attr.h"
 	"src/netlink/nl_wifi_command.h"
@@ -71,7 +75,6 @@ add_library(${PROJECT_NAME} SHARED
 	"src/ies/traffic_indication_map.cpp"
 	"src/ies/erp_info.cpp"
 	"src/ies/extended_capabilities.cpp"
-	"src/channel.cpp"
 	"src/ies/standard-items/affirmable_field_standard_item.cpp"
 	"src/ies/standard-items/affirmable_field_standard_item.h"
 	"src/ies/standard-items/country_info_standard_item.cpp"
@@ -102,6 +105,7 @@ add_library(${PROJECT_NAME} SHARED
 	"src/ies/standard-items/vht_capability_standard_item.h"
 	"src/ies/standard-items/vht_operation_standard_item.cpp"
 	"src/ies/standard-items/vht_operation_standard_item.h"
+	"src/scanning/access_point_scanner.cpp"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
