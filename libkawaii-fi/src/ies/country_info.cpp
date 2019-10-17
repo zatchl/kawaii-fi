@@ -55,8 +55,8 @@ namespace KawaiiFi::Ies {
 		QVector<ChannelPowerConstraint> channel_constraints;
 		QByteArray::size_type i = 3;
 		while (i + 2 < bytes().size()) {
-			const unsigned int first_channel_number = static_cast<std::uint8_t>(bytes()[i++]);
-			const unsigned int number_of_channels = static_cast<std::uint8_t>(bytes()[i++]);
+			const auto first_channel_number = static_cast<std::uint8_t>(bytes()[i++]);
+			const auto number_of_channels = static_cast<std::uint8_t>(bytes()[i++]);
 			const int max_transmit_power_dbm = static_cast<std::uint8_t>(bytes()[i++]);
 
 			const unsigned int channel_number_delta = (first_channel_number > 14) ? 4 : 1;
