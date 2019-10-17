@@ -44,10 +44,11 @@ inline constexpr unsigned int ieee80211_channel_to_frequency(unsigned int chan,
 	 * there are overlapping channel numbers in 5GHz and 2GHz bands */
 	switch (band) {
 	case NL80211_BAND_2GHZ:
-		if (chan == 14)
+		if (chan == 14) {
 			return 2484;
-		else if (chan < 14)
+		} else if (chan < 14) {
 			return 2407 + chan * 5;
+		}
 		break;
 	case NL80211_BAND_5GHZ:
 		if (chan >= 182 && chan <= 196) {
