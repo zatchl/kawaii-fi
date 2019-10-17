@@ -24,12 +24,12 @@ struct nlattr;
 
 namespace KawaiiFi {
 	namespace {
-		const double ht_vht_short_gi_us = 0.4;
-		const double ht_vht_long_gi_us = 0.8;
+		constexpr double ht_vht_short_gi_us = 0.4;
+		constexpr double ht_vht_long_gi_us = 0.8;
 
-		const double ofdm_symbol_duration_us = 3.2;
+		constexpr double ofdm_symbol_duration_us = 3.2;
 
-		int ht_vht_data_subcarriers(Channel::Width channel_width)
+		constexpr int ht_vht_data_subcarriers(Channel::Width channel_width)
 		{
 			switch (channel_width) {
 			case Channel::Width::TwentyMhz:
@@ -76,7 +76,7 @@ namespace KawaiiFi {
 			        (ht_short_gi(ht_cap, channel_width) ? ht_vht_short_gi_us : ht_vht_long_gi_us));
 		}
 
-		int vht_bpscs(Ies::VhtMcs mcs)
+		constexpr int vht_bpscs(Ies::VhtMcs mcs)
 		{
 			switch (mcs) {
 			case Ies::VhtMcs::OneThroughSeven:
@@ -90,7 +90,7 @@ namespace KawaiiFi {
 			return 0;
 		}
 
-		double vht_coding(Ies::VhtMcs mcs)
+		constexpr double vht_coding(Ies::VhtMcs mcs)
 		{
 			switch (mcs) {
 			case Ies::VhtMcs::OneThroughSeven:
