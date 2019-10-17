@@ -34,10 +34,11 @@ namespace KawaiiFi::Ies {
 		for (const auto &rate_byte : bytes()) {
 			// The most significant bit of the rate byte indicates whether the rate is
 			// basic/mandatory
-			if ((rate_byte & basic_rate_mask) != 0) {
+			if ((static_cast<std::uint8_t>(rate_byte) & basic_rate_mask) != 0) {
 				// The seven low-order bits are the rate as a multiple of 500 kbps
 				// So divide by 2 to get the rate in mbps
-				double rate_mbps = static_cast<double>(rate_byte & supported_rate_mask) / 2;
+				double rate_mbps =
+				        (static_cast<std::uint8_t>(rate_byte) & supported_rate_mask) / 2.0;
 				basic_rates.insert(rate_mbps);
 			}
 		}
@@ -50,7 +51,7 @@ namespace KawaiiFi::Ies {
 		for (const auto &rate_byte : bytes()) {
 			// The seven low-order bits are the rate as a multiple of 500 kbps
 			// So divide by 2 to get the rate in mbps
-			double rate_mbps = static_cast<double>(rate_byte & supported_rate_mask) / 2;
+			double rate_mbps = (static_cast<std::uint8_t>(rate_byte) & supported_rate_mask) / 2.0;
 			rates.insert(rate_mbps);
 		}
 		return rates;
@@ -60,8 +61,8 @@ namespace KawaiiFi::Ies {
 	{
 		QStringList rates;
 		for (const auto &rate_byte : bytes()) {
-			bool is_basic = (rate_byte & basic_rate_mask) != 0;
-			double rate_mbps = static_cast<double>(rate_byte & supported_rate_mask) / 2;
+			bool is_basic = (static_cast<std::uint8_t>(rate_byte) & basic_rate_mask) != 0;
+			double rate_mbps = (static_cast<std::uint8_t>(rate_byte) & supported_rate_mask) / 2.0;
 			rates.append(is_basic ? QString("%0*").arg(rate_mbps) : QString::number(rate_mbps));
 		}
 		return rates;

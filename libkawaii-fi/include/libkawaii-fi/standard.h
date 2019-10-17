@@ -7,12 +7,12 @@
 
 namespace KawaiiFi {
 	enum class Standard {
-		B = 1 << 0,
-		G = 1 << 1,
-		N = 1 << 2,
-		A = 1 << 3,
-		AC = 1 << 4,
-		AX = 1 << 5
+		B = 1U << 0U,
+		G = 1U << 1U,
+		N = 1U << 2U,
+		A = 1U << 3U,
+		AC = 1U << 4U,
+		AX = 1U << 5U
 	};
 
 	Q_DECLARE_FLAGS(Standards, Standard)

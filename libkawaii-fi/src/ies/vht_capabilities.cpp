@@ -185,10 +185,10 @@ namespace KawaiiFi::Ies {
 		if (bytes().size() < 4) {
 			return 0;
 		}
+
 		const unsigned int exp =
-		        13 + ((bytes()[2] & max_ampdu_length_first_mask) >> 7) +
-		        static_cast<unsigned int>(((bytes()[3] & max_ampdu_length_second_mask) << 1));
-		return (1 << exp) - 1;
+		        13 + (bits_to_unsigned_int(2, 7, 1) >> 7U) + (bits_to_unsigned_int(3, 0, 2) << 1U);
+		return (1U << exp) - 1;
 	}
 
 	LinkAdaptation VhtCapabilities::link_adaptation() const
@@ -282,8 +282,11 @@ namespace KawaiiFi::Ies {
 		if (bytes().size() < 8) {
 			return 0;
 		}
-		return static_cast<std::uint8_t>(bytes()[6]) +
-		       static_cast<std::uint8_t>(((bytes()[7] & rx_highest_long_gi_data_rate_mask) << 8));
+
+		const auto first_byte = static_cast<std::uint8_t>(bytes()[6]);
+		const auto second_byte = static_cast<unsigned int>(static_cast<std::uint8_t>(bytes()[7]) &
+		                                                   rx_highest_long_gi_data_rate_mask);
+		return first_byte + (second_byte << 8U);
 	}
 
 	unsigned int VhtCapabilities::max_nsts_total() const

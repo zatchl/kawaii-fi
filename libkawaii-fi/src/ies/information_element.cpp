@@ -29,8 +29,8 @@ namespace KawaiiFi::Ies {
 			return false;
 		}
 
-		const auto byte_mask = static_cast<std::uint8_t>(1 << bit_index);
-		return (bytes_[byte_index] & byte_mask) != 0;
+		const auto byte_mask = 1U << bit_index;
+		return (static_cast<std::uint8_t>(bytes_[byte_index]) & byte_mask) != 0;
 	}
 
 	unsigned int InformationElement::byte_to_unsigned_int(QByteArray::size_type byte_index,
@@ -50,7 +50,7 @@ namespace KawaiiFi::Ies {
 			return default_value;
 		}
 
-		const unsigned int byte_mask = (1 << number_of_bits) - 1;
-		return static_cast<unsigned int>(bytes_[byte_index]) & byte_mask;
+		const unsigned int byte_mask = (1U << number_of_bits) - 1;
+		return static_cast<std::uint8_t>(bytes_[byte_index]) & byte_mask;
 	}
 } // namespace KawaiiFi::Ies

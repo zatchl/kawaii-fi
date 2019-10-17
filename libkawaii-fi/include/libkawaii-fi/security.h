@@ -6,7 +6,13 @@
 #include <QStringList>
 
 namespace KawaiiFi::Security {
-	enum class Protocol { None = 1 << 0, WEP = 1 << 1, WPA = 1 << 2, WPA2 = 1 << 3, WPA3 = 1 << 4 };
+	enum class Protocol {
+		None = 1U << 0U,
+		WEP = 1U << 1U,
+		WPA = 1U << 2U,
+		WPA2 = 1U << 3U,
+		WPA3 = 1U << 4U
+	};
 
 	Q_DECLARE_FLAGS(Protocols, Security::Protocol)
 	Q_DECLARE_OPERATORS_FOR_FLAGS(Protocols)

@@ -26,7 +26,8 @@ namespace KawaiiFi::Ies {
 		if (bytes().size() < 2) {
 			return 1;
 		}
-		return static_cast<unsigned int>(bytes()[0] + (bytes()[1] << 8));
+		return static_cast<std::uint8_t>(bytes()[0]) +
+		       (static_cast<std::uint8_t>(bytes()[1]) << 8U);
 	}
 
 	Security::CipherSuite RobustSecurityNetwork::group_cipher_suite() const
@@ -56,7 +57,8 @@ namespace KawaiiFi::Ies {
 		if (static_cast<unsigned int>(bytes().size()) < pairwise_cipher_suites_start()) {
 			return 0;
 		}
-		return static_cast<unsigned int>(bytes()[6] + (bytes()[7] << 8));
+		return static_cast<std::uint8_t>(bytes()[6]) +
+		       (static_cast<std::uint8_t>(bytes()[7]) << 8U);
 	}
 
 	QVector<Security::CipherSuite> RobustSecurityNetwork::pairwise_cipher_suites() const
@@ -99,9 +101,9 @@ namespace KawaiiFi::Ies {
 		if (static_cast<unsigned int>(bytes().size()) < akm_suites_start()) {
 			return 0;
 		}
-		return static_cast<unsigned int>(
-		        bytes()[8 + (pairwise_cipher_suite_count() * 4)] +
-		        (bytes()[8 + (pairwise_cipher_suite_count() * 4) + 1] << 8));
+		return static_cast<std::uint8_t>(bytes()[8 + (pairwise_cipher_suite_count() * 4)]) +
+		       (static_cast<std::uint8_t>(bytes()[8 + (pairwise_cipher_suite_count() * 4) + 1])
+		        << 8U);
 	}
 
 	QVector<Security::AkmSuite> RobustSecurityNetwork::akm_suites() const

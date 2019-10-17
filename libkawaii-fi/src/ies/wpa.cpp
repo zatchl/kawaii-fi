@@ -24,7 +24,7 @@ namespace KawaiiFi::Ies {
 		if (bytes().size() < 6) {
 			return 1;
 		}
-		return static_cast<std::uint8_t>(bytes()[4] + (bytes()[5] << 8));
+		return bytes()[4] + (static_cast<std::uint8_t>(bytes()[5]) << 8U);
 	}
 
 	KawaiiFi::Security::CipherSuite Wpa::group_cipher_suite() const
@@ -59,7 +59,7 @@ namespace KawaiiFi::Ies {
 		if (bytes().size() < pairwise_cipher_suites_start) {
 			return 0;
 		}
-		return static_cast<unsigned int>(bytes()[10] + (bytes()[11] << 8));
+		return bytes()[10] + (static_cast<std::uint8_t>(bytes()[11]) << 8U);
 	}
 
 	QVector<KawaiiFi::Security::CipherSuite> Wpa::pairwise_cipher_suites() const
@@ -99,9 +99,9 @@ namespace KawaiiFi::Ies {
 		if (bytes().size() < akm_suites_start()) {
 			return 0;
 		}
-		return static_cast<unsigned int>(
-		        bytes()[8 + (pairwise_cipher_suite_count() * 4)] +
-		        (bytes()[8 + (pairwise_cipher_suite_count() * 4) + 1] << 8));
+		return static_cast<std::uint8_t>(bytes()[8 + (pairwise_cipher_suite_count() * 4)]) +
+		       (static_cast<std::uint8_t>(bytes()[8 + (pairwise_cipher_suite_count() * 4) + 1])
+		        << 8U);
 	}
 
 	QVector<KawaiiFi::Security::AkmSuite> Wpa::akm_suites() const

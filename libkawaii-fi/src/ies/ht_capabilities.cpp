@@ -45,10 +45,12 @@ namespace KawaiiFi::Ies {
 
 	SmPowerSave HtCapabilities::sm_power_save() const
 	{
-		if (bytes().size() < 1) {
-			return SmPowerSave::Disabled;
-		}
-		switch ((bytes()[0] & sm_power_save_mask) >> 2) {
+		constexpr QByteArray::size_type byte_index = 0;
+		constexpr unsigned int bit_start_index = 2;
+		constexpr unsigned int number_of_bits = 2;
+		constexpr unsigned int default_value = 2;
+
+		switch (bits_to_unsigned_int(byte_index, bit_start_index, number_of_bits, default_value)) {
 		case 0:
 			return SmPowerSave::Static;
 		case 1:
@@ -88,10 +90,11 @@ namespace KawaiiFi::Ies {
 
 	HtRxStbc HtCapabilities::rx_stbc() const
 	{
-		if (bytes().size() < 2) {
-			return HtRxStbc::Disabled;
-		}
-		switch (bytes()[1] & rx_stbc_mask) {
+		constexpr QByteArray::size_type byte_index = 1;
+		constexpr unsigned int bit_start_index = 0;
+		constexpr unsigned int number_of_bits = 2;
+
+		switch (bits_to_unsigned_int(byte_index, bit_start_index, number_of_bits)) {
 		case 0:
 			return HtRxStbc::Disabled;
 		case 1:
@@ -157,16 +160,18 @@ namespace KawaiiFi::Ies {
 			return default_max_ampdu_length;
 		}
 
-		const unsigned int exp = 13 + (bytes()[byte_index] & max_ampdu_length_mask);
-		return (1 << exp) - 1;
+		const unsigned int exp =
+		        13 + (static_cast<std::uint8_t>(bytes()[byte_index]) & max_ampdu_length_mask);
+		return (1U << exp) - 1;
 	}
 
 	double HtCapabilities::mpdu_density_usec() const
 	{
-		if (bytes().size() < 3) {
-			return 0;
-		}
-		switch ((bytes()[2] & mpdu_density_usec_mask) >> 2) {
+		constexpr QByteArray::size_type byte_index = 2;
+		constexpr unsigned int bit_start_index = 2;
+		constexpr unsigned int number_of_bits = 3;
+
+		switch (bits_to_unsigned_int(byte_index, bit_start_index, number_of_bits)) {
 		case 0:
 			return 0;
 		case 1:
@@ -203,7 +208,7 @@ namespace KawaiiFi::Ies {
 				continue;
 			}
 			int highest_set_bit = 0;
-			while (mcs_ss >>= 1) {
+			while ((mcs_ss >>= 1U) != 0) {
 				++highest_set_bit;
 			}
 			switch (highest_set_bit) {
