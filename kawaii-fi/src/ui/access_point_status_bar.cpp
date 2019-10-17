@@ -26,9 +26,9 @@ AccessPointStatusBar::AccessPointStatusBar(QAction *pause_action, QAction *resum
 
 	// Trigger either the pause or resume actions depending on which one is enabled
 	connect(scan_toggle_button, &QPushButton::clicked, [pause_action, resume_action]() {
-		if (pause_action && pause_action->isEnabled()) {
+		if ((pause_action != nullptr) && pause_action->isEnabled()) {
 			pause_action->trigger();
-		} else if (resume_action && resume_action->isEnabled()) {
+		} else if ((resume_action != nullptr) && resume_action->isEnabled()) {
 			resume_action->trigger();
 		}
 	});
