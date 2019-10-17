@@ -63,12 +63,12 @@ namespace KawaiiFi {
 			unsigned int max_ss = 0;
 			Ies::HtMcs mcs = {Ies::HtModulation::None, 0};
 			const std::array<Ies::HtMcs, 4> ht_mcs = ht_cap.rx_mcs();
-			for (unsigned long i = 0; i < ht_mcs.size(); ++i) {
-				if (ht_mcs[i].modulation == Ies::HtModulation::None) {
+			for (auto it = ht_mcs.begin(); it < ht_mcs.end(); ++it) {
+				if (it->modulation == Ies::HtModulation::None) {
 					continue;
 				}
-				max_ss = static_cast<unsigned int>(i + 1);
-				mcs = ht_mcs[i];
+				max_ss = (it - ht_mcs.begin()) + 1;
+				mcs = *it;
 			}
 			return (ht_vht_data_subcarriers(channel_width) * static_cast<int>(mcs.modulation) *
 			        mcs.coding * max_ss) /
@@ -129,12 +129,12 @@ namespace KawaiiFi {
 			unsigned int max_ss = 0;
 			Ies::VhtMcs mcs = Ies::VhtMcs::NotSupported;
 			const std::array<Ies::VhtMcs, 8> vht_mcs = vht_cap.mcs_rx();
-			for (unsigned long i = 0; i < vht_mcs.size(); ++i) {
-				if (vht_mcs[i] == Ies::VhtMcs::NotSupported) {
+			for (auto it = vht_mcs.begin(); it < vht_mcs.end(); ++it) {
+				if (*it == Ies::VhtMcs::NotSupported) {
 					break;
 				}
-				max_ss = static_cast<unsigned int>(i + 1);
-				mcs = vht_mcs[i];
+				max_ss = (it - vht_mcs.begin()) + 1;
+				mcs = *it;
 			}
 			return (ht_vht_data_subcarriers(channel_width) * vht_bpscs(mcs) * vht_coding(mcs) *
 			        max_ss) /

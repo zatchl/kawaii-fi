@@ -201,10 +201,10 @@ namespace KawaiiFi::Ies {
 
 		QByteArray::size_type rx_mcs_byte_index = 3;
 		std::array<HtMcs, 4> rx_mcs;
-		for (std::array<HtMcs, 4>::size_type i = 0; i < rx_mcs.size(); ++i) {
+		for (auto it = rx_mcs.begin(); it < rx_mcs.end(); ++it) {
 			auto mcs_ss = static_cast<std::uint8_t>(bytes()[rx_mcs_byte_index++]);
 			if (mcs_ss == 0) {
-				rx_mcs[i] = {HtModulation::None, 0};
+				*it = {HtModulation::None, 0};
 				continue;
 			}
 			int highest_set_bit = 0;
@@ -213,34 +213,35 @@ namespace KawaiiFi::Ies {
 			}
 			switch (highest_set_bit) {
 			case 0:
-				rx_mcs[i] = {HtModulation::BPSK, 0.5};
+				*it = {HtModulation::BPSK, 0.5};
 				break;
 			case 1:
-				rx_mcs[i] = {HtModulation::QPSK, 0.5};
+				*it = {HtModulation::QPSK, 0.5};
 				break;
 			case 2:
-				rx_mcs[i] = {HtModulation::QPSK, 0.75};
+				*it = {HtModulation::QPSK, 0.75};
 				break;
 			case 3:
-				rx_mcs[i] = {HtModulation::QAM_16, 0.5};
+				*it = {HtModulation::QAM_16, 0.5};
 				break;
 			case 4:
-				rx_mcs[i] = {HtModulation::QAM_16, 0.75};
+				*it = {HtModulation::QAM_16, 0.75};
 				break;
 			case 5:
-				rx_mcs[i] = {HtModulation::QAM_64, 2.0 / 3};
+				*it = {HtModulation::QAM_64, 2.0 / 3};
 				break;
 			case 6:
-				rx_mcs[i] = {HtModulation::QAM_64, 0.75};
+				*it = {HtModulation::QAM_64, 0.75};
 				break;
 			case 7:
-				rx_mcs[i] = {HtModulation::QAM_64, 5.0 / 6};
+				*it = {HtModulation::QAM_64, 5.0 / 6};
 				break;
 			default:
-				rx_mcs[i] = {HtModulation::None, 0};
+				*it = {HtModulation::None, 0};
 				break;
 			}
 		}
+
 		return rx_mcs;
 	}
 
