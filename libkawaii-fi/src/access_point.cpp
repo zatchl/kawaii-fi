@@ -1,6 +1,7 @@
 #include "libkawaii-fi/access_point.h"
 
 #include "libkawaii-fi/capabilities.h"
+#include "libkawaii-fi/channel.h"
 #include "libkawaii-fi/connection_status.h"
 #include "libkawaii-fi/ies/ht_capabilities.h"
 #include "libkawaii-fi/ies/robust_security_network.h"
@@ -343,6 +344,7 @@ namespace KawaiiFi {
 
 		authentication_ = calculate_authentication(ies_);
 
+		standards_ = standards_from_ies(ies_, channel_.band());
 		// supported rates, max rate
 	}
 

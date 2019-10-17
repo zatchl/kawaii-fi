@@ -1,9 +1,13 @@
 #ifndef STANDARD_H
 #define STANDARD_H
 
+#include "libkawaii-fi/channel.h"
+#include "libkawaii-fi/ies/variant.h"
+
 #include <QFlag>
 #include <QMetaType>
 #include <QString>
+#include <QVector>
 
 namespace KawaiiFi {
 	enum class Standard {
@@ -21,6 +25,8 @@ namespace KawaiiFi {
 	QString standard_to_string(Standard standard);
 
 	QString standards_to_string(Standards standards, const QString &delimeter);
+
+	Standards standards_from_ies(const QVector<Ies::Variant> &ies, Channel::Band band);
 } // namespace KawaiiFi
 
 Q_DECLARE_METATYPE(KawaiiFi::Standard)
